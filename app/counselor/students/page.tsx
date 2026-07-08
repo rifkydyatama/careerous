@@ -202,13 +202,13 @@ function StudentRow({ student, totalWeeks, onSaveFeedback }: { student: Counselo
 
           {student.lateModules > 0 && (
             <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10.5px] font-bold text-amber-700">
-              <AlertTriangle size={12} /> {student.lateModules} Telat
+              <AlertTriangle size={12} /> {student.lateModules} Terblokir
             </span>
           )}
 
           {student.lockedModules > 0 && (
             <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-100 px-2.5 py-1 text-[10.5px] font-bold text-rose-700">
-              <Lock size={12} /> {student.lockedModules} Terkunci
+              <Lock size={12} /> {student.lockedModules} Terblokir
             </span>
           )}
 
@@ -394,7 +394,7 @@ function CounselorReportSection({ studentId }: { studentId: string }) {
             <Sparkles size={12} /> Career Exploration Report (AI)
           </p>
           <h5 className="mt-1 text-[13px] font-bold text-slate-900">
-            Dokumen pendukung bimbingan &amp; seleksi masuk PT
+            Dokumen pendukung bimbingan
           </h5>
           <p className="mt-0.5 text-[11.5px] text-slate-500">
             Ringkasan AI dari seluruh journaling siswa untuk membantu mengarahkan pilihan kariernya.
@@ -504,12 +504,12 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
         <div className="flex items-center gap-1.5">
           {isLate && (
             <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-amber-700">
-              <AlertTriangle size={10} /> Telat
+              <AlertTriangle size={10} /> Terblokir
             </span>
           )}
           {isTempLocked && (
             <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-rose-700">
-              <Lock size={10} /> Terkunci
+              <Lock size={10} /> Terblokir
             </span>
           )}
           {journal.reflectionText && (
@@ -546,7 +546,7 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
           </div>
         )}
 
-        <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Teks Refleksi Siswa</div>
+        <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Mood Board</div>
         <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-[12.5px] leading-relaxed text-slate-600">
           {journal.reflectionText || <em className="text-slate-400">Tidak ada teks.</em>}
         </div>

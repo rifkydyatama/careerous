@@ -458,7 +458,7 @@ function DeadlineBanner({ journal }: { journal: JournalItem }) {
         {isLate && (
           <>
             {" "}
-            — jika kembali terlambat, modul akan <b>terkunci 3 hari</b>.
+            — jika kembali terlambat, modul akan <b>terblokir</b>.
           </>
         )}
       </p>

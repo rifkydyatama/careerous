@@ -202,7 +202,7 @@ export default function RiasecPage() {
     <>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-900">Asesmen Minat Karier (RIASEC)</h2>
+          <h2 className="text-xl font-extrabold text-slate-900">Tes RIASEC dan Tes Gaya Belajar</h2>
           <p className="mt-1 text-[13px] text-slate-500">Jawab pertanyaan berikut dengan jujur sesuai preferensi Anda.</p>
         </div>
         {!isTestStarted && assessment && (

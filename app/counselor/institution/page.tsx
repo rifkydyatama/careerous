@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Building2, RefreshCw, Crown, Users, CalendarClock, CheckCircle2 } from "lucide-react";
+import { Building2, RefreshCw, Crown, CalendarClock, CheckCircle2 } from "lucide-react";
 import {
   fetchCurrentUser,
   fetchInstitution,
@@ -112,17 +112,6 @@ export default function InstitutionPage() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-2 text-slate-400">
-                <Users size={15} />
-                <p className="text-[10px] font-extrabold uppercase tracking-wider">Siswa Terdampak</p>
-              </div>
-              <p className="mt-2 text-2xl font-extrabold text-slate-900">{institution.studentCount}</p>
-              <p className="mt-0.5 text-[12px] text-slate-500">
-                siswa otomatis mendapat Premium saat langganan aktif.
-              </p>
-            </div>
-
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center gap-2 text-slate-400">
                 <CalendarClock size={15} />

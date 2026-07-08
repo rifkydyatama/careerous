@@ -151,7 +151,7 @@ export default function CounselorDashboard() {
             <Kpi icon={Users} label="Total Siswa" value={summary.totalStudents} sub={`${summary.premium} Premium`} color="from-blue-600 to-blue-400" />
             <Kpi icon={TrendingUp} label="Rata-rata Progres" value={`${summary.avgProgress}%`} sub={`${summary.finished} tuntas`} color="from-teal-600 to-teal-400" progress={summary.avgProgress} />
             <Kpi icon={ClipboardCheck} label="Menunggu Reviu" value={summary.totalPending} sub={summary.totalPending > 0 ? "Perlu umpan balik" : "Semua direviu"} color="from-rose-600 to-rose-400" isRed={summary.totalPending > 0} />
-            <Kpi icon={AlertTriangle} label="Perlu Perhatian" value={summary.needAttention} sub="Telat / terkunci" color="from-amber-600 to-amber-400" isRed={summary.needAttention > 0} />
+            <Kpi icon={AlertTriangle} label="Perlu Perhatian" value={summary.needAttention} sub="Terblokir" color="from-amber-600 to-amber-400" isRed={summary.needAttention > 0} />
           </div>
 
           {/* Grafik */}
@@ -231,8 +231,8 @@ export default function CounselorDashboard() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-[12.5px] font-bold text-slate-900">{s.name}</p>
                         <div className="mt-0.5 flex flex-wrap gap-1.5">
-                          {s.lockedModules > 0 && <Tag color="rose" icon={<Lock size={9} />} text={`${s.lockedModules} terkunci`} />}
-                          {s.lateModules > 0 && <Tag color="amber" icon={<AlertTriangle size={9} />} text={`${s.lateModules} telat`} />}
+                          {s.lockedModules > 0 && <Tag color="rose" icon={<Lock size={9} />} text={`${s.lockedModules} terblokir`} />}
+                          {s.lateModules > 0 && <Tag color="amber" icon={<AlertTriangle size={9} />} text={`${s.lateModules} terblokir`} />}
                           {s.pendingFeedback > 0 && <Tag color="blue" text={`${s.pendingFeedback} reviu`} />}
                         </div>
                       </div>
