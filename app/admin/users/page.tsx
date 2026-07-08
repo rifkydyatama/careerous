@@ -1,0 +1,212 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { RefreshCw, Trash2, Search } from "lucide-react";
+import {
+  fetchAdminUsers,
+  updateAdminUser,
+  deleteAdminUser,
+  formatDateId,
+  AdminUser,
+  AdminInstitutionOption,
+} from "../utils";
+
+const ROLE_LABEL: Record<string, string> = {
+  STUDENT: "Siswa",
+  COUNSELOR: "Konselor",
+  ADMIN: "Admin",
+};
+
+export default function AdminUsersPage() {
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [institutions, setInstitutions] = useState<AdminInstitutionOption[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const result = await fetchAdminUsers();
+      setUsers(result.users);
+      setInstitutions(result.institutions);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Gagal memuat pengguna");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const patch = async (
+    id: string,
+    data: { role?: string; plan?: string; institutionId?: string | null }
+  ) => {
+    setSavingId(id);
+    setErrorMessage(null);
+    // Optimistic update
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === id
+          ? {
+              ...u,
+              role: (data.role as AdminUser["role"]) ?? u.role,
+              plan: (data.plan as AdminUser["plan"]) ?? u.plan,
+              institution:
+                data.institutionId === undefined
+                  ? u.institution
+                  : institutions.find((i) => i.id === data.institutionId) ?? null,
+            }
+          : u
+      )
+    );
+    try {
+      await updateAdminUser(id, data);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Gagal memperbarui");
+      await load();
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const handleDelete = async (u: AdminUser) => {
+    if (!window.confirm(`Hapus akun ${u.name || u.email}? Tindakan ini permanen.`)) return;
+    try {
+      await deleteAdminUser(u.id);
+      setUsers((prev) => prev.filter((x) => x.id !== u.id));
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Gagal menghapus");
+    }
+  };
+
+  const filtered = users.filter((u) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      (u.name ?? "").toLowerCase().includes(q) ||
+      (u.email ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-extrabold text-slate-900">Kelola Pengguna</h2>
+          <p className="mt-1 text-[13px] text-slate-500">
+            Ubah peran, paket, dan institusi pengguna, atau hapus akun.
+          </p>
+        </div>
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Cari nama / email..."
+            className="w-64 rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-[12.5px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+        </div>
+      </div>
+
+      {errorMessage && (
+        <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] text-rose-700">
+          {errorMessage}
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-3">
+            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <p className="text-sm font-bold text-slate-900">Memuat pengguna</p>
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full min-w-[820px] text-left text-[12.5px]">
+            <thead className="border-b border-slate-200 bg-slate-50 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th className="px-4 py-3">Nama / Email</th>
+                <th className="px-4 py-3">Peran</th>
+                <th className="px-4 py-3">Paket</th>
+                <th className="px-4 py-3">Institusi</th>
+                <th className="px-4 py-3">Terdaftar</th>
+                <th className="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filtered.map((u) => (
+                <tr key={u.id} className={savingId === u.id ? "opacity-60" : ""}>
+                  <td className="px-4 py-3">
+                    <p className="font-bold text-slate-900">{u.name || "—"}</p>
+                    <p className="text-[11px] text-slate-500">{u.email}</p>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={u.role}
+                      onChange={(e) => void patch(u.id, { role: e.target.value })}
+                      className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-[11.5px] outline-none focus:border-blue-500"
+                    >
+                      {Object.keys(ROLE_LABEL).map((r) => (
+                        <option key={r} value={r}>
+                          {ROLE_LABEL[r]}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={u.plan}
+                      onChange={(e) => void patch(u.id, { plan: e.target.value })}
+                      className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-[11.5px] outline-none focus:border-blue-500"
+                    >
+                      <option value="FREE">Free</option>
+                      <option value="PREMIUM">Premium</option>
+                    </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={u.institution?.id ?? ""}
+                      onChange={(e) => void patch(u.id, { institutionId: e.target.value || null })}
+                      className="max-w-[180px] rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-[11.5px] outline-none focus:border-blue-500"
+                    >
+                      <option value="">— Tanpa institusi —</option>
+                      {institutions.map((i) => (
+                        <option key={i.id} value={i.id}>
+                          {i.name}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">{formatDateId(u.createdAt)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      type="button"
+                      onClick={() => void handleDelete(u)}
+                      className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-bold text-rose-600 transition hover:bg-rose-50"
+                    >
+                      <Trash2 size={12} /> Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                    Tidak ada pengguna.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}

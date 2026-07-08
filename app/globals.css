@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ─── Aksesibilitas & tema (dikontrol AccessibilityWidget via class di <html>) ─── */
+html {
+  --f-dark: ;
+  --f-contrast: ;
+}
+/* Mode gelap (mode malam): inversi luminansi global, hue dijaga agar warna tetap wajar */
+html.theme-dark {
+  --f-dark: invert(1) hue-rotate(180deg);
+  background-color: #0e1116;
+}
+/* Kontras tinggi (ramah buta warna / low vision) */
+html.a11y-contrast {
+  --f-contrast: contrast(1.35);
+}
+html.theme-dark,
+html.a11y-contrast {
+  filter: var(--f-dark) var(--f-contrast);
+}
+/* Kembalikan media agar warna asli saat mode gelap */
+html.theme-dark img,
+html.theme-dark video,
+html.theme-dark [data-noinvert] {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Mode ramah disleksia: font & spasi lebih lega */
+html.a11y-dyslexia body,
+html.a11y-dyslexia body * {
+  font-family: Verdana, Tahoma, "Trebuchet MS", sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.12em !important;
+  line-height: 1.75 !important;
+}
+
+/* Perbesar teks/seluruh tampilan */
+html.a11y-large body {
+  zoom: 1.12;
+}
+
+@keyframes riseIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.um-landing .motion-rise {
+  animation: riseIn 0.7s ease-out both;
+}
+
+.um-landing .motion-stagger > * {
+  animation: riseIn 0.7s ease-out both;
+}
+
+.um-landing .motion-stagger > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.um-landing .motion-stagger > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.um-landing .motion-stagger > *:nth-child(3) {
+  animation-delay: 0.19s;
+}
+
+.um-landing .motion-stagger > *:nth-child(4) {
+  animation-delay: 0.26s;
+}
