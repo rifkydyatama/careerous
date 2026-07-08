@@ -88,7 +88,7 @@ export default function SettingsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat data pengaturan</p>
               <p className="text-[13px] text-slate-500">Menghubungkan panel konselor ke database.</p>
@@ -116,7 +116,7 @@ export default function SettingsPage() {
 
           <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#0B1D3A]">Pengaturan Akun</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Pengaturan Akun</p>
               <h3 className="mt-1 text-sm font-extrabold text-slate-900">Sari Rahmawati, S.Pd.</h3>
               <p className="mt-1 text-[13px] text-slate-500">Konselor / Guru BK</p>
 
@@ -139,7 +139,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleAddStudent}
-                  className="rounded-lg bg-[#0B1D3A] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#132848]"
+                  className="rounded-lg bg-[#2e1065] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#3b0764]"
                 >
                   Tambah Siswa Baru
                 </button>

@@ -43,7 +43,7 @@ export default function AdminModulesPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
             <p className="text-sm font-bold text-slate-900">Memuat modul</p>
           </div>
         </div>
@@ -102,7 +102,7 @@ function ModuleEditor({ module }: { module: AdminModule }) {
           type="button"
           onClick={() => void handleSave()}
           disabled={isSaving || !dirty}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#0B1D3A] px-3.5 py-2 text-[11.5px] font-bold text-white transition hover:bg-[#132848] disabled:bg-slate-300"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2e1065] px-3.5 py-2 text-[11.5px] font-bold text-white transition hover:bg-[#3b0764] disabled:bg-slate-300"
         >
           <Save size={13} /> {isSaving ? "Menyimpan..." : savedAt && !dirty ? "Tersimpan" : "Simpan"}
         </button>

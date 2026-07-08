@@ -99,7 +99,7 @@ export default function RiasecPage() {
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-3">
-          <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+          <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
           <div>
             <p className="text-sm font-bold text-slate-900">Memuat data asesmen</p>
             <p className="text-[13px] text-slate-500">Menyinkronkan hasil tes Anda.</p>
@@ -137,7 +137,7 @@ export default function RiasecPage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#0B1D3A]">Dimensi Minat</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Dimensi Minat</p>
                 <h3 className="mt-1 text-lg font-extrabold text-slate-900">Profil Holland Anda</h3>
               </div>
               <div className="flex gap-2">
@@ -159,7 +159,7 @@ export default function RiasecPage() {
                         <span className="text-sm font-bold text-slate-900">{dimension.label}</span>
                         <span className="text-[11px] font-medium text-slate-500 hidden sm:inline-block">— {dimension.description}</span>
                       </div>
-                      <span className="text-sm font-extrabold text-[#0B1D3A]">{score}/10</span>
+                      <span className="text-sm font-extrabold text-[#2e1065]">{score}/10</span>
                     </div>
                     <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                       <div
@@ -174,8 +174,8 @@ export default function RiasecPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-[#0B1D3A] to-[#1e3a6e] p-6 text-white shadow-md">
-              <Sparkles size={24} className="mb-3 text-[#F5C842]" />
+            <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-[#2e1065] to-[#1e3a6e] p-6 text-white shadow-md">
+              <Sparkles size={24} className="mb-3 text-[#e879f9]" />
               <h4 className="text-base font-extrabold">Interpretasi Singkat</h4>
               <p className="mt-2 text-[13px] leading-relaxed text-white/80">
                 Profil RIASEC Anda menunjukkan kombinasi ketertarikan pada {assessmentTop3.join(" dan ")}. Gunakan wawasan ini untuk memilih jurusan atau aktivitas ekstrakurikuler yang sesuai.
@@ -233,7 +233,7 @@ export default function RiasecPage() {
           </p>
           <button
             onClick={() => setIsTestStarted(true)}
-            className="mt-6 rounded-xl bg-[#0B1D3A] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#132848]"
+            className="mt-6 rounded-xl bg-[#2e1065] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#3b0764]"
           >
             Mulai Tes Sekarang
           </button>
@@ -327,7 +327,7 @@ export default function RiasecPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={!testProgress.isComplete || isSubmitting}
-                  className="w-full rounded-xl bg-[#0B1D3A] py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#132848] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+                  className="w-full rounded-xl bg-[#2e1065] py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#3b0764] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
                 >
                   {isSubmitting ? "Menyimpan..." : "Kirim Hasil"}
                 </button>

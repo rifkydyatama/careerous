@@ -43,10 +43,10 @@ export default function StudentLayout({
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F4F6FA] font-sans text-slate-900">
+    <div className="flex min-h-screen bg-[#f6f4fd] font-sans text-slate-900">
       
       {/* ─── SIDEBAR ─── */}
-      <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col bg-[#0B1D3A] shadow-2xl">
+      <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col bg-gradient-to-b from-[#2e1065] via-[#3b0764] to-[#1a0636] shadow-2xl shadow-fuchsia-900/40">
         <div className="flex items-center gap-3 border-b border-white/10 p-5">
           <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0" />
           <div>
@@ -95,7 +95,7 @@ export default function StudentLayout({
                 <p className="text-[11.5px] font-bold text-slate-900">Siswa Aktif</p>
                 <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">Peserta Program</p>
               </div>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0B1D3A] text-xs font-extrabold text-white shadow-sm">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2e1065] text-xs font-extrabold text-white shadow-sm">
                 S
               </div>
             </div>
@@ -241,10 +241,10 @@ const MenuSection = ({ title }: { title: string }) => (
 
 const NavItem = ({ href, icon, label, badge, active }: any) => (
   <Link href={href} className={`mx-2 my-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
-    active ? "border-[#C9920A]/30 bg-[#C9920A]/20 font-bold text-[#F5C842]" : "text-white/55 hover:bg-white/5 hover:text-white/90"
+    active ? "border-[#a855f7]/30 bg-[#a855f7]/20 font-bold text-[#e879f9]" : "text-white/55 hover:bg-white/5 hover:text-white/90"
   }`}>
-    <span className={active ? "text-[#F5C842]" : ""}>{icon}</span>
+    <span className={active ? "text-[#e879f9]" : ""}>{icon}</span>
     {label}
-    {badge && <span className="ml-auto rounded-full bg-[#C9920A] px-1.5 py-0.5 text-[9.5px] font-bold text-white">{badge}</span>}
+    {badge && <span className="ml-auto rounded-full bg-[#a855f7] px-1.5 py-0.5 text-[9.5px] font-bold text-white">{badge}</span>}
   </Link>
 );

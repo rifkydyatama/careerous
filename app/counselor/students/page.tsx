@@ -105,7 +105,7 @@ export default function StudentsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat data siswa</p>
               <p className="text-[13px] text-slate-500">Menghubungkan panel konselor ke database.</p>
@@ -241,7 +241,7 @@ function StudentRow({ student, totalWeeks, onSaveFeedback }: { student: Counselo
           <button 
             onClick={() => setIsOpen(!isOpen)}
             className={`flex items-center gap-1.5 rounded-lg border px-4 py-2 text-[11.5px] font-bold transition-colors ${
-              isOpen ? "border-[#0B1D3A] bg-[#0B1D3A] text-white" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+              isOpen ? "border-[#2e1065] bg-[#2e1065] text-white" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
             }`}
           >
             {isOpen ? "Tutup Panel" : "Buka Panel"}
@@ -260,7 +260,7 @@ function StudentRow({ student, totalWeeks, onSaveFeedback }: { student: Counselo
           <div className={`mb-4 rounded-xl border p-4 ${assessment ? "border-indigo-200 bg-indigo-50" : "border-dashed border-slate-200 bg-white"}`}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#0B1D3A]">Tes RIASEC & Gaya Belajar</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Tes RIASEC & Gaya Belajar</p>
                 <h5 className="mt-1 text-[13px] font-bold text-slate-900">
                   {assessment ? "Hasil minat karier terbaru" : "Belum ada hasil RIASEC"}
                 </h5>
@@ -298,7 +298,7 @@ function StudentRow({ student, totalWeeks, onSaveFeedback }: { student: Counselo
                           </div>
                           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200">
                             <div
-                              className="h-full rounded-full bg-[#0B1D3A]"
+                              className="h-full rounded-full bg-[#2e1065]"
                               style={{ width: `${score * 10}%` }}
                             ></div>
                           </div>
@@ -581,7 +581,7 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="rounded-lg bg-[#0B1D3A] px-4 py-2 text-[11.5px] font-bold text-white transition-colors hover:bg-[#132848] disabled:bg-slate-300"
+                className="rounded-lg bg-[#2e1065] px-4 py-2 text-[11.5px] font-bold text-white transition-colors hover:bg-[#3b0764] disabled:bg-slate-300"
               >
                 {isSubmitting ? "Menyimpan..." : "Simpan Umpan Balik"}
               </button>

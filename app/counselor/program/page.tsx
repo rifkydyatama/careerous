@@ -39,13 +39,13 @@ export default function ProgramPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#0B1D3A]">Jadwal Program</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Jadwal Program</p>
             <h3 className="mt-1 text-sm font-extrabold text-slate-900">Alur kerja konseling yang sedang berjalan</h3>
           </div>
           <button
             type="button"
             onClick={handleAddStudent}
-            className="rounded-lg bg-[#0B1D3A] px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#132848]"
+            className="rounded-lg bg-[#2e1065] px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#3b0764]"
           >
             Tambah Siswa
           </button>

@@ -13,7 +13,7 @@ export default function SchedulePage() {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="mb-5 text-[10px] font-bold uppercase tracking-wider text-[#0B1D3A]">Kegiatan Mingguan</p>
+        <p className="mb-5 text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Kegiatan Mingguan</p>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {STUDENT_SCHEDULE_ITEMS.map((item) => (
             <div key={item.title} className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition-transform hover:-translate-y-0.5">

@@ -123,12 +123,12 @@ export default function StudentDashboardPage() {
       ) : (
         <>
           {/* Hero */}
-          <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B1D3A] via-[#13294f] to-[#0B1D3A] p-7 shadow-md">
+          <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#2e1065] via-[#13294f] to-[#2e1065] p-7 shadow-md">
             <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-white/5 blur-2xl"></div>
-            <div className="absolute -bottom-16 -left-16 h-[200px] w-[200px] rounded-full bg-[#C9920A]/10 blur-2xl"></div>
+            <div className="absolute -bottom-16 -left-16 h-[200px] w-[200px] rounded-full bg-[#a855f7]/10 blur-2xl"></div>
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-6">
               <div className="text-white">
-                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[1.5px] text-[#F5C842]">Ruang Siswa</p>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[1.5px] text-[#e879f9]">Ruang Siswa</p>
                 <h3 className="text-2xl font-extrabold leading-tight">
                   Halo, {data.student?.name?.split(" ")[0] || "Siswa"}!
                 </h3>
@@ -140,7 +140,7 @@ export default function StudentDashboardPage() {
                       : `Kamu sudah menuntaskan ${stats.completed} dari ${stats.total} modul. Teruskan langkahmu!`}
                 </p>
                 {data.premium && (
-                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#F5C842]/15 px-3 py-1 text-[10.5px] font-bold text-[#F5C842]">
+                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#e879f9]/15 px-3 py-1 text-[10.5px] font-bold text-[#e879f9]">
                     <Sparkles size={11} /> Akses Premium aktif
                     {data.premiumSource === "INSTITUTION" ? " (institusi)" : ""}
                   </span>
@@ -169,7 +169,7 @@ export default function StudentDashboardPage() {
           <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#C9920A] to-[#F5C842] text-white shadow-sm">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#a855f7] to-[#e879f9] text-white shadow-sm">
                   <Trophy size={22} />
                 </div>
                 <div>
@@ -179,7 +179,7 @@ export default function StudentDashboardPage() {
               </div>
               <div className="text-right">
                 <div className="flex items-end gap-1.5">
-                  <span className="text-[28px] font-extrabold leading-none text-[#C9920A]">{game.points}</span>
+                  <span className="text-[28px] font-extrabold leading-none text-[#a855f7]">{game.points}</span>
                   <span className="mb-1 text-[12px] font-bold text-slate-400">poin</span>
                 </div>
                 <p className="text-[11px] text-slate-500">
@@ -282,7 +282,7 @@ function LoadingCard() {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
-        <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+        <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
         <div>
           <p className="text-sm font-bold text-slate-900">Memuat data dasbor</p>
           <p className="text-[13px] text-slate-500">Menyinkronkan data Anda.</p>
@@ -297,10 +297,10 @@ function ProgressRing({ percent }: { percent: number }) {
     <div
       className="relative flex h-[92px] w-[92px] items-center justify-center rounded-full"
       style={{
-        background: `conic-gradient(#F5C842 ${percent * 3.6}deg, rgba(255,255,255,0.12) 0deg)`,
+        background: `conic-gradient(#e879f9 ${percent * 3.6}deg, rgba(255,255,255,0.12) 0deg)`,
       }}
     >
-      <div className="flex h-[72px] w-[72px] flex-col items-center justify-center rounded-full bg-[#0B1D3A]">
+      <div className="flex h-[72px] w-[72px] flex-col items-center justify-center rounded-full bg-[#2e1065]">
         <span className="text-[20px] font-extrabold leading-none text-white">{percent}%</span>
         <span className="mt-0.5 text-[8px] font-bold uppercase tracking-wider text-white/40">Progres</span>
       </div>
@@ -312,7 +312,7 @@ function MiniStat({ label, value, accent }: { label: string; value: string; acce
   return (
     <div>
       <p className="text-[9px] font-bold uppercase tracking-wider text-white/40">{label}</p>
-      <p className={`text-[15px] font-extrabold leading-none ${accent ? "text-[#F5C842]" : "text-white"}`}>{value}</p>
+      <p className={`text-[15px] font-extrabold leading-none ${accent ? "text-[#e879f9]" : "text-white"}`}>{value}</p>
     </div>
   );
 }
@@ -364,7 +364,7 @@ function ActiveModuleCard({
           )}
           <Link
             href={`/dashboard/student/${studentId}/journals`}
-            className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-lg bg-[#0B1D3A] px-4 py-2 text-[12px] font-bold text-white transition hover:bg-[#132848]"
+            className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-lg bg-[#2e1065] px-4 py-2 text-[12px] font-bold text-white transition hover:bg-[#3b0764]"
           >
             Kerjakan Sekarang <ChevronRight size={14} />
           </Link>

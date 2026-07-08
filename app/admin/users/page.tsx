@@ -123,7 +123,7 @@ export default function AdminUsersPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
             <p className="text-sm font-bold text-slate-900">Memuat pengguna</p>
           </div>
         </div>

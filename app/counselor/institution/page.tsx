@@ -72,7 +72,7 @@ export default function InstitutionPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
             <p className="text-sm font-bold text-slate-900">Memuat data institusi</p>
           </div>
         </div>
@@ -90,12 +90,12 @@ export default function InstitutionPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-5">
-          <div className="relative overflow-hidden rounded-2xl bg-[#0B1D3A] p-7 shadow-md">
-            <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-[#C9920A]/10 blur-2xl"></div>
+          <div className="relative overflow-hidden rounded-2xl bg-[#2e1065] p-7 shadow-md">
+            <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-[#a855f7]/10 blur-2xl"></div>
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-5">
               <div className="text-white">
                 <div className="flex items-center gap-2">
-                  <Building2 size={18} className="text-[#F5C842]" />
+                  <Building2 size={18} className="text-[#e879f9]" />
                   <h3 className="text-xl font-extrabold">{institution.name}</h3>
                 </div>
                 <p className="mt-1 text-[13px] text-white/60">Langganan akses Premium institusi</p>
@@ -170,7 +170,7 @@ export default function InstitutionPage() {
                 type="button"
                 onClick={() => void handleToggle(true)}
                 disabled={isSaving}
-                className="rounded-lg bg-[#0B1D3A] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#132848] disabled:bg-slate-300"
+                className="rounded-lg bg-[#2e1065] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#3b0764] disabled:bg-slate-300"
               >
                 {isSaving ? "Memproses..." : "Aktifkan Langganan (Mock)"}
               </button>

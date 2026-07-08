@@ -56,7 +56,7 @@ export default function SettingsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#0B1D3A]" />
+            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat profil</p>
               <p className="text-[13px] text-slate-500">Menyinkronkan data Anda.</p>
@@ -71,7 +71,7 @@ export default function SettingsPage() {
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#0B1D3A]">Profil Anda</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Profil Anda</p>
             <h3 className="mt-1 text-sm font-extrabold text-slate-900">{data.student?.name || "Siswa Tidak Dikenal"}</h3>
             <p className="mt-1 text-[13px] text-slate-500">{data.student?.email || "Email tidak tersedia"}</p>
 
