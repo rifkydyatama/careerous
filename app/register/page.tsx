@@ -8,11 +8,18 @@ import {
   BadgePlus,
   Lock,
   Mail,
+  School,
   Sparkles,
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
 import { PORTAL_ROLE_OPTIONS, normalizeRole, type PortalRole } from "../../lib/portal-auth";
+
+type InstitutionOption = {
+  id: string;
+  name: string;
+  hasCounselor: boolean;
+};
 
 async function readApiError(response: Response, fallback: string) {
   try {
@@ -35,6 +42,8 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<PortalRole>("STUDENT");
   const [institutionName, setInstitutionName] = useState("");
+  const [institutionId, setInstitutionId] = useState("");
+  const [institutions, setInstitutions] = useState<InstitutionOption[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,10 +56,41 @@ export default function RegisterPage() {
     }
   }, []);
 
+  // Ambil daftar sekolah: siswa memilih dari sini, guru memakainya sebagai saran nama.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/institutions/list", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : { institutions: [] }))
+      .then((data) => {
+        if (active) setInstitutions(data.institutions ?? []);
+      })
+      .catch(() => {
+        if (active) setInstitutions([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const selectedRole = useMemo(
     () => PORTAL_ROLE_OPTIONS.find((item) => item.value === role),
     [role]
   );
+
+  // Sekolah yang boleh dipilih siswa: hanya yang sudah punya guru terdaftar.
+  const studentSchools = useMemo(
+    () => institutions.filter((item) => item.hasCounselor),
+    [institutions]
+  );
+
+  // Saran untuk guru: bila mengetik nama yang sudah terdaftar (case-insensitive), tampilkan
+  // nama kanoniknya agar tidak membuat sekolah duplikat dengan ejaan berbeda.
+  const institutionSuggestion = useMemo(() => {
+    const typed = institutionName.trim().toLowerCase();
+    if (!typed) return null;
+    const match = institutions.find((item) => item.name.toLowerCase() === typed);
+    return match && match.name !== institutionName.trim() ? match.name : null;
+  }, [institutionName, institutions]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -78,6 +118,12 @@ export default function RegisterPage() {
       return;
     }
 
+    // Siswa wajib memilih sekolah dari daftar.
+    if (role === "STUDENT" && !institutionId) {
+      setErrorMessage("Silakan pilih sekolah dari daftar.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
@@ -92,7 +138,10 @@ export default function RegisterPage() {
           email: trimmedEmail,
           role,
           password,
-          institutionName: institutionName.trim(),
+          // Siswa: id sekolah dari dropdown. Guru: nama sekolah (find-or-create).
+          ...(role === "STUDENT"
+            ? { institutionId }
+            : { institutionName: institutionName.trim() }),
         }),
       });
 
@@ -135,7 +184,7 @@ export default function RegisterPage() {
           <section className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#F5C842]/20 bg-[#F5C842]/10 px-3 py-1 text-[11px] font-semibold text-[#F5C842]">
               <Sparkles size={13} />
-              Pendaftaran mahasiswa dan konselor
+              Pendaftaran siswa dan konselor
             </div>
             <h2 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Buat akun baru untuk masuk ke portal layanan.
@@ -260,21 +309,79 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
-                  Sekolah / Institusi <span className="font-normal text-slate-400">(opsional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={institutionName}
-                  onChange={(event) => setInstitutionName(event.target.value)}
-                  placeholder="mis. SMA Negeri 1 Malang"
-                  className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[#F5C842]/60 focus:ring-2 focus:ring-[#F5C842]/15"
-                />
-                <p className="mt-2 text-xs text-slate-400">
-                  Jika sekolah Anda berlangganan, seluruh siswa otomatis mendapat akses Premium.
-                </p>
-              </div>
+              {role === "STUDENT" ? (
+                <div>
+                  <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    Sekolah
+                  </label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                      <School size={14} />
+                    </div>
+                    <select
+                      value={institutionId}
+                      onChange={(event) => setInstitutionId(event.target.value)}
+                      disabled={studentSchools.length === 0}
+                      className="w-full appearance-none rounded-xl border border-white/10 bg-slate-950/40 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-[#F5C842]/60 focus:ring-2 focus:ring-[#F5C842]/15 disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      <option value="" className="bg-slate-950">
+                        {studentSchools.length === 0
+                          ? "Belum ada sekolah terdaftar"
+                          : "— Pilih sekolah —"}
+                      </option>
+                      {studentSchools.map((item) => (
+                        <option key={item.id} value={item.id} className="bg-slate-950">
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-400">
+                    {studentSchools.length === 0
+                      ? "Sekolah baru muncul setelah guru dari sekolahmu mendaftar terlebih dahulu."
+                      : "Pilih sekolahmu. Daftar ini berisi sekolah yang gurunya sudah terdaftar."}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    Sekolah / Institusi <span className="font-normal text-slate-400">(opsional)</span>
+                  </label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                      <School size={14} />
+                    </div>
+                    <input
+                      type="text"
+                      value={institutionName}
+                      onChange={(event) => setInstitutionName(event.target.value)}
+                      placeholder="mis. SMA Negeri 1 Malang"
+                      list="institution-suggestions"
+                      autoComplete="off"
+                      className="w-full rounded-xl border border-white/10 bg-slate-950/40 py-3 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[#F5C842]/60 focus:ring-2 focus:ring-[#F5C842]/15"
+                    />
+                    <datalist id="institution-suggestions">
+                      {institutions.map((item) => (
+                        <option key={item.id} value={item.name} />
+                      ))}
+                    </datalist>
+                  </div>
+                  {institutionSuggestion ? (
+                    <button
+                      type="button"
+                      onClick={() => setInstitutionName(institutionSuggestion)}
+                      className="mt-2 text-xs font-semibold text-[#F5C842] hover:text-[#ffd75a]"
+                    >
+                      Sekolah ini sudah terdaftar sebagai “{institutionSuggestion}” — gunakan nama itu
+                    </button>
+                  ) : (
+                    <p className="mt-2 text-xs text-slate-400">
+                      Ketik nama sekolahmu. Jika sudah pernah didaftarkan guru lain, pilih dari saran
+                      agar tidak terjadi duplikat. Siswa akan memilih sekolah ini saat mendaftar.
+                    </p>
+                  )}
+                </div>
+              )}
 
               {errorMessage && (
                 <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">

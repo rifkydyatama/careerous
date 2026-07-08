@@ -60,6 +60,9 @@ export async function POST(request: NextRequest) {
   const password = typeof body?.password === "string" ? body.password : "";
   const institutionName =
     typeof body?.institutionName === "string" ? body.institutionName.trim() : "";
+  // Siswa memilih sekolah dari dropdown dan mengirim id (presisi, tak membuat duplikat).
+  const institutionIdInput =
+    typeof body?.institutionId === "string" ? body.institutionId.trim() : "";
 
   if (!name) {
     return NextResponse.json({ error: "Nama wajib diisi" }, { status: 400 });
@@ -99,9 +102,22 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await hashPassword(password);
 
-    // Tautkan ke institusi (find-or-create) bila nama institusi diisi.
+    // Tautkan ke institusi. Siswa mengirim institutionId (pilih dari daftar sekolah yang
+    // sudah punya guru); guru mengirim nama (find-or-create). Utamakan id bila valid.
     let institutionId: string | null = null;
-    if (institutionName) {
+    if (institutionIdInput) {
+      const byId = await prisma.institution.findUnique({
+        where: { id: institutionIdInput },
+        select: { id: true },
+      });
+      if (!byId) {
+        return NextResponse.json(
+          { error: "Sekolah yang dipilih tidak ditemukan" },
+          { status: 400 }
+        );
+      }
+      institutionId = byId.id;
+    } else if (institutionName) {
       const existingInstitution = await prisma.institution.findFirst({
         where: { name: { equals: institutionName, mode: "insensitive" } },
         select: { id: true },
@@ -114,6 +130,14 @@ export async function POST(request: NextRequest) {
               select: { id: true },
             })
           ).id;
+    }
+
+    // Siswa wajib memilih sekolah dari daftar.
+    if (role === "STUDENT" && !institutionId) {
+      return NextResponse.json(
+        { error: "Silakan pilih sekolah dari daftar" },
+        { status: 400 }
+      );
     }
 
     let user;

@@ -124,7 +124,7 @@ export default function LoginPage() {
               <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
                 <UserRound size={16} className="text-[#F5C842]" />
                 <p className="mt-3 text-sm font-semibold text-white">Peran jelas</p>
-                <p className="mt-1 text-xs text-slate-400">Siswa / mahasiswa atau konselor.</p>
+                <p className="mt-1 text-xs text-slate-400">Siswa / siswa atau konselor.</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
                 <ShieldCheck size={16} className="text-[#F5C842]" />
