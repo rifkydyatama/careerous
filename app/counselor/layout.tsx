@@ -15,7 +15,16 @@ import {
   markCounselorNotificationsRead,
   formatDateTimeId,
   CounselorNotification,
+  CurrentUser,
 } from "./utils";
+
+// Inisial dari nama (maks 2 huruf) untuk avatar.
+function initialsOf(name: string | null | undefined): string {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "BK";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 export default function CounselorLayout({
   children,
@@ -24,6 +33,21 @@ export default function CounselorLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [me, setMe] = useState<CurrentUser | null>(null);
+
+  // Ambil identitas konselor yang login (nama & sekolah) untuk ditampilkan otomatis.
+  useEffect(() => {
+    let mounted = true;
+    void fetchCurrentUser().then((user) => {
+      if (mounted) setMe(user);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const schoolName = me?.institution?.name ?? UNIVERSITY.name;
+  const counselorName = me?.name?.trim() || "Konselor";
 
   const handleAddStudent = () => {
     router.push("/register?role=STUDENT");
@@ -47,16 +71,16 @@ export default function CounselorLayout({
           <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0" />
           <div>
             <h1 className="text-sm font-extrabold leading-tight text-white">{UNIVERSITY.app} BK</h1>
-            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-white/40">{UNIVERSITY.name}</p>
+            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-white/40">{schoolName}</p>
           </div>
         </div>
 
         <div className="mx-3 mt-3 flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 p-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 text-xs font-extrabold text-white">
-            SR
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-400 to-purple-600 text-xs font-extrabold text-white">
+            {initialsOf(me?.name)}
           </div>
-          <div>
-            <p className="text-[11.5px] font-bold text-white">Sari Rahmawati, S.Pd.</p>
+          <div className="min-w-0">
+            <p className="truncate text-[11.5px] font-bold text-white">{counselorName}</p>
             <p className="mt-0.5 text-[9.5px] text-white/40">Konselor / Guru BK</p>
           </div>
         </div>

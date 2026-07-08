@@ -51,8 +51,7 @@ export type CareerReportData = {
 };
 
 export function buildReportFromText(
-  reflections: string[],
-  riasecTop3: string | null
+  reflections: string[]
 ): CareerReportData {
   const corpus = reflections.join(" \n ").toLowerCase();
 
@@ -84,7 +83,8 @@ export function buildReportFromText(
     .map((entry) => entry.theme);
 
   const dominantThemes = themeScores.join(", ");
-  const topInterest = riasecTop3?.trim() || null;
+  // Laporan hanya merangkum modul eksplorasi; hasil RIASEC/gaya belajar tidak disertakan.
+  const topInterest = null;
 
   // Ringkasan
   const sentimentSentence =
@@ -99,15 +99,10 @@ export function buildReportFromText(
       ? `Tema karier yang paling sering muncul dalam tulisanmu adalah ${dominantThemes}.`
       : "Belum ada tema karier dominan yang menonjol secara jelas — ini kesempatan untuk menjelajah lebih jauh.";
 
-  const interestSentence = topInterest
-    ? `Hasil asesmen RIASEC-mu menonjolkan minat ${topInterest}, yang dapat menjadi titik awal mendiskusikan pilihan studi dan karier.`
-    : "Lengkapi Tes RIASEC untuk memperkaya gambaran minat kariermu.";
-
   const summary = [
     `Kamu telah menyelesaikan seluruh ${TOTAL_MODULES} modul eksplorasi karier. Berikut ringkasan perjalananmu.`,
     sentimentSentence,
     themeSentence,
-    interestSentence,
     "Gunakan laporan ini sebagai bahan diskusi bersama guru BK untuk menyusun langkah selanjutnya.",
   ].join(" ");
 
@@ -147,18 +142,13 @@ const REPORT_SCHEMA = {
       type: "integer",
       description: "Skor sentimen positif 0-100.",
     },
-    topInterest: {
-      type: "string",
-      description: "Minat RIASEC teratas; string kosong bila tidak ada.",
-    },
   },
-  required: ["summary", "dominantThemes", "sentimentLabel", "sentimentScore", "topInterest"],
+  required: ["summary", "dominantThemes", "sentimentLabel", "sentimentScore"],
   additionalProperties: false,
 } as const;
 
 async function generateReportWithAI(
-  qaPairs: QAPair[],
-  riasecTop3: string | null
+  qaPairs: QAPair[]
 ): Promise<CareerReportData | null> {
   if (!process.env.ANTHROPIC_API_KEY?.trim()) {
     return null;
@@ -170,10 +160,6 @@ async function generateReportWithAI(
     const journalText = qaPairs
       .map((qa, i) => `Modul ${i + 1} — ${qa.question}\nJawaban siswa: ${qa.answer}`)
       .join("\n\n");
-
-    const riasecLine = riasecTop3
-      ? `Hasil asesmen RIASEC siswa (minat teratas): ${riasecTop3}.`
-      : "Siswa belum melengkapi asesmen RIASEC.";
 
     const response = await client.messages.create({
       model: "claude-opus-4-8",
@@ -192,10 +178,10 @@ async function generateReportWithAI(
           role: "user",
           content:
             `Berikut seluruh jawaban journaling eksplorasi karier seorang siswa selama 12 modul.\n\n` +
-            `${journalText}\n\n${riasecLine}\n\n` +
-            `Hasilkan Career Exploration Report sesuai skema: ringkasan perjalanan, ` +
-            `tema karier dominan yang teridentifikasi, analisis sentimen umum (POSITIF/NETRAL/CAMPURAN) ` +
-            `beserta skor 0-100, dan minat RIASEC teratas.`,
+            `${journalText}\n\n` +
+            `Hasilkan Career Exploration Report sesuai skema HANYA berdasarkan jawaban modul di atas: ` +
+            `ringkasan perjalanan, tema karier dominan yang teridentifikasi, dan analisis sentimen umum ` +
+            `(POSITIF/NETRAL/CAMPURAN) beserta skor 0-100. Jangan menyertakan hasil tes RIASEC atau gaya belajar.`,
         },
       ],
     });
@@ -208,7 +194,6 @@ async function generateReportWithAI(
       dominantThemes: string[];
       sentimentLabel: string;
       sentimentScore: number;
-      topInterest: string;
     };
 
     return {
@@ -220,7 +205,7 @@ async function generateReportWithAI(
         ? parsed.sentimentLabel
         : "NETRAL",
       sentimentScore: Math.max(0, Math.min(100, Math.round(parsed.sentimentScore ?? 50))),
-      topInterest: parsed.topInterest?.trim() || riasecTop3?.trim() || null,
+      topInterest: null,
       isAiGenerated: true,
     };
   } catch {
@@ -258,17 +243,11 @@ export async function generateCareerReport(studentId: string) {
       answer: j.reflectionText!.trim(),
     }));
 
-  const assessment = await prisma.assessment.findFirst({
-    where: { studentId },
-    orderBy: { createdAt: "desc" },
-    select: { riasecTop3: true },
-  });
-  const riasecTop3 = assessment?.riasecTop3 ?? null;
-
   // Coba AI dulu; bila tidak tersedia, pakai mock rule-based.
+  // Laporan hanya merangkum modul eksplorasi (tanpa RIASEC/gaya belajar).
   const data =
-    (await generateReportWithAI(qaPairs, riasecTop3)) ??
-    buildReportFromText(reflections, riasecTop3);
+    (await generateReportWithAI(qaPairs)) ??
+    buildReportFromText(reflections);
 
   return prisma.careerExplorationReport.upsert({
     where: { studentId },
