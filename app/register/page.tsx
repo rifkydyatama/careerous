@@ -190,7 +190,7 @@ export default function RegisterPage() {
               Buat akun baru untuk masuk ke portal layanan.
             </h2>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-              Gunakan formulir ini untuk menambahkan akun mahasiswa atau konselor
+              Gunakan formulir ini untuk menambahkan akun siswa atau konselor
               ke database. Setelah berhasil, akun akan diarahkan ke halaman yang
               sesuai dengan perannya.
             </p>

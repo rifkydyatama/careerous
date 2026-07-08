@@ -64,6 +64,159 @@ html.a11y-large body {
   zoom: 1.12;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   Sistem visual "vibrant" (target pelajar SMP–SMA): gradient cerah,
+   glow, bentuk membulat, dan animasi hidup. Dipakai lintas halaman.
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --c-violet: #8b5cf6;
+  --c-fuchsia: #ec4899;
+  --c-blue: #3b82f6;
+  --c-cyan: #22d3ee;
+  --c-lime: #a3e635;
+  --grad-brand: linear-gradient(
+    120deg,
+    #a855f7 0%,
+    #ec4899 38%,
+    #6366f1 72%,
+    #22d3ee 100%
+  );
+}
+
+/* Teks dengan isian gradient (judul/aksen) */
+.text-gradient {
+  background: var(--grad-brand);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 8s ease infinite;
+}
+
+/* Kartu kaca membulat */
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+/* Angkat & bercahaya saat hover (kartu interaktif) */
+.card-hover {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 70px -20px rgba(168, 85, 247, 0.55);
+  border-color: rgba(236, 72, 153, 0.45);
+}
+
+/* Tombol gradient utama */
+.btn-glow {
+  position: relative;
+  background: var(--grad-brand);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+  box-shadow: 0 10px 30px -8px rgba(168, 85, 247, 0.6);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-glow:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 18px 45px -10px rgba(236, 72, 153, 0.7);
+}
+
+/* Kilau melintas (shimmer) untuk badge/chip */
+.shimmer {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.6s linear infinite;
+}
+
+/* ─── Utilitas animasi ─── */
+.animate-blob {
+  animation: blob 18s ease-in-out infinite;
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-float-slow {
+  animation: float 9s ease-in-out infinite;
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+.animate-spin-slow {
+  animation: spinSlow 22s linear infinite;
+}
+.glow-pulse {
+  animation: glowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -30px) scale(1.12);
+  }
+  66% {
+    transform: translate(-30px, 25px) scale(0.92);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+@keyframes spinSlow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Animasi lama landing (dipertahankan) ─── */
 @keyframes riseIn {
   0% {
     opacity: 0;
@@ -74,27 +227,32 @@ html.a11y-large body {
     transform: translateY(0);
   }
 }
-
 .um-landing .motion-rise {
   animation: riseIn 0.7s ease-out both;
 }
-
 .um-landing .motion-stagger > * {
   animation: riseIn 0.7s ease-out both;
 }
-
 .um-landing .motion-stagger > *:nth-child(1) {
   animation-delay: 0.05s;
 }
-
 .um-landing .motion-stagger > *:nth-child(2) {
   animation-delay: 0.12s;
 }
-
 .um-landing .motion-stagger > *:nth-child(3) {
   animation-delay: 0.19s;
 }
-
 .um-landing .motion-stagger > *:nth-child(4) {
   animation-delay: 0.26s;
+}
+
+/* Hormati preferensi kurangi animasi */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
