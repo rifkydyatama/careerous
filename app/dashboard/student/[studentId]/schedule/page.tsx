@@ -168,7 +168,7 @@ export default function SchedulePage() {
                               </div>
                               <div className="flex-1">
                                 <p className="font-bold">Gabung Video Call</p>
-                                <p className="mt-0.5 text-[10.5px] font-normal text-fuchsia-500 truncate">{s.meetLink}</p>
+                                <p className="mt-0.5 text-[10.5px] font-normal text-fuchsia-500">Buka ruang interaktif Careerous</p>
                               </div>
                               <ExternalLink size={14} className="shrink-0 text-fuchsia-400" />
                             </a>

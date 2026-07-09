@@ -63,7 +63,7 @@ export default function ProgramPage() {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [capacity, setCapacity] = useState(1);
-  const [meetLink, setMeetLink] = useState("");
+
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -113,7 +113,6 @@ export default function ProgramPage() {
           maxCapacity: type === "GROUP" ? capacity : 1,
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
-          meetLink: meetLink.trim() || null,
           location: location.trim() || null,
           phone: phone.trim() || null,
         }),
@@ -125,7 +124,6 @@ export default function ProgramPage() {
       setDate("");
       setStart("");
       setEnd("");
-      setMeetLink("");
       setLocation("");
       setPhone("");
       await load();
@@ -237,13 +235,9 @@ export default function ProgramPage() {
               <label className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
                 <Video size={12} className="text-fuchsia-600" /> Link Video Call
               </label>
-              <input
-                type="url"
-                value={meetLink}
-                onChange={(e) => setMeetLink(e.target.value)}
-                placeholder="https://meet.google.com/..."
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
-              />
+              <div className="flex h-[38px] w-full items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-500">
+                Dibuat otomatis oleh sistem
+              </div>
             </div>
             <div>
               <label className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
@@ -417,9 +411,14 @@ function ScheduleCard({
       {hasComm && (
         <div className="mt-3 flex flex-wrap gap-2">
           {schedule.meetLink && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2.5 py-1 text-[10.5px] font-bold text-fuchsia-700">
-              <Video size={11} /> Meet
-            </span>
+            <a
+              href={schedule.meetLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 hover:bg-fuchsia-100 transition-colors px-2.5 py-1 text-[10.5px] font-bold text-fuchsia-700"
+            >
+              <Video size={11} /> Buka Ruang Video
+            </a>
           )}
           {schedule.phone && (
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[10.5px] font-bold text-emerald-700">

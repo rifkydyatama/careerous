@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         maxCapacity: s.maxCapacity,
         startTime: s.startTime.toISOString(),
         endTime: s.endTime.toISOString(),
-        meetLink: s.meetLink,
+        meetLink: `/room/${s.id}`,
         location: s.location,
         phone: s.phone,
         status: s.status,
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
         myBookingStatus: myBooking?.status ?? null,
         myBookingId: myBooking?.id ?? null,
         // Info komunikasi hanya ditampilkan jika booking disetujui.
-        meetLink: isApproved ? s.meetLink : null,
+        meetLink: isApproved ? `/room/${s.id}` : null,
         location: isApproved ? s.location : null,
         phone: isApproved ? s.phone : null,
         approvalMessage: isApproved ? (myBooking?.approvalMessage ?? null) : null,
@@ -131,7 +131,6 @@ export async function POST(request: NextRequest) {
       : type === "GROUP"
         ? 5
         : 1;
-  const meetLink = typeof body?.meetLink === "string" ? body.meetLink.trim() || null : null;
   const location = typeof body?.location === "string" ? body.location.trim() || null : null;
   const phone = typeof body?.phone === "string" ? body.phone.trim() || null : null;
 
@@ -149,7 +148,6 @@ export async function POST(request: NextRequest) {
       maxCapacity,
       startTime: start,
       endTime: end,
-      meetLink,
       location,
       phone,
     },
