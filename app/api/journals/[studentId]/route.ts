@@ -110,10 +110,27 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
     });
 
     const contents = await getModuleContents();
+
+    let schoolDeadlineMap = new Map<number, Date | null>();
+    if (premium && student.institutionId) {
+      const schoolDeadlines = await prisma.institutionModuleDeadline.findMany({
+        where: { institutionId: student.institutionId },
+      });
+      for (const sd of schoolDeadlines) {
+        schoolDeadlineMap.set(sd.moduleNumber, sd.deadlineAt);
+      }
+    }
+
     const journalsWithGate = journals.map((journal) => {
       const meta = resolveModule(journal.weekNumber, contents);
+      const overrideDeadline = schoolDeadlineMap.has(journal.weekNumber)
+        ? schoolDeadlineMap.get(journal.weekNumber)
+        : undefined;
       return {
         ...journal,
+        deadlineAt: overrideDeadline !== undefined
+          ? (overrideDeadline?.toISOString() ?? null)
+          : (journal.deadlineAt?.toISOString() ?? null),
         premiumLocked: !premium && isPremiumModule(journal.weekNumber),
         title: meta?.title ?? null,
         prompt: meta?.prompt ?? null,
