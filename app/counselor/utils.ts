@@ -69,6 +69,57 @@ export type Institution = {
   studentCount: number;
 };
 
+export type SubscriptionRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export type SubscriptionRequest = {
+  id: string;
+  months: number;
+  note: string | null;
+  status: SubscriptionRequestStatus;
+  decisionNote: string | null;
+  decidedAt: string | null;
+  createdAt: string;
+};
+
+export type SubscriptionRequestState = {
+  institution: {
+    id: string;
+    name: string;
+    subscriptionActive: boolean;
+    subscriptionExpiresAt: string | null;
+  } | null;
+  requests: SubscriptionRequest[];
+};
+
+// Status langganan institusi + riwayat pengajuan konselor.
+export async function fetchSubscriptionRequestState(): Promise<SubscriptionRequestState> {
+  const response = await fetch("/api/counselor/subscription-request", {
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(
+      await readApiError(response, "Gagal memuat status langganan")
+    );
+  }
+  return (await response.json()) as SubscriptionRequestState;
+}
+
+// Ajukan langganan Premium ke admin (menunggu ACC).
+export async function submitSubscriptionRequest(
+  note?: string
+): Promise<SubscriptionRequest> {
+  const response = await fetch("/api/counselor/subscription-request", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ note: note?.trim() || undefined }),
+  });
+  if (!response.ok) {
+    throw new Error(await readApiError(response, "Gagal mengirim pengajuan"));
+  }
+  const payload = (await response.json()) as { request: SubscriptionRequest };
+  return payload.request;
+}
+
 export type CurrentUser = {
   id: string;
   name: string | null;
@@ -234,22 +285,6 @@ export async function fetchInstitution(id: string): Promise<Institution | null> 
   if (!response.ok) return null;
   const payload = (await response.json()) as { institution: Institution };
   return payload.institution ?? null;
-}
-
-export async function setInstitutionSubscription(
-  institutionId: string,
-  active: boolean
-): Promise<Institution> {
-  const response = await fetch("/api/institutions/subscribe", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ institutionId, active }),
-  });
-  if (!response.ok) {
-    throw new Error(await readApiError(response, "Gagal memperbarui langganan"));
-  }
-  const payload = (await response.json()) as { institution: Institution };
-  return payload.institution;
 }
 
 export async function fetchCounselorNotifications(

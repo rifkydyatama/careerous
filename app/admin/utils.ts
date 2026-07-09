@@ -138,6 +138,44 @@ export async function subscribeAdminInstitution(
   return ((await res.json()) as { institution: AdminInstitution }).institution;
 }
 
+export type AdminSubscriptionRequest = {
+  id: string;
+  months: number;
+  note: string | null;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  decisionNote: string | null;
+  decidedAt: string | null;
+  createdAt: string;
+  institution: {
+    id: string;
+    name: string;
+    subscriptionActive: boolean;
+    subscriptionExpiresAt: string | null;
+  };
+  requestedBy: { id: string; name: string | null; email: string | null };
+};
+
+export async function fetchSubscriptionRequests(): Promise<AdminSubscriptionRequest[]> {
+  const res = await fetch("/api/admin/subscription-requests", { cache: "no-store" });
+  if (!res.ok) throw new Error(await readApiError(res, "Gagal memuat pengajuan"));
+  return ((await res.json()) as { requests: AdminSubscriptionRequest[] }).requests;
+}
+
+export async function decideSubscriptionRequest(
+  id: string,
+  action: "APPROVE" | "REJECT",
+  months?: number,
+  decisionNote?: string
+): Promise<AdminSubscriptionRequest> {
+  const res = await fetch("/api/admin/subscription-requests", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, action, months, decisionNote: decisionNote?.trim() || undefined }),
+  });
+  if (!res.ok) throw new Error(await readApiError(res, "Gagal memproses pengajuan"));
+  return ((await res.json()) as { request: AdminSubscriptionRequest }).request;
+}
+
 export async function fetchAdminModules(): Promise<AdminModule[]> {
   const res = await fetch("/api/admin/modules", { cache: "no-store" });
   if (!res.ok) throw new Error(await readApiError(res, "Gagal memuat modul"));

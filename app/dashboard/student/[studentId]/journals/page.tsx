@@ -20,7 +20,6 @@ import {
   submitStudentJournal,
   submitMoodDocument,
   uploadFile,
-  upgradeToPremium,
   formatDateTimeId,
   formatDeadlineCountdown,
   StudentDashboardResponse,
@@ -35,7 +34,6 @@ export default function JournalsPage() {
   const [data, setData] = useState<StudentDashboardResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isUpgrading, setIsUpgrading] = useState(false);
 
   const load = async () => {
     setIsLoading(true);
@@ -61,21 +59,6 @@ export default function JournalsPage() {
     // Setelah submit, muat ulang agar modul berikutnya & deadline ikut diperbarui.
     await load();
     return savedJournal;
-  };
-
-  const handleUpgrade = async () => {
-    setIsUpgrading(true);
-    setErrorMessage(null);
-    try {
-      await upgradeToPremium(studentId);
-      await load();
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Gagal meng-upgrade paket"
-      );
-    } finally {
-      setIsUpgrading(false);
-    }
   };
 
   const completedAll =
@@ -128,30 +111,21 @@ export default function JournalsPage() {
             </Link>
           )}
 
-          {/* Banner upgrade (paket gratis) */}
+          {/* Info paket gratis — Premium hanya bisa diaktifkan sekolah lewat BK */}
           {!data.premium && (
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
-                  <Crown size={18} />
-                </div>
-                <div>
-                  <p className="text-[13px] font-extrabold text-slate-900">
-                    Paket Gratis · Modul 1–{data.freeModuleLimit} terbuka
-                  </p>
-                  <p className="text-[12px] text-slate-500">
-                    Upgrade ke Premium untuk membuka seluruh 12 modul, konseling online, dan laporan AI.
-                  </p>
-                </div>
+            <div className="mb-5 flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
+                <Crown size={18} />
               </div>
-              <button
-                type="button"
-                onClick={() => void handleUpgrade()}
-                disabled={isUpgrading}
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-[12px] font-bold text-white transition hover:bg-indigo-700 disabled:bg-slate-300"
-              >
-                {isUpgrading ? "Memproses..." : "Upgrade ke Premium"}
-              </button>
+              <div>
+                <p className="text-[13px] font-extrabold text-slate-900">
+                  Paket Gratis · Modul 1–{data.freeModuleLimit} terbuka
+                </p>
+                <p className="text-[12px] text-slate-500">
+                  Akses Premium (seluruh 12 modul, konseling online, dan laporan AI) diaktifkan oleh
+                  sekolah. Hubungi guru BK-mu untuk mengajukan langganan.
+                </p>
+              </div>
             </div>
           )}
 
@@ -180,8 +154,6 @@ export default function JournalsPage() {
                 journal={journal}
                 onSubmitSuccess={handleJournalSubmit}
                 onReload={load}
-                onUpgrade={handleUpgrade}
-                isUpgrading={isUpgrading}
               />
             ))}
           </div>
@@ -196,15 +168,11 @@ function ModuleCard({
   journal,
   onSubmitSuccess,
   onReload,
-  onUpgrade,
-  isUpgrading,
 }: {
   studentId: string;
   journal: JournalItem;
   onSubmitSuccess: (journal: JournalItem) => Promise<JournalItem> | void;
   onReload: () => Promise<void> | void;
-  onUpgrade: () => void;
-  isUpgrading: boolean;
 }) {
   const fallback = getModule(journal.weekNumber);
   const meta = {
@@ -250,19 +218,14 @@ function ModuleCard({
 
       <div className="p-4">
         {isPremiumGate ? (
-          <div className="flex h-32 flex-col items-center justify-center text-center">
+          <div className="flex h-32 flex-col items-center justify-center px-3 text-center">
             <Crown size={22} className="mb-2 text-indigo-400" />
             <p className="text-[11.5px] font-medium text-slate-600">
               Modul ini bagian dari paket Premium.
             </p>
-            <button
-              type="button"
-              onClick={onUpgrade}
-              disabled={isUpgrading}
-              className="mt-3 rounded-lg bg-indigo-600 px-3.5 py-2 text-[11px] font-bold text-white transition hover:bg-indigo-700 disabled:bg-slate-300"
-            >
-              {isUpgrading ? "Memproses..." : "Upgrade ke Premium"}
-            </button>
+            <p className="mt-1.5 text-[10.5px] leading-snug text-slate-400">
+              Akses diaktifkan oleh sekolah. Hubungi guru BK-mu.
+            </p>
           </div>
         ) : journal.status === "LOCKED" ? (
           <LockedCard journal={journal} studentId={studentId} onReload={onReload} />

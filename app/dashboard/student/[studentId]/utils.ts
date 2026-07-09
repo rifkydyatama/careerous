@@ -565,21 +565,6 @@ export async function fetchCareerReport(studentId: string): Promise<CareerReport
   return payload.report;
 }
 
-export async function upgradeToPremium(studentId: string): Promise<PlanTier> {
-  const response = await fetch("/api/billing/upgrade", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ studentId, plan: "PREMIUM" }),
-  });
-
-  if (!response.ok) {
-    throw new Error(await readApiError(response, "Gagal meng-upgrade paket"));
-  }
-
-  const payload = (await response.json()) as { plan: PlanTier };
-  return payload.plan;
-}
-
 export async function fetchNotifications(
   userId: string
 ): Promise<{ notifications: NotificationItem[]; unreadCount: number }> {

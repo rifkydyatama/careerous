@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Building2, BookOpen, Clock, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Building2, BookOpen, Clock, LogOut, Inbox } from "lucide-react";
 import { UNIVERSITY } from "@/lib/identity";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -38,6 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <NavItem href="/admin" icon={<LayoutDashboard size={17} />} label="Dasbor Sistem" active={pathname === "/admin"} />
           <NavItem href="/admin/users" icon={<Users size={17} />} label="Kelola Pengguna" active={pathname === "/admin/users"} />
           <NavItem href="/admin/institutions" icon={<Building2 size={17} />} label="Kelola Institusi" active={pathname === "/admin/institutions"} />
+          <NavItem href="/admin/subscriptions" icon={<Inbox size={17} />} label="Pengajuan Langganan" active={pathname === "/admin/subscriptions"} />
           <NavItem href="/admin/modules" icon={<BookOpen size={17} />} label="Konten Modul" active={pathname === "/admin/modules"} />
           <NavItem href="/admin/settings" icon={<Clock size={17} />} label="Batas Waktu Modul" active={pathname === "/admin/settings"} />
         </div>

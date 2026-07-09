@@ -23,6 +23,12 @@ enum PlanTier {
   PREMIUM
 }
 
+enum SubscriptionRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 // Konten 12 modul yang dapat dikelola admin (override metadata default di lib/modules.ts).
 model ModuleContent {
   id         String    @id @default(uuid()) @db.Uuid
@@ -52,6 +58,28 @@ model Institution {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   users                 User[]
+  subscriptionRequests  SubscriptionRequest[]
+}
+
+// Pengajuan langganan Premium oleh konselor (BK), disetujui/ditolak admin.
+model SubscriptionRequest {
+  id            String                    @id @default(uuid()) @db.Uuid
+  institutionId String                    @db.Uuid
+  institution   Institution               @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  requestedById String                    @db.Uuid
+  requestedBy   User                      @relation("RequestedSubs", fields: [requestedById], references: [id], onDelete: Cascade)
+  months        Int                       @default(6) // durasi langganan yang diminta/disetujui (bulan)
+  note          String?                   @db.Text // pesan opsional dari BK
+  status        SubscriptionRequestStatus @default(PENDING)
+  decidedById   String?                   @db.Uuid
+  decidedBy     User?                     @relation("DecidedSubs", fields: [decidedById], references: [id])
+  decidedAt     DateTime?
+  decisionNote  String?                   @db.Text // alasan admin (mis. saat menolak)
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
+
+  @@index([institutionId])
+  @@index([status])
 }
 
 enum LearningStyle {
@@ -86,6 +114,10 @@ model User {
   // Relations for Counselors
   schedulesCreated CounselingSchedule[] @relation("CounselorSchedules")
   reportsCreated   ProgressReport[]     @relation("CounselorReports")
+  requestedSubs    SubscriptionRequest[] @relation("RequestedSubs")
+
+  // Relations for Admin
+  decidedSubs      SubscriptionRequest[] @relation("DecidedSubs")
 
   // Relations for Students
   counselingBookings CounselingBooking[]       @relation("StudentBookings")
