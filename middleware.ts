@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // Panggil API internal untuk cek status maintenance secara real-time
+
   let isMaintenance = false;
   try {
     const origin = request.nextUrl.origin;

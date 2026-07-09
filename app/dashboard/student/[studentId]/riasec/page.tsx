@@ -128,7 +128,7 @@ export default function RiasecPage() {
     );
   }
 
-  // --- RESULT VIEW ---
+
   if (assessment && !isTestStarted) {
     const assessmentTop3 = assessment.riasecTop3
       ? assessment.riasecTop3.split(",").map((item) => item.trim()).filter(Boolean)
@@ -219,7 +219,7 @@ export default function RiasecPage() {
     );
   }
 
-  // --- TEST VIEW ---
+
   return (
     <>
       <div className="mb-6 flex items-center justify-between">

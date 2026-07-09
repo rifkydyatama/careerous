@@ -176,12 +176,12 @@ export default function GuidePage() {
 
   return (
     <main className="relative min-h-screen font-sans text-slate-900 pb-16">
-      {/* BACKGROUND GRAPHIC */}
+
       <div className="absolute inset-0 bg-slate-50 -z-20" />
       <div className="absolute top-0 left-0 right-0 h-[260px] bg-gradient-to-b from-blue-600 to-indigo-700 -z-10 shadow-inner" />
       <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-white/5 blur-3xl -z-10" />
 
-      {/* HEADER SECTION */}
+
       <div className="mx-auto max-w-5xl px-5 pt-8 text-white">
         <button
           onClick={handleBack}
@@ -217,11 +217,11 @@ export default function GuidePage() {
         </div>
       </div>
 
-      {/* MAIN CONTAINER */}
+
       <div className="mx-auto max-w-5xl px-5 mt-10">
         <div className="grid gap-6 md:grid-cols-[240px_1fr]">
           
-          {/* TAB SIDEBAR */}
+
           <aside className="flex flex-col gap-2">
             <button
               onClick={() => {
@@ -267,7 +267,7 @@ export default function GuidePage() {
             </div>
           </aside>
 
-          {/* CONTENT CARD */}
+
           <section className="flex flex-col gap-5">
             {activeSteps.length > 0 ? (
               activeSteps.map((step, index) => {

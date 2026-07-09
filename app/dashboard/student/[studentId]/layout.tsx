@@ -64,7 +64,7 @@ export default function StudentLayout({
   return (
     <div className="flex min-h-screen bg-[#f0f5ff] font-sans text-slate-900">
       
-      {/* ─── SIDEBAR ─── */}
+
       <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col border-r border-slate-200 bg-white shadow-sm">
         <div className="flex items-center gap-3 border-b border-slate-200 p-5">
           <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover bg-white" />
@@ -99,7 +99,7 @@ export default function StudentLayout({
         </div>
       </aside>
 
-      {/* ─── MAIN WRAPPER ─── */}
+
       <div className="ml-[260px] flex flex-1 flex-col">
         {/* Topbar */}
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-7">
@@ -144,7 +144,7 @@ export default function StudentLayout({
   );
 }
 
-// ─── NOTIFICATION BELL ───
+
 function NotificationBell({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<NotificationItem[]>([]);
@@ -263,7 +263,7 @@ function NotificationBell({ userId }: { userId: string }) {
   );
 }
 
-// ─── SMALL UI COMPONENTS ───
+
 const MenuSection = ({ title }: { title: string }) => (
   <div className="px-5 pb-1 pt-4 text-[9px] font-bold uppercase tracking-[1.2px] text-slate-400">{title}</div>
 );

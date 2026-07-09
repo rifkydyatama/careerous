@@ -427,7 +427,7 @@ export default function StudentsPage() {
   );
 }
 
-// ─── UTILITY COMPONENT: Filter Button ───
+
 function FilterButton({
   active,
   onClick,
@@ -466,7 +466,7 @@ function FilterButton({
   );
 }
 
-// ─── COMPONENT: Detail Drawer (Slide-in) ───
+
 function DetailDrawer({
   isOpen,
   student,
@@ -568,7 +568,7 @@ function DetailDrawer({
   );
 }
 
-// ─── UTILITY COMPONENT: Tab Header ───
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TabHeader({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
   return (
@@ -585,7 +585,7 @@ function TabHeader({ active, onClick, label }: { active: boolean; onClick: () =>
   );
 }
 
-// ─── DRAWER TAB: Progres & Jurnal ───
+
 function TabJurnal({
   student,
   onUnlockModule,
@@ -713,7 +713,7 @@ function TabJurnal({
   );
 }
 
-// ─── DRAWER TAB: Hasil Tes RIASEC ───
+
 function TabRiasec({ student }: { student: CounselorStudent }) {
   const assessment = student.latestAssessment;
   
@@ -793,7 +793,7 @@ function TabRiasec({ student }: { student: CounselorStudent }) {
   );
 }
 
-// ─── DRAWER TAB: AI Career Report ───
+
 function TabAiReport({ studentId }: { studentId: string }) {
   const [report, setReport] = useState<CounselorCareerReport | null>(null);
   const [notReady, setNotReady] = useState<{ completed: number; total: number } | null>(null);

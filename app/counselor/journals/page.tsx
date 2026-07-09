@@ -238,7 +238,7 @@ function StudentJournalRow({
   );
 }
 
-// ─── COMPONENT: Journal Card & Feedback Form ───
+
 function JournalCard({
   journal,
   studentId,

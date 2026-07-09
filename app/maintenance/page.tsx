@@ -108,7 +108,7 @@ export default function MaintenancePage() {
   );
 }
 
-// ─── UTILITY COMPONENT: Countdown Card ───
+
 function CountdownCard({ value, label }: { value: number; label: string }) {
   const formattedValue = String(value).padStart(2, "0");
 

@@ -101,7 +101,7 @@ export default function HomePage() {
       <AuroraBackground />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 pb-16 pt-5 sm:px-8 lg:px-10">
-        {/* ─── Navbar ─── */}
+
         <header className="flex items-center justify-between rounded-full border border-slate-200/80 bg-white/70 px-4 py-3 shadow-sm backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="relative h-11 w-11 overflow-hidden rounded-full border border-slate-200 bg-white shadow-md flex items-center justify-center shrink-0">
@@ -137,7 +137,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* ─── Hero ─── */}
+
         <section className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:py-16">
           <Reveal>
             <div className="max-w-2xl">
@@ -252,7 +252,7 @@ export default function HomePage() {
           </Reveal>
         </section>
 
-        {/* ─── Fitur ─── */}
+
         <section className="pb-16" id="fitur">
           <Reveal>
             <div className="mb-8 text-center">
@@ -274,7 +274,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ─── Langkah ─── */}
+
         <section className="pb-16">
           <Reveal>
             <div className="glass rounded-[32px] p-6 sm:p-10">
@@ -313,7 +313,7 @@ export default function HomePage() {
           </Reveal>
         </section>
 
-        {/* ─── CTA akhir ─── */}
+
         <Reveal>
           <section className="relative overflow-hidden rounded-[32px] border border-blue-100 bg-gradient-to-br from-blue-50 via-sky-50 to-white p-8 text-center shadow-sm sm:p-12">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-400/20 blur-3xl glow-pulse" />
