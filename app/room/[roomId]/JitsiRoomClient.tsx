@@ -61,7 +61,7 @@ export default function JitsiRoomClient({
       </div>
       
       <JitsiMeeting
-        domain="meet.ffmuc.net"
+        domain="meet.guifi.net"
         roomName={`careerous-room-${roomId}`}
         configOverwrite={{
           startWithAudioMuted: true,
