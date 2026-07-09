@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 const EXCLUDED_PATHS = [
   "/maintenance",
   "/login",
+  "/guide",
   "/api/auth/",
   "/_next",
   "/logo.jpg",

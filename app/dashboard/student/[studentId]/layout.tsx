@@ -15,6 +15,7 @@ import {
   Sparkles,
   FileText,
   CheckCheck,
+  HelpCircle,
 } from "lucide-react";
 import {
   fetchNotifications,
@@ -106,6 +107,12 @@ export default function StudentLayout({
             <span>{UNIVERSITY.app}</span> <span>›</span> <b className="font-bold text-slate-900">Ruang Siswa</b>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/guide"
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
+            >
+              <HelpCircle size={13} /> Panduan
+            </Link>
             <NotificationBell userId={studentId} />
             <div className="h-8 w-px bg-slate-200"></div>
             <div className="flex items-center gap-2.5">

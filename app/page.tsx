@@ -14,6 +14,7 @@ import {
   Sparkles,
   Target,
   Users,
+  HelpCircle,
   type LucideIcon,
 } from "lucide-react";
 import AuroraBackground from "./components/AuroraBackground";
@@ -115,6 +116,12 @@ export default function HomePage() {
           </div>
 
           <div className="hidden items-center gap-3 sm:flex">
+            <Link
+              href="/guide"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-slate-500 transition hover:text-slate-900 flex items-center gap-1"
+            >
+              <HelpCircle size={14} /> Panduan
+            </Link>
             <Link
               href="/login"
               className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900"

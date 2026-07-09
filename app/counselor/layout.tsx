@@ -7,7 +7,7 @@ import Image from "next/image";
 import { UNIVERSITY } from "@/lib/identity";
 import {
   Home, Users, BookOpen, Calendar, Settings, LogOut,
-  Bell, UserPlus, CheckCheck, Building2
+  Bell, UserPlus, CheckCheck, Building2, HelpCircle
 } from "lucide-react";
 import {
   fetchCurrentUser,
@@ -120,6 +120,12 @@ export default function CounselorLayout({
             <span>{UNIVERSITY.app}</span> <span>›</span> <b className="font-bold text-slate-900">Panel Konselor</b>
           </div>
           <div className="flex items-center gap-2.5">
+            <Link
+              href="/guide"
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
+            >
+              <HelpCircle size={13} /> Panduan
+            </Link>
             <CounselorNotificationBell />
             <button onClick={handleAddStudent} className="flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#1d4ed8]">
               <UserPlus size={13} /> Tambah Siswa
