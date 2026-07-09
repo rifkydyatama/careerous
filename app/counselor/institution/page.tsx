@@ -145,7 +145,7 @@ export default function InstitutionPage() {
             </div>
           )}
 
-          {/* Kartu aksi/pengajuan */}
+          {}
           {active ? (
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
               <div className="flex items-center gap-2 text-emerald-800">
@@ -212,7 +212,7 @@ export default function InstitutionPage() {
             </div>
           )}
 
-          {/* Riwayat pengajuan */}
+          {}
           {requests.length > 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <p className="mb-3 text-[13px] font-bold text-slate-900">Riwayat Pengajuan</p>

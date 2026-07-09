@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
-// GET /api/institutions?id=...  -> detail institusi + jumlah siswa
-// GET /api/institutions          -> daftar institusi (untuk dropdown registrasi)
+
+
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
 
@@ -44,4 +44,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/institutions/subscribe ditangani di file terpisah.
+

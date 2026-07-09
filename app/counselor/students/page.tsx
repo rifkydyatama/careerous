@@ -26,15 +26,15 @@ export default function StudentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // States Pencarian & Filter
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | "LOCKED" | "PENDING" | "PREMIUM">("ALL");
 
-  // State Drawer & Detail Siswa
+  
   const [selectedStudent, setSelectedStudent] = useState<CounselorStudent | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // States Reset Password
+  
   const [resetTarget, setResetTarget] = useState<CounselorStudent | null>(null);
   const [resetPassword, setResetPassword] = useState("");
   const [resetError, setResetError] = useState<string | null>(null);
@@ -49,7 +49,7 @@ export default function StudentsPage() {
       setStudents(response.students);
       setTotalWeeks(response.totalWeeks ?? COUNSELOR_TOTAL_WEEKS);
       
-      // Sinkronisasi data selectedStudent jika sedang terbuka
+      
       if (selectedStudent) {
         const updated = response.students.find((s) => s.id === selectedStudent.id);
         if (updated) setSelectedStudent(updated);
@@ -65,15 +65,15 @@ export default function StudentsPage() {
 
   useEffect(() => {
     void loadOverview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
-  // Handler Buka Kunci Modul langsung di state lokal
+  
   const handleUnlockModule = async (studentId: string, weekNumber: number) => {
     try {
       await unlockStudentModule(studentId, weekNumber);
       
-      // Update state local agar UI langsung merespons
+      
       setStudents((prev) =>
         prev.map((student) => {
           if (student.id !== studentId) return student;
@@ -141,7 +141,7 @@ export default function StudentsPage() {
     }
   };
 
-  // Filter & Search Logic
+  
   const filteredStudents = useMemo(() => {
     return students.filter((s) => {
       const matchesSearch =
@@ -170,7 +170,7 @@ export default function StudentsPage() {
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
-    // Hapus target detail setelah animasi transisi selesai
+    
     setTimeout(() => setSelectedStudent(null), 300);
   };
 
@@ -190,7 +190,7 @@ export default function StudentsPage() {
         </button>
       </div>
 
-      {/* FILTER & PENCARIAN BAR */}
+      {}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="relative w-full max-w-sm">
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -214,7 +214,7 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      {/* DATA VIEW */}
+      {}
       {isLoading && students.length === 0 ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
           <RefreshCw size={24} className="mx-auto animate-spin text-blue-600 mb-3" />
@@ -260,7 +260,7 @@ export default function StudentsPage() {
                 
                 return (
                   <tr key={student.id} className="hover:bg-slate-50/70 transition-colors group">
-                    {/* Nama & Email */}
+                    {}
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-[13px] font-bold text-blue-700">
@@ -273,7 +273,7 @@ export default function StudentsPage() {
                       </div>
                     </td>
 
-                    {/* Progress Modul */}
+                    {}
                     <td className="px-5 py-3">
                       <div className="max-w-[140px]">
                         <div className="mb-1 flex items-center justify-between text-[11px]">
@@ -289,7 +289,7 @@ export default function StudentsPage() {
                       </div>
                     </td>
 
-                    {/* Status Kendala */}
+                    {}
                     <td className="px-5 py-3">
                       {hasBlockers ? (
                         <div className="flex flex-wrap gap-1">
@@ -315,7 +315,7 @@ export default function StudentsPage() {
                       )}
                     </td>
 
-                    {/* RIASEC Minat */}
+                    {}
                     <td className="px-5 py-3">
                       {assessment?.riasecTop3 ? (
                         <div className="flex items-center gap-1.5">
@@ -330,7 +330,7 @@ export default function StudentsPage() {
                       )}
                     </td>
 
-                    {/* Paket Akun */}
+                    {}
                     <td className="px-5 py-3">
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[9.5px] font-bold ${
                         student.premium ? "border-amber-200 bg-amber-50 text-amber-700" : "border-slate-200 bg-slate-50 text-slate-500"
@@ -339,7 +339,7 @@ export default function StudentsPage() {
                       </span>
                     </td>
 
-                    {/* Aksi */}
+                    {}
                     <td className="px-5 py-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
@@ -372,7 +372,7 @@ export default function StudentsPage() {
         </div>
       )}
 
-      {/* DETAIL SISWA: SLIDING RIGHT DRAWER */}
+      {}
       <DetailDrawer
         isOpen={isDrawerOpen}
         student={selectedStudent}
@@ -386,7 +386,7 @@ export default function StudentsPage() {
         }}
       />
 
-      {/* MODAL RESET PASSWORD */}
+      {}
       {resetTarget && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-xs">
           <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-fade-in">
@@ -482,7 +482,7 @@ function DetailDrawer({
 }) {
   const [activeTab, setActiveTab] = useState<"JURNAL" | "RIASEC" | "AI_REPORT">("JURNAL");
 
-  // Reset tab ke Jurnal setiap kali siswa berganti
+  
   useEffect(() => {
     if (student) setActiveTab("JURNAL");
   }, [student]);
@@ -491,7 +491,7 @@ function DetailDrawer({
 
   return (
     <>
-      {/* Backdrop Overlay */}
+      {}
       <div
         onClick={onClose}
         className={`fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-xs transition-opacity duration-300 ${
@@ -499,13 +499,13 @@ function DetailDrawer({
         }`}
       />
 
-      {/* Drawer Container */}
+      {}
       <div
         className={`fixed inset-y-0 right-0 z-50 w-full max-w-lg bg-white border-l border-slate-200 shadow-2xl flex flex-col transition-transform duration-300 ease-out transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Drawer Header */}
+        {}
         <div className="flex items-center justify-between border-b border-slate-200 p-5 bg-slate-50">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-[15px] font-extrabold text-blue-700">
@@ -524,7 +524,7 @@ function DetailDrawer({
           </button>
         </div>
 
-        {/* Info Cepat & Reset Sandi */}
+        {}
         <div className="px-5 py-3 border-b border-slate-100 bg-white flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${
@@ -542,14 +542,14 @@ function DetailDrawer({
           </button>
         </div>
 
-        {/* TABS SELECTOR */}
+        {}
         <div className="flex border-b border-slate-200 bg-slate-50/50 px-2">
           <TabHeader active={activeTab === "JURNAL"} onClick={() => setActiveTab("JURNAL")} label="Progres & Jurnal" />
           <TabHeader active={activeTab === "RIASEC"} onClick={() => setActiveTab("RIASEC")} label="Hasil RIASEC" />
           <TabHeader active={activeTab === "AI_REPORT"} onClick={() => setActiveTab("AI_REPORT")} label="AI Career Report" />
         </div>
 
-        {/* TAB CONTENTS (Scrollable) */}
+        {}
         <div className="flex-1 overflow-y-auto p-5 bg-[#FAFBFD]">
           {activeTab === "JURNAL" && (
             <TabJurnal student={student} onUnlockModule={onUnlockModule} />
@@ -569,7 +569,7 @@ function DetailDrawer({
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 function TabHeader({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
   return (
     <button
@@ -611,7 +611,7 @@ function TabJurnal({
         const isCompleted = journal.status === "COMPLETED";
         const isLocked = journal.status === "LOCKED";
         
-        // Kunci akibat batas waktu
+        
         const isGraceLocked = isLocked && (journal.lateCount ?? 0) === 1;
         const isPermanentlyLocked = isLocked && (journal.lateCount ?? 0) >= 2;
         
@@ -643,7 +643,7 @@ function TabJurnal({
               </div>
             </div>
 
-            {/* Jika Modul Terkunci BK/Masa Tenggang */}
+            {}
             {isGraceLocked && (
               <div className="mb-3 rounded-lg bg-amber-50 border border-amber-100 p-2.5 text-[11px] text-amber-800 flex flex-wrap items-center justify-between gap-2">
                 <span>Modul terkunci sementara hingga <b>{formatDateTimeId(journal.lockedUntil)}</b></span>
@@ -672,7 +672,7 @@ function TabJurnal({
               </div>
             )}
 
-            {/* Jawaban Jurnal */}
+            {}
             {isCompleted ? (
               <div className="space-y-2">
                 <div>
@@ -733,7 +733,7 @@ function TabRiasec({ student }: { student: CounselorStudent }) {
 
   return (
     <div className="space-y-4">
-      {/* Tipe Minat Teratas */}
+      {}
       <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-4">
         <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Dimensi Utama Minat Karier</p>
         <h4 className="text-sm font-extrabold text-slate-900 mt-1">3 Tipe Kepribadian Dominan</h4>
@@ -750,7 +750,7 @@ function TabRiasec({ student }: { student: CounselorStudent }) {
         </p>
       </div>
 
-      {/* Grafik Nilai Dimensi RIASEC */}
+      {}
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">Skor Detail Minat (RIASEC)</p>
         <div className="space-y-3">
@@ -774,7 +774,7 @@ function TabRiasec({ student }: { student: CounselorStudent }) {
         </div>
       </div>
 
-      {/* Preferensi Gaya Belajar */}
+      {}
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Preferensi Metode Pembelajaran</p>
         <h4 className="text-sm font-extrabold text-slate-900 mt-1">Gaya Belajar Utama</h4>
@@ -863,7 +863,7 @@ function TabAiReport({ studentId }: { studentId: string }) {
 
   return (
     <div className="space-y-4">
-      {/* Sentimen & Tipe Minat Utama */}
+      {}
       <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 flex flex-wrap gap-2.5 items-center justify-between">
         <div>
           <p className="text-[9px] font-extrabold uppercase tracking-wider text-emerald-700">Analisis Sentimen Jurnal</p>
@@ -877,7 +877,7 @@ function TabAiReport({ studentId }: { studentId: string }) {
         )}
       </div>
 
-      {/* Tema Dominan */}
+      {}
       {report.dominantThemes.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">Tema Eksplorasi Paling Dominan</p>
@@ -891,7 +891,7 @@ function TabAiReport({ studentId }: { studentId: string }) {
         </div>
       )}
 
-      {/* Summary Laporan */}
+      {}
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-2">
         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Ringkasan Analisis Karakter & Minat BK</p>
         <p className="text-[12.5px] leading-relaxed text-slate-700 whitespace-pre-wrap">

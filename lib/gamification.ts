@@ -1,5 +1,5 @@
-// Gamifikasi: poin & lencana dihitung dari progres modul + asesmen.
-// Fungsi murni (tanpa akses DB) — aman dipakai di client maupun server.
+
+
 
 import { PHASES, TOTAL_MODULES } from "./modules";
 

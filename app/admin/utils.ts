@@ -1,4 +1,4 @@
-// Tipe & helper untuk panel admin.
+
 
 export type AdminStats = {
   students: number;
@@ -38,12 +38,12 @@ export type AdminModule = {
   phaseLabel: string;
 };
 
-// Batas waktu absolut per modul (tanggal & jam).
+
 export type ModuleDeadline = {
   number: number;
   title: string;
   phaseLabel: string;
-  deadlineAt: string | null; // ISO string atau null (belum diatur)
+  deadlineAt: string | null; 
 };
 
 async function readApiError(response: Response, fallback: string) {
@@ -53,7 +53,7 @@ async function readApiError(response: Response, fallback: string) {
       return payload.error;
     }
   } catch {
-    // fallback
+    
   }
   return fallback;
 }
@@ -214,7 +214,7 @@ export async function updateModuleDeadline(
   return ((await res.json()) as { module: ModuleDeadline }).module;
 }
 
-// ISO string -> nilai untuk <input type="datetime-local"> (waktu lokal, "YYYY-MM-DDTHH:mm").
+
 export function isoToLocalInput(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
@@ -225,7 +225,7 @@ export function isoToLocalInput(iso: string | null): string {
   )}:${pad(d.getMinutes())}`;
 }
 
-// Nilai <input type="datetime-local"> (waktu lokal) -> ISO string, atau null bila kosong.
+
 export function localInputToIso(value: string): string | null {
   if (!value) return null;
   const d = new Date(value);

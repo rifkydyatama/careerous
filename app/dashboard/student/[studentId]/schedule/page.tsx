@@ -126,7 +126,7 @@ export default function SchedulePage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {/* Booking saya */}
+          {}
           {myBookings.length > 0 && (
             <div>
               <h3 className="mb-3 text-sm font-extrabold text-slate-900">Booking Saya</h3>
@@ -148,7 +148,7 @@ export default function SchedulePage() {
                       {s.myBookingStatus && <StatusBadge status={s.myBookingStatus} />}
                     </div>
 
-                    {/* ── Panel Komunikasi (hanya jika disetujui) ── */}
+                    {}
                     {s.myBookingStatus === "APPROVED" && (s.meetLink || s.phone || s.location || s.approvalMessage) && (
                       <div className="mt-4 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 p-4">
                         <p className="mb-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
@@ -219,14 +219,14 @@ export default function SchedulePage() {
                       </div>
                     )}
 
-                    {/* Pesan default jika disetujui tanpa info komunikasi */}
+                    {}
                     {s.myBookingStatus === "APPROVED" && !s.meetLink && !s.phone && !s.location && !s.approvalMessage && (
                       <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-[12px] text-emerald-700">
                         Sesi konseling kamu sudah disetujui. Sampai jumpa di sesi!
                       </div>
                     )}
 
-                    {/* Pesan jika ditolak */}
+                    {}
                     {s.myBookingStatus === "REJECTED" && (
                       <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-[12px] text-rose-700">
                         Permintaan ditolak. Silakan pilih slot lain yang tersedia.
@@ -247,7 +247,7 @@ export default function SchedulePage() {
             </div>
           )}
 
-          {/* Slot tersedia */}
+          {}
           <div>
             <h3 className="mb-3 text-sm font-extrabold text-slate-900">Slot Tersedia</h3>
             {available.length === 0 ? (
@@ -282,7 +282,7 @@ export default function SchedulePage() {
         </div>
       )}
 
-      {/* Modal pesan */}
+      {}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setSelected(null)}>
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>

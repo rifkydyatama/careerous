@@ -91,7 +91,7 @@ export type SubscriptionRequestState = {
   requests: SubscriptionRequest[];
 };
 
-// Status langganan institusi + riwayat pengajuan konselor.
+
 export async function fetchSubscriptionRequestState(): Promise<SubscriptionRequestState> {
   const response = await fetch("/api/counselor/subscription-request", {
     cache: "no-store",
@@ -104,7 +104,7 @@ export async function fetchSubscriptionRequestState(): Promise<SubscriptionReque
   return (await response.json()) as SubscriptionRequestState;
 }
 
-// Ajukan langganan Premium ke admin (menunggu ACC).
+
 export async function submitSubscriptionRequest(
   note?: string
 ): Promise<SubscriptionRequest> {
@@ -182,7 +182,7 @@ async function readApiError(response: Response, fallback: string) {
       return payload.error;
     }
   } catch {
-    // Fall through to the fallback message.
+    
   }
 
   return fallback;
@@ -223,7 +223,7 @@ export async function submitCounselorFeedback(
   return (await response.json()) as CounselorJournal;
 }
 
-// Konselor membuka modul yang terkunci karena batas waktu (setelah eskalasi moodboard).
+
 export async function unlockStudentModule(
   studentId: string,
   weekNumber: number
@@ -248,7 +248,7 @@ export type CounselorCareerReport = {
   generatedAt: string;
 };
 
-// Mengembalikan { report } bila tersedia, atau { notReady, completed, total } bila belum 12 modul.
+
 export async function fetchStudentReport(studentId: string): Promise<
   | { report: CounselorCareerReport }
   | { notReady: true; completed: number; total: number }

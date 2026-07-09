@@ -1,14 +1,14 @@
-// Generator Career Exploration Report (AI Insight) — versi MOCK rule-based.
-//
-// Setelah siswa menyelesaikan 12 modul, laporan dirakit dari seluruh teks journaling:
-// analisis sentimen sederhana + ekstraksi tema karier dominan + minat RIASEC teratas.
-// `isAiGenerated=false` menandai ini pratinjau; integrasi AI penuh = roadmap.
+
+
+
+
+
 
 import { prisma } from "./prisma";
 import { TOTAL_MODULES } from "./modules";
 import { getModuleContents, resolveModule } from "./module-content";
 
-// Kamus kecil Bahasa Indonesia untuk sentimen.
+
 const POSITIVE_WORDS = [
   "senang", "suka", "tertarik", "semangat", "bangga", "yakin", "mampu", "berhasil",
   "menikmati", "antusias", "percaya", "optimis", "puas", "nyaman", "berkembang",
@@ -20,7 +20,7 @@ const NEGATIVE_WORDS = [
   "tidak yakin", "kesulitan", "putus asa", "malas",
 ];
 
-// Kamus tema karier: label tema -> kata kunci pemicu.
+
 const THEME_KEYWORDS: Array<{ theme: string; keywords: string[] }> = [
   { theme: "Teknologi & Komputer", keywords: ["komputer", "teknologi", "coding", "program", "software", "aplikasi", "digital", "data"] },
   { theme: "Seni & Kreativitas", keywords: ["seni", "desain", "gambar", "kreatif", "menulis", "musik", "lukis", "estetika"] },
@@ -42,9 +42,9 @@ function countMatches(text: string, words: string[]): number {
 
 export type CareerReportData = {
   summary: string;
-  dominantThemes: string; // CSV
-  sentimentLabel: string; // POSITIF | NETRAL | CAMPURAN
-  sentimentScore: number; // 0-100
+  dominantThemes: string; 
+  sentimentLabel: string; 
+  sentimentScore: number; 
   topInterest: string | null;
   isAiGenerated: boolean;
 };
@@ -54,7 +54,7 @@ export function buildReportFromText(
 ): CareerReportData {
   const corpus = reflections.join(" \n ").toLowerCase();
 
-  // Sentimen
+  
   const pos = countMatches(corpus, POSITIVE_WORDS);
   const neg = countMatches(corpus, NEGATIVE_WORDS);
   const totalSentiment = pos + neg;
@@ -71,7 +71,7 @@ export function buildReportFromText(
     sentimentLabel = "NETRAL";
   }
 
-  // Tema dominan (top 3 yang muncul)
+  
   const themeScores = THEME_KEYWORDS.map((entry) => ({
     theme: entry.theme,
     score: countMatches(corpus, entry.keywords),
@@ -82,10 +82,10 @@ export function buildReportFromText(
     .map((entry) => entry.theme);
 
   const dominantThemes = themeScores.join(", ");
-  // Laporan hanya merangkum modul eksplorasi; hasil RIASEC/gaya belajar tidak disertakan.
+  
   const topInterest = null;
 
-  // Ringkasan
+  
   const sentimentSentence =
     sentimentLabel === "POSITIF"
       ? "Secara umum, refleksimu menunjukkan sikap yang positif dan antusias terhadap perjalanan kariermu."
@@ -115,9 +115,9 @@ export function buildReportFromText(
   };
 }
 
-// ── Integrasi AI sungguhan (Claude API) ──
-// Menghasilkan report via Claude. Mengembalikan null bila ANTHROPIC_API_KEY tidak
-// di-set atau panggilan gagal, sehingga pemanggil jatuh ke generator mock.
+
+
+
 
 type QAPair = { question: string; answer: string };
 
@@ -246,16 +246,12 @@ async function generateReportWithAI(
       isAiGenerated: true,
     };
   } catch {
-    // Jatuh ke generator mock bila AI gagal (key salah, kuota, jaringan, dll).
+    
     return null;
   }
 }
 
-/**
- * Membuat / memperbarui Career Exploration Report untuk siswa.
- * Mengembalikan null bila siswa belum menyelesaikan seluruh modul.
- * Memakai Claude API bila tersedia; jika tidak, jatuh ke generator rule-based (mock).
- */
+
 export async function generateCareerReport(studentId: string) {
   const journals = await prisma.journalProgress.findMany({
     where: { studentId },
@@ -280,8 +276,8 @@ export async function generateCareerReport(studentId: string) {
       answer: j.reflectionText!.trim(),
     }));
 
-  // Coba AI dulu; bila tidak tersedia, pakai mock rule-based.
-  // Laporan hanya merangkum modul eksplorasi (tanpa RIASEC/gaya belajar).
+  
+  
   const data =
     (await generateReportWithAI(qaPairs)) ??
     buildReportFromText(reflections);

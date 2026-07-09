@@ -1,9 +1,9 @@
-// Latar "aurora" versi terang: blob gradient biru lembut yang melayang di atas
-// kanvas putih agar terasa modern & profesional tanpa nuansa gelap.
-// Server component murni (CSS animation) agar hemat & bisa dipakai di mana saja.
+
+
+
 
 type AuroraBackgroundProps = {
-  /** Tampilkan grid halus di atas blob (default true). */
+  
   grid?: boolean;
 };
 
@@ -13,16 +13,16 @@ export default function AuroraBackground({ grid = true }: AuroraBackgroundProps)
       aria-hidden
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#f6f9ff]"
     >
-      {/* Gradasi dasar lembut */}
+      {}
       <div className="absolute inset-0 bg-gradient-to-b from-white via-[#f4f8ff] to-[#eaf1ff]" />
 
-      {/* Blob-blob gradient biru melayang (opasitas rendah agar tetap kalem) */}
+      {}
       <div className="absolute -left-24 -top-32 h-[40rem] w-[40rem] rounded-full bg-blue-400/20 blur-[130px] animate-blob" />
       <div className="absolute -right-24 top-1/4 h-[36rem] w-[36rem] rounded-full bg-sky-400/20 blur-[130px] animate-blob [animation-delay:-6s]" />
       <div className="absolute -bottom-40 left-1/3 h-[34rem] w-[34rem] rounded-full bg-indigo-400/15 blur-[130px] animate-blob [animation-delay:-3s]" />
       <div className="absolute right-1/4 top-2/3 h-[24rem] w-[24rem] rounded-full bg-cyan-300/15 blur-[110px] animate-blob [animation-delay:-9s]" />
 
-      {/* Grid halus (garis gelap tipis di atas latar terang) */}
+      {}
       {grid && (
         <div className="absolute inset-0 opacity-[0.5] [background-image:linear-gradient(rgba(37,99,235,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.05)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
       )}

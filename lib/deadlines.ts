@@ -1,24 +1,9 @@
-// Logika sistem deadline modul (model tanggal absolut per modul).
-//
-// Aturan:
-// - Tiap modul punya batas waktu absolut (tanggal & jam) yang diatur admin di ModuleContent.deadlineAt.
-// - Saat batas terlewat & modul belum selesai: modul TERKUNCI dan siswa wajib mengisi moodboard
-//   (perasaan + alasan) dalam masa grace (GRACE_HOURS). Setelah diisi, modul terbuka kembali dengan
-//   perpanjangan +1 hari (EXTENSION_HOURS) dan konselor diberi tahu.
-// - Jika grace habis tanpa moodboard, sistem otomatis melapor ke konselor untuk membukakan modul,
-//   dan modul menunggu konselor membukanya (counselorUnlockModule).
-//
-// Konvensi lateCount: 0 = diatur tanggal absolut (fresh), 1 = terkunci menunggu moodboard (grace),
-// 2 = grace habis & sudah dieskalasi ke konselor, 3 = diperpanjang +1 hari (relatif, tak dikunci ulang).
-//
-// Diproses oleh endpoint cron (/api/cron/deadlines) dan juga saat GET jurnal per-siswa (idempoten).
-
 import { prisma } from "./prisma";
 import { isPremiumEffective } from "./subscription";
 import { getModuleContents } from "./module-content";
 
-export const GRACE_HOURS = 24; // waktu mengisi moodboard setelah batas terlewat
-export const EXTENSION_HOURS = 24; // perpanjangan (+1 hari) setelah moodboard/konselor membuka
+export const GRACE_HOURS = 24;
+export const EXTENSION_HOURS = 24;
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -42,15 +27,13 @@ async function getCounselors(): Promise<CounselorRef[]> {
   });
 }
 
-// Notifikasi konselor: siswa belum mengisi moodboard, mohon bukakan modul.
 async function notifyCounselorsUnlock(
   counselors: CounselorRef[],
   studentId: string,
   studentName: string | null,
   moduleNumber: number
-) {
-  if (counselors.length === 0) return;
-  const name = studentName?.trim() || "Seorang siswa";
+): Promise<void> {
+  const name = studentName?.trim() || "Siswa";
   await prisma.notification.createMany({
     data: counselors.map((counselor) => ({
       userId: counselor.id,
@@ -64,14 +47,10 @@ async function notifyCounselorsUnlock(
 }
 
 type ProcessResult = {
-  locks: number; // modul terkunci karena batas terlewat
-  escalations: number; // eskalasi ke konselor (grace habis)
+  locks: number;
+  escalations: number;
 };
 
-/**
- * Memproses deadline untuk satu siswa. Idempoten: tiap transisi hanya terjadi sekali karena
- * mengubah status / lateCount / lockedUntil.
- */
 export async function processStudentDeadlines(
   studentId: string,
   counselorsCache?: CounselorRef[]
@@ -93,19 +72,16 @@ export async function processStudentDeadlines(
   });
   if (!student || student.role !== "STUDENT") return result;
 
-  // Sistem deadline otomatis adalah fitur Premium. Siswa Free tidak diproses.
   if (!isPremiumEffective(student.plan, student.institution)) return result;
 
   const journals = await prisma.journalProgress.findMany({ where: { studentId } });
-  const contents = await getModuleContents(); // termasuk deadlineAt absolut per modul
+  const contents = await getModuleContents();
 
   let counselors = counselorsCache;
 
   for (const journal of journals) {
     const moduleDeadline = contents.get(journal.weekNumber)?.deadlineAt ?? null;
 
-    // Sinkronisasi tampilan: modul aktif yang masih "fresh" (lateCount 0) mengikuti tanggal absolut
-    // terkini dari admin. Aman: lateCount 0 = belum masuk siklus telat.
     if (journal.status === "UNLOCKED" && journal.lateCount === 0) {
       const cur = journal.deadlineAt ? journal.deadlineAt.getTime() : null;
       const want = moduleDeadline ? moduleDeadline.getTime() : null;
@@ -118,7 +94,6 @@ export async function processStudentDeadlines(
       }
     }
 
-    // A) Batas absolut terlewat pada modul terbuka -> kunci untuk moodboard (grace).
     if (
       journal.status === "UNLOCKED" &&
       journal.lateCount === 0 &&
@@ -152,7 +127,6 @@ export async function processStudentDeadlines(
       continue;
     }
 
-    // B) Grace habis tanpa moodboard -> eskalasi ke konselor (sekali).
     if (
       journal.status === "LOCKED" &&
       journal.lateCount === 1 &&
@@ -182,10 +156,6 @@ export async function processStudentDeadlines(
   return result;
 }
 
-/**
- * Mood board: siswa mengunggah dokumen untuk membuka kembali modul yang terblokir
- * (masa grace). Modul terbuka kembali dengan perpanjangan +1 hari, konselor diberi tahu.
- */
 export async function submitMoodDocument(
   studentId: string,
   weekNumber: number,
@@ -212,7 +182,6 @@ export async function submitMoodDocument(
   }
 
   const now = new Date();
-  // Hanya modul yang terblokir karena batas & masih dalam masa grace yang bisa dibuka via mood board.
   const isTempLocked =
     journal.status === "LOCKED" && journal.lockedUntil && journal.lockedUntil > now;
   if (!isTempLocked) {
@@ -230,11 +199,10 @@ export async function submitMoodDocument(
       unlockedAt: now,
       deadlineAt: newDeadline,
       lockedUntil: null,
-      lateCount: 3, // diperpanjang: tak dikunci ulang otomatis oleh batas absolut
+      lateCount: 3,
     },
   });
 
-  // Beri tahu konselor bahwa siswa mengunggah dokumen mood board.
   const counselors = await getCounselors();
   if (counselors.length > 0) {
     const name = student.name?.trim() || "Seorang siswa";
@@ -253,10 +221,6 @@ export async function submitMoodDocument(
   return { ok: true };
 }
 
-/**
- * Konselor membuka modul yang terkunci karena batas waktu (setelah eskalasi atau kapan pun).
- * Modul terbuka kembali dengan perpanjangan +1 hari; siswa diberi tahu.
- */
 export async function counselorUnlockModule(
   studentId: string,
   weekNumber: number
@@ -270,7 +234,6 @@ export async function counselorUnlockModule(
   if (journal.status !== "LOCKED") {
     return { ok: false, error: "Modul tidak sedang terkunci", status: 409 };
   }
-  // Hanya kunci akibat batas waktu (lateCount >= 1), bukan kunci urutan (modul sebelumnya belum selesai).
   if (journal.lateCount < 1) {
     return { ok: false, error: "Modul terkunci karena urutan, bukan batas waktu", status: 409 };
   }
@@ -302,9 +265,6 @@ export async function counselorUnlockModule(
   return { ok: true };
 }
 
-/**
- * Memproses deadline untuk semua siswa. Dipakai oleh endpoint cron.
- */
 export async function processAllDeadlines(): Promise<
   ProcessResult & { studentsProcessed: number }
 > {

@@ -67,7 +67,7 @@ export default function AdminSettingsPage() {
 
   return (
     <>
-      {/* KARTU PENGATURAN MODE PEMELIHARAAN GLOBAL */}
+      {}
       <div className="mb-8">
         <h2 className="text-xl font-extrabold text-slate-900">Pengaturan Sistem Global</h2>
         <p className="mt-1 text-[13px] text-slate-500">

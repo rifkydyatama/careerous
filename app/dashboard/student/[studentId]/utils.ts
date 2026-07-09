@@ -130,17 +130,17 @@ export type AssessmentSubmissionPayload = {
   learningStyle: LearningStyle;
 };
 
-// RIASEC: pernyataan yang dicentang (sesuai) atau tidak. Skor tiap dimensi = jumlah centang.
+
 export type RiasecStatement = {
   id: string;
   dimension: RiasecScoreKey;
   text: string;
 };
 
-// Peta centang RIASEC: id pernyataan -> true bila dicentang.
+
 export type RiasecCheckMap = Record<string, boolean>;
 
-// Gaya belajar: tiap soal dijawab a/b/c (a=Visual, b=Auditorial, c=Kinestetik).
+
 export type LearningStyleChoice = "a" | "b" | "c";
 
 export type LearningStyleQuestion = {
@@ -237,8 +237,8 @@ export const LEARNING_STYLE_OPTIONS: Array<{ value: LearningStyle; label: string
   },
 ];
 
-// 48 pernyataan RIASEC (8 per dimensi), diurutkan selang-seling agar tidak terlihat
-// mengelompok per huruf di tampilan. Siswa cukup mencentang yang sesuai dirinya.
+
+
 export const RIASEC_STATEMENTS: RiasecStatement[] = [
   { id: "r1", dimension: "riasecRealistic", text: "Saya adalah seseorang yang praktis" },
   { id: "i1", dimension: "riasecInvestigative", text: "Saya adalah seseorang yang memiliki rasa ingin tahu" },
@@ -297,7 +297,7 @@ export const RIASEC_STATEMENTS: RiasecStatement[] = [
   { id: "c8", dimension: "riasecConventional", text: "Saya lebih suka pekerjaan yang terstruktur" },
 ];
 
-// Kuesioner gaya belajar (14 soal). Pilihan a=Visual, b=Auditorial, c=Kinestetik.
+
 export const LEARNING_STYLE_QUESTIONS: LearningStyleQuestion[] = [
   { id: "ls1", prompt: "Saya sangat suka…", options: { a: "Mencatat", b: "Bercerita", c: "Menjiplak" } },
   { id: "ls2", prompt: "Saya suka membaca dengan…", options: { a: "Cepat", b: "Suara keras", c: "Jari sebagai penunjuk" } },
@@ -335,7 +335,7 @@ export function buildRiasecTop3(scores: RiasecScores) {
     .join(", ");
 }
 
-// Jumlah pernyataan per dimensi (untuk skala tampilan).
+
 export const RIASEC_MAX_PER_DIMENSION = RIASEC_STATEMENTS.reduce<RiasecScores>(
   (acc, s) => {
     acc[s.dimension] += 1;
@@ -344,7 +344,7 @@ export const RIASEC_MAX_PER_DIMENSION = RIASEC_STATEMENTS.reduce<RiasecScores>(
   { ...DEFAULT_RIASEC_SCORES }
 );
 
-// Skor RIASEC = jumlah pernyataan yang dicentang pada tiap dimensi.
+
 export function computeRiasecScores(checks: RiasecCheckMap) {
   const scores: RiasecScores = { ...DEFAULT_RIASEC_SCORES };
   let checkedCount = 0;
@@ -357,8 +357,8 @@ export function computeRiasecScores(checks: RiasecCheckMap) {
   return { scores, checkedCount };
 }
 
-// Gaya belajar dari jawaban a/b/c: hitung tiap pilihan, terbanyak = dominan.
-// a=Visual, b=Auditorial(AUDITORY), c=Kinestetik. Seri di puncak -> MULTIMODAL.
+
+
 export function computeLearningStyle(answers: LearningStyleAnswerMap): {
   style: LearningStyle;
   counts: { a: number; b: number; c: number };
@@ -393,7 +393,7 @@ export async function readApiError(response: Response, fallback: string) {
       return payload.error;
     }
   } catch {
-    // Fall through to the fallback message.
+    
   }
 
   return fallback;
@@ -496,7 +496,7 @@ export function formatDateTimeId(value?: string | null): string {
   }).format(date);
 }
 
-// Sisa waktu menuju deadline dalam teks ramah (mis. "1 hari 4 jam lagi" / "Lewat 2 jam").
+
 export function formatDeadlineCountdown(deadlineAt?: string | null): {
   text: string;
   overdue: boolean;
@@ -521,7 +521,7 @@ export function formatDeadlineCountdown(deadlineAt?: string | null): {
   };
 }
 
-// Unggah satu file ke server (Vercel Blob) dan kembalikan URL publiknya.
+
 export async function uploadFile(file: File): Promise<string> {
   const form = new FormData();
   form.append("file", file);
@@ -533,7 +533,7 @@ export async function uploadFile(file: File): Promise<string> {
   return payload.url;
 }
 
-// Mood board: kirim URL dokumen yang diunggah untuk membuka kembali modul terblokir.
+
 export async function submitMoodDocument(
   studentId: string,
   weekNumber: number,

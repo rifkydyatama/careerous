@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { requireRole } from "../../../../lib/auth-guard";
 
-// GET /api/admin/users — daftar semua pengguna (admin only).
+
 export async function GET(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/users — ubah role / plan / institusi. body: { id, role?, plan?, institutionId? }
+
 export async function PATCH(request: NextRequest) {
   const session = requireRole(request, "ADMIN");
   if (!session) {
@@ -96,7 +96,7 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE /api/admin/users?id=... — hapus pengguna.
+
 export async function DELETE(request: NextRequest) {
   const session = requireRole(request, "ADMIN");
   if (!session) {

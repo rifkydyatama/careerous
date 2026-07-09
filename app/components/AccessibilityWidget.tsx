@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Accessibility, Moon, Sun, Type, Contrast, X, BookA } from "lucide-react";
 
-// Preferensi aksesibilitas, dipetakan ke class pada <html>.
+
 const OPTIONS = [
   { key: "theme-dark", storageKey: "a11y-theme-dark", label: "Mode Gelap", hint: "Cocok untuk penggunaan malam." },
   { key: "a11y-dyslexia", storageKey: "a11y-dyslexia", label: "Mode Disleksia", hint: "Font & spasi lebih lega." },
@@ -23,7 +23,7 @@ export default function AccessibilityWidget() {
   const [state, setState] = useState<Record<string, boolean>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Muat preferensi dari localStorage saat mount.
+  
   useEffect(() => {
     const next: Record<string, boolean> = {};
     for (const opt of OPTIONS) {
@@ -34,7 +34,7 @@ export default function AccessibilityWidget() {
     setState(next);
   }, []);
 
-  // Tutup popover saat klik di luar.
+  
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {

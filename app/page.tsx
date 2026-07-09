@@ -185,7 +185,7 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          {/* Kartu akses cepat melayang */}
+          {}
           <Reveal delay={0.15}>
             <div className="relative">
               <div className="absolute -inset-4 -z-10 rounded-[40px] bg-gradient-to-br from-blue-400/25 via-sky-400/15 to-cyan-300/15 blur-2xl glow-pulse" />

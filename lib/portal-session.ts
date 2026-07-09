@@ -25,8 +25,8 @@ export type AuthSession = {
 function getAuthSecret() {
   const secret = process.env.AUTH_SECRET?.trim();
 
-  // Di produksi, menandatangani session dengan secret dev yang hardcoded = siapa pun
-  // bisa memalsukan token (termasuk ADMIN). Wajib gagal keras bila belum di-set.
+  
+  
   if (process.env.NODE_ENV === "production" && (!secret || secret === FALLBACK_AUTH_SECRET)) {
     throw new Error(
       "AUTH_SECRET wajib di-set di produksi (tidak boleh kosong atau memakai secret dev bawaan)."

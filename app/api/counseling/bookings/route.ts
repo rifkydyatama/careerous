@@ -10,7 +10,7 @@ function formatId(date: Date): string {
   return new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
-// POST /api/counseling/bookings — siswa memesan slot. body: { scheduleId, topic }
+
 export async function POST(request: NextRequest) {
   const session = getSession(request);
   if (!session || session.role !== "STUDENT") {
@@ -57,14 +57,14 @@ export async function POST(request: NextRequest) {
       data: { scheduleId, studentId: session.userId, topic, status: "PENDING" },
     });
   } catch {
-    // Unik (scheduleId, studentId): booking lama (mis. REJECTED) mungkin masih ada.
+    
     await prisma.counselingBooking.update({
       where: { scheduleId_studentId: { scheduleId, studentId: session.userId } },
       data: { topic, status: "PENDING" },
     });
   }
 
-  // Beri tahu konselor pemilik slot.
+  
   const student = await prisma.user.findUnique({
     where: { id: session.userId },
     select: { name: true },
@@ -83,8 +83,8 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ ok: true }, { status: 201 });
 }
 
-// PATCH /api/counseling/bookings — ubah status booking.
-// Konselor: { id, status: APPROVED|REJECTED, approvalMessage? }. Siswa: { id, status: CANCELLED }.
+
+
 export async function PATCH(request: NextRequest) {
   const session = getSession(request);
   if (!session) {
@@ -122,7 +122,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Booking tidak ditemukan" }, { status: 404 });
   }
 
-  // Siswa membatalkan booking miliknya.
+  
   if (session.role === "STUDENT") {
     if (booking.studentId !== session.userId || status !== "CANCELLED") {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -131,7 +131,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // Konselor menyetujui / menolak booking pada slotnya.
+  
   if (session.role === "COUNSELOR") {
     if (booking.schedule.counselorId !== session.userId) {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -152,7 +152,7 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
-    // Beri tahu siswa — sertakan info komunikasi jika disetujui.
+    
     if (status === "APPROVED") {
       const schedule = booking.schedule;
       const commParts: string[] = [];

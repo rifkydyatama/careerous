@@ -18,7 +18,7 @@ import {
   CurrentUser,
 } from "./utils";
 
-// Inisial dari nama (maks 2 huruf) untuk avatar.
+
 function initialsOf(name: string | null | undefined): string {
   const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "BK";
@@ -35,7 +35,7 @@ export default function CounselorLayout({
   const pathname = usePathname();
   const [me, setMe] = useState<CurrentUser | null>(null);
 
-  // Ambil identitas konselor yang login (nama & sekolah) untuk ditampilkan otomatis.
+  
   useEffect(() => {
     let mounted = true;
     void fetchCurrentUser().then((user) => {
@@ -114,7 +114,7 @@ export default function CounselorLayout({
 
 
       <div className="ml-[260px] flex flex-1 flex-col">
-        {/* Topbar */}
+        {}
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-7">
           <div className="flex items-center gap-2 text-[13px] text-slate-400">
             <span>{UNIVERSITY.app}</span> <span>›</span> <b className="font-bold text-slate-900">Panel Konselor</b>
@@ -133,7 +133,7 @@ export default function CounselorLayout({
           </div>
         </header>
 
-        {/* Content */}
+        {}
         <main className="p-7">
           {children}
         </main>
@@ -170,7 +170,7 @@ function CounselorNotificationBell() {
       setItems(res.notifications);
       setUnread(res.unreadCount);
     } catch {
-      // notifikasi tidak kritikal
+      
     }
   };
 
@@ -198,7 +198,7 @@ function CounselorNotificationBell() {
       setUnread(count);
       setItems((prev) => prev.map((item) => ({ ...item, read: true })));
     } catch {
-      // abaikan
+      
     }
   };
 
@@ -209,7 +209,7 @@ function CounselorNotificationBell() {
       setUnread(count);
       setItems((prev) => prev.map((n) => (n.id === item.id ? { ...n, read: true } : n)));
     } catch {
-      // abaikan
+      
     }
   };
 

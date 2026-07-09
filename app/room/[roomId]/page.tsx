@@ -30,8 +30,8 @@ export default async function RoomPage({
     redirect("/login");
   }
 
-  // To secure it fully, we should check if the user is authorized to enter this roomId
-  // But for now, since roomId is a UUID and only known to assigned users, it's reasonably secure.
+  
+  
 
   return (
     <JitsiRoomClient

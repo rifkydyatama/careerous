@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   const password = typeof body?.password === "string" ? body.password : "";
   const institutionName =
     typeof body?.institutionName === "string" ? body.institutionName.trim() : "";
-  // Siswa memilih sekolah dari dropdown dan mengirim id (presisi, tak membuat duplikat).
+  
   const institutionIdInput =
     typeof body?.institutionId === "string" ? body.institutionId.trim() : "";
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Peran tidak valid" }, { status: 400 });
   }
 
-  // Admin tidak boleh dibuat lewat registrasi publik (gunakan seed-admin).
+  
   if (role === "ADMIN") {
     return NextResponse.json({ error: "Peran tidak valid" }, { status: 400 });
   }
@@ -102,8 +102,8 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await hashPassword(password);
 
-    // Tautkan ke institusi. Siswa mengirim institutionId (pilih dari daftar sekolah yang
-    // sudah punya guru); guru mengirim nama (find-or-create). Utamakan id bila valid.
+    
+    
     let institutionId: string | null = null;
     if (institutionIdInput) {
       const byId = await prisma.institution.findUnique({
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
           ).id;
     }
 
-    // Siswa wajib memilih sekolah dari daftar.
+    
     if (role === "STUDENT" && !institutionId) {
       return NextResponse.json(
         { error: "Silakan pilih sekolah dari daftar" },

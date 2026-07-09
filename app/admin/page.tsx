@@ -112,7 +112,7 @@ export default function AdminDashboard() {
             <StatCard icon={ShieldCheck} label="Administrator" value={stats.admins} color="from-slate-700 to-slate-500" />
           </div>
 
-          {/* Grafik */}
+          {}
           <div className="mt-6 grid gap-5 lg:grid-cols-3">
             <ChartCard title="Distribusi Peran">
               <DonutChart data={roleData} />
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
             </ChartCard>
           </div>
 
-          {/* Akses cepat */}
+          {}
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <QuickLink href="/admin/users" icon={<Users size={18} />} title="Kelola Pengguna" desc="Atur peran, paket, dan institusi pengguna." />
             <QuickLink href="/admin/institutions" icon={<Building2 size={18} />} title="Kelola Institusi" desc="Buat institusi & atur langganan sekolah." />

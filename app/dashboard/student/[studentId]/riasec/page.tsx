@@ -29,7 +29,7 @@ export default function RiasecPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Form State
+  
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [checks, setChecks] = useState<RiasecCheckMap>({});
   const [lsAnswers, setLsAnswers] = useState<LearningStyleAnswerMap>({});
@@ -81,7 +81,7 @@ export default function RiasecPage() {
   };
 
   const handleSubmit = async () => {
-    // Gaya belajar wajib lengkap; centang RIASEC boleh sebagian (tidak dicentang = tidak sesuai).
+    
     if (!lsComplete) return;
 
     setIsSubmitting(true);
@@ -263,7 +263,7 @@ export default function RiasecPage() {
       ) : (
         <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
           <div className="space-y-6">
-            {/* Bagian 1: RIASEC — centang pernyataan yang sesuai */}
+            {}
             <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
               <h3 className="text-sm font-extrabold text-slate-900">Bagian 1: Pernyataan tentang Diri Anda</h3>
               <p className="mt-1 mb-5 text-[12px] text-slate-500">Centang pernyataan yang sesuai dengan diri Anda. Biarkan kosong bila tidak sesuai.</p>
@@ -298,7 +298,7 @@ export default function RiasecPage() {
               </div>
             </div>
 
-            {/* Bagian 2: Gaya belajar — pilih A/B/C */}
+            {}
             <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
               <h3 className="text-sm font-extrabold text-slate-900">Bagian 2: Kuesioner Gaya Belajar</h3>
               <p className="mt-1 mb-5 text-[12px] text-slate-500">Pilih salah satu jawaban yang paling sesuai untuk tiap pertanyaan.</p>

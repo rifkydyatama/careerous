@@ -20,7 +20,7 @@ function serialize(inst: {
   };
 }
 
-// GET /api/admin/institutions — daftar institusi + jumlah anggota (admin only).
+
 export async function GET(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/admin/institutions — buat institusi baru. body: { name }
+
 export async function POST(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/institutions — aktif/nonaktifkan langganan. body: { id, active, months? }
+
 export async function PATCH(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });

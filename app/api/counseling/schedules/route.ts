@@ -4,14 +4,14 @@ import { getSession } from "../../../../lib/auth-guard";
 
 export const dynamic = "force-dynamic";
 
-// Booking yang masih memakai kuota (PENDING/APPROVED).
+
 const ACTIVE_BOOKING = ["PENDING", "APPROVED"] as const;
 
 type ScheduleType = "INDIVIDUAL" | "GROUP";
 
-// GET /api/counseling/schedules
-// - Konselor: slot miliknya + daftar booking (nama siswa, topik, status).
-// - Siswa: slot mendatang yang tersedia + status booking dirinya + info komunikasi (jika disetujui).
+
+
+
 export async function GET(request: NextRequest) {
   const session = getSession(request);
   if (!session) {
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // STUDENT: slot mendatang yang belum dibatalkan, ATAU slot (lampau/mendatang) yang sudah pernah dibooking siswa ini.
+  
   const schedules = await prisma.counselingSchedule.findMany({
     where: {
       OR: [
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
         isFull: active.length >= s.maxCapacity,
         myBookingStatus: myBooking?.status ?? null,
         myBookingId: myBooking?.id ?? null,
-        // Info komunikasi hanya ditampilkan jika booking disetujui.
+        
         meetLink: isApproved ? `/room/${s.id}` : null,
         location: isApproved ? s.location : null,
         phone: isApproved ? s.phone : null,
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
-// POST /api/counseling/schedules — konselor membuat slot baru.
+
 export async function POST(request: NextRequest) {
   const session = getSession(request);
   if (!session || session.role !== "COUNSELOR") {
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ id: schedule.id }, { status: 201 });
 }
 
-// DELETE /api/counseling/schedules?id=... — konselor membatalkan slot miliknya.
+
 export async function DELETE(request: NextRequest) {
   const session = getSession(request);
   if (!session || session.role !== "COUNSELOR") {

@@ -52,11 +52,11 @@ export default function JournalsPage() {
 
   useEffect(() => {
     void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [studentId]);
 
   const handleJournalSubmit = async (savedJournal: JournalItem) => {
-    // Setelah submit, muat ulang agar modul berikutnya & deadline ikut diperbarui.
+    
     await load();
     return savedJournal;
   };
@@ -92,7 +92,7 @@ export default function JournalsPage() {
         </div>
       ) : (
         <>
-          {/* Banner laporan siap */}
+          {}
           {(completedAll || data.hasReport) && (
             <Link
               href={`/dashboard/student/${studentId}/report`}
@@ -111,7 +111,7 @@ export default function JournalsPage() {
             </Link>
           )}
 
-          {/* Info paket gratis — Premium hanya bisa diaktifkan sekolah lewat BK */}
+          {}
           {!data.premium && (
             <div className="mb-5 flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
@@ -129,7 +129,7 @@ export default function JournalsPage() {
             </div>
           )}
 
-          {/* Banner Premium aktif via institusi */}
+          {}
           {data.premium && data.premiumSource === "INSTITUTION" && (
             <div className="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
@@ -185,7 +185,7 @@ function ModuleCard({
   const config = STATUS_CONFIG[journal.status];
   const Icon = config.icon;
 
-  // Kartu premium (gembok freemium) diberi gaya khusus.
+  
   const cardClass = isPremiumGate
     ? "border-indigo-200 bg-indigo-50/40"
     : config.colorClass;
@@ -262,7 +262,7 @@ function LockedCard({
   const lateCount = journal.lateCount ?? 0;
 
   if (isTempLocked && lateCount >= 1) {
-    // Batas waktu terlewat & masih dalam grace: siswa wajib mengisi moodboard untuk membuka modul.
+    
     return (
       <TransitionTaskForm
         journal={journal}
@@ -273,7 +273,7 @@ function LockedCard({
     );
   }
 
-  // Grace habis tanpa moodboard: menunggu konselor membuka modul.
+  
   if (lateCount >= 2) {
     return (
       <div className="flex h-32 flex-col items-center justify-center text-center">
@@ -288,7 +288,7 @@ function LockedCard({
     );
   }
 
-  // Kunci urutan biasa (modul sebelumnya belum selesai).
+  
   return (
     <div className="flex h-32 flex-col items-center justify-center text-center">
       <Lock size={20} className="mb-2 text-slate-300" />
@@ -497,7 +497,7 @@ function JournalEntryForm({
     setIsSubmitting(true);
     setError(null);
 
-    // Gabungkan jawaban dengan separator yang jelas
+    
     const combined = answers
       .map((a, i) => `[Pertanyaan ${i + 1}]\n${a.trim()}`)
       .join("\n\n");

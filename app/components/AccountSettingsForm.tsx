@@ -57,7 +57,7 @@ export function AccountSettingsForm({
           
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Convert to base64 with webp or jpeg
+          
           const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
           resolve(dataUrl);
         };
@@ -120,7 +120,7 @@ export function AccountSettingsForm({
       </div>
 
       <form onSubmit={handleSave} className="p-6">
-        {/* Avatar Upload */}
+        {}
         <div className="mb-6 flex flex-col items-center sm:flex-row sm:items-start gap-6">
           <div className="relative group">
             <div 
@@ -173,7 +173,7 @@ export function AccountSettingsForm({
           </div>
         </div>
 
-        {/* Form Fields */}
+        {}
         <div className="grid gap-5">
           <div>
             <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Nama Lengkap</label>

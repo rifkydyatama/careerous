@@ -68,7 +68,7 @@ export default function ProgramPage() {
   const [phone, setPhone] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  // Modal approve
+  
   const [approveTarget, setApproveTarget] = useState<Booking | null>(null);
   const [approvalMessage, setApprovalMessage] = useState("");
   const [isApproving, setIsApproving] = useState(false);
@@ -182,7 +182,7 @@ export default function ProgramPage() {
         <p className="mt-1 text-[13px] text-slate-500">Buat slot konseling dan kelola permintaan siswa.</p>
       </div>
 
-      {/* Form buat slot */}
+      {}
       <form onSubmit={handleCreate} className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[#2563eb]">
           <CalendarPlus size={14} /> Buat Slot Baru
@@ -225,7 +225,7 @@ export default function ProgramPage() {
           </div>
         </div>
 
-        {/* Komunikasi */}
+        {}
         <div className="mt-4 rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-4">
           <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-blue-700">
             Info Komunikasi (opsional — akan dikirim ke siswa saat disetujui)
@@ -316,7 +316,7 @@ export default function ProgramPage() {
         </div>
       )}
 
-      {/* Modal Approve */}
+      {}
       {approveTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setApproveTarget(null)}>
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
@@ -407,7 +407,7 @@ function ScheduleCard({
         )}
       </div>
 
-      {/* Info komunikasi */}
+      {}
       {hasComm && (
         <div className="mt-3 flex flex-wrap gap-2">
           {schedule.meetLink && (

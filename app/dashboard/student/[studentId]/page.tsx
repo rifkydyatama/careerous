@@ -122,7 +122,7 @@ export default function StudentDashboardPage() {
         </div>
       ) : (
         <>
-          {/* Hero */}
+          {}
           <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1d4ed8] via-[#2563eb] to-[#0ea5e9] p-7 shadow-md shadow-blue-500/20">
             <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-white/10 blur-2xl"></div>
             <div className="absolute -bottom-16 -left-16 h-[200px] w-[200px] rounded-full bg-white/10 blur-2xl"></div>
@@ -147,7 +147,7 @@ export default function StudentDashboardPage() {
                 )}
               </div>
 
-              {/* Cincin progres */}
+              {}
               <div className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
                 <ProgressRing percent={stats.progress} />
                 <div className="space-y-2.5">
@@ -159,13 +159,13 @@ export default function StudentDashboardPage() {
             </div>
           </div>
 
-          {/* Baris: modul aktif + progres fase */}
+          {}
           <div className="mb-6 grid gap-5 lg:grid-cols-[1.1fr_1.4fr]">
             <ActiveModuleCard studentId={studentId} active={activeModule} completed={stats.completed} total={stats.total} />
             <PhaseProgressCard phases={phaseProgress} />
           </div>
 
-          {/* Gamifikasi */}
+          {}
           <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ export default function StudentDashboardPage() {
             </div>
           </div>
 
-          {/* Akses cepat + umpan balik terbaru */}
+          {}
           <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
             <div className="grid gap-4 sm:grid-cols-2">
               <QuickCard

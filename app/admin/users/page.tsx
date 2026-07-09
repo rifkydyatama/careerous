@@ -54,7 +54,7 @@ export default function AdminUsersPage() {
   ) => {
     setSavingId(id);
     setErrorMessage(null);
-    // Optimistic update
+    
     setUsers((prev) =>
       prev.map((u) =>
         u.id === id
@@ -252,7 +252,7 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      {/* Modal Reset Password */}
+      {}
       {resetTarget && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">

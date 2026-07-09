@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { getSession } from "../../../lib/auth-guard";
 
-// POST /api/upload — unggah satu file (mood board dokumen, dll) ke Vercel Blob.
-// Mengembalikan { url } publik. Hanya untuk pengguna yang login.
-const MAX_BYTES = 8 * 1024 * 1024; // 8 MB
+
+
+const MAX_BYTES = 8 * 1024 * 1024; 
 
 export async function POST(request: NextRequest) {
   const session = getSession(request);

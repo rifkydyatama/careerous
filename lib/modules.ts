@@ -1,12 +1,12 @@
-// Metadata 12 Modul Eksplorasi Karier Careerous.
-//
-// Konsep: Career Construction Theory (Savickas) — 3 fase eksplorasi x 4 modul = 12 modul,
-// setara 1 semester efektif. Nomor modul memakai field DB `weekNumber` (1-12) yang tidak
-// di-rename agar tidak perlu migrasi data; di tampilan disebut "Modul".
+
+
+
+
+
 
 export const TOTAL_MODULES = 12;
 
-// Batas modul gratis (freemium). Modul 1-3 gratis, 4-12 butuh Premium.
+
 export const FREE_MODULE_LIMIT = 3;
 
 export type ModulePhase = "EKSPLORASI_DIRI" | "EKSPLORASI_LINGKUNGAN" | "SINTESIS_REFLEKSI";
@@ -45,12 +45,12 @@ export type ModuleInfo = {
   phaseLabel: string;
   title: string;
   prompts: string[];
-  /** @deprecated Use prompts instead. Kept for backward compat with DB. */
+  
   prompt: string;
 };
 
 const RAW_MODULES: Array<Omit<ModuleInfo, "phase" | "phaseLabel" | "prompt">> = [
-  // ── Fase 1: Eksplorasi Diri (1-4) ──
+  
   {
     number: 1,
     title: "Mengenali Diri",
@@ -83,7 +83,7 @@ const RAW_MODULES: Array<Omit<ModuleInfo, "phase" | "phaseLabel" | "prompt">> = 
       "Apa yang biasanya menghambat proses belajarmu, dan bagaimana kamu mengatasinya?",
     ],
   },
-  // ── Fase 2: Eksplorasi Lingkungan (5-8) ──
+  
   {
     number: 5,
     title: "Dunia Profesi",
@@ -116,7 +116,7 @@ const RAW_MODULES: Array<Omit<ModuleInfo, "phase" | "phaseLabel" | "prompt">> = 
       "Sebutkan satu langkah kecil yang bisa kamu ambil minggu ini untuk mendekatkan dirimu ke peluang tersebut.",
     ],
   },
-  // ── Fase 3: Sintesis & Refleksi (9-12) ──
+  
   {
     number: 9,
     title: "Menghubungkan Titik",
@@ -171,14 +171,14 @@ export function getModule(n: number): ModuleInfo | null {
   return MODULES.find((mod) => mod.number === n) ?? null;
 }
 
-// Apakah modul ini terkunci oleh paket gratis (freemium)?
+
 export function isPremiumModule(moduleNumber: number): boolean {
   return moduleNumber > FREE_MODULE_LIMIT;
 }
 
-// ── Moodboard ──
-// Perasaan yang bisa dipilih siswa saat modul terlambat/terkunci. Dikirim ke konselor
-// bersama alasan keterlambatan agar pendampingan lebih tepat sasaran.
+
+
+
 export type MoodKey =
   | "STRESSED"
   | "CONFUSED"

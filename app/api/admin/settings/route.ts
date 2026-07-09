@@ -4,7 +4,7 @@ import { requireRole } from "../../../../lib/auth-guard";
 import { ensureModuleContents } from "../../../../lib/module-content";
 import { TOTAL_MODULES } from "../../../../lib/modules";
 
-// GET /api/admin/settings — daftar batas waktu (tanggal & jam) tiap modul (admin only).
+
 export async function GET(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/settings — set batas waktu satu modul. body: { number, deadlineAt: ISO | null }
+
 export async function PATCH(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -45,7 +45,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Nomor modul harus 1-12" }, { status: 400 });
   }
 
-  // deadlineAt: null (hapus batas) atau string ISO valid.
+  
   let deadlineAt: Date | null = null;
   if (body?.deadlineAt != null) {
     const parsed = new Date(body.deadlineAt);

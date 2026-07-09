@@ -13,8 +13,8 @@ type RouteContext = {
   params: Promise<{ studentId: string }>;
 };
 
-// `premium` menentukan apakah sistem deadline otomatis diaktifkan (fitur Premium).
-// `firstDeadline` = batas waktu absolut Modul 1 (dari admin), dipakai saat seed pertama.
+
+
 async function ensureJournalWeeks(
   studentId: string,
   premium: boolean,
@@ -99,8 +99,8 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
     const firstDeadline = premium ? await getModuleDeadline(1) : null;
     await ensureJournalWeeks(studentId, premium, firstDeadline);
 
-    // Proses deadline (idempoten) sebelum membaca, agar status selalu mutakhir.
-    // Hanya berdampak untuk siswa Premium (lihat lib/deadlines).
+    
+    
     await processStudentDeadlines(studentId);
 
     const journals = await prisma.journalProgress.findMany({
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
     const premium = isPremiumEffective(student.plan, student.institution);
 
-    // Gating freemium: modul 4-12 butuh Premium (pribadi atau via institusi).
+    
     if (!premium && isPremiumModule(weekNumber)) {
       return NextResponse.json(
         { error: "Modul ini hanya tersedia untuk paket Premium" },
@@ -224,7 +224,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     }
 
     const now = new Date();
-    // Deadline modul berikutnya = batas waktu absolut modul itu (diatur admin).
+    
     const nextDeadline = premium ? await getModuleDeadline(weekNumber + 1) : null;
 
     const updated = await prisma.$transaction(async (tx) => {
@@ -243,12 +243,12 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
             studentId,
             weekNumber: weekNumber + 1,
             status: "LOCKED",
-            lockedUntil: null, // jangan timpa modul yang sedang dikunci 3 hari
+            lockedUntil: null, 
           },
           data: {
             status: "UNLOCKED",
             unlockedAt: now,
-            // Deadline absolut modul berikutnya (hanya Premium).
+            
             deadlineAt: nextDeadline,
             lateCount: 0,
           },
@@ -258,7 +258,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       return saved;
     });
 
-    // Setelah modul terakhir selesai, hasilkan Career Exploration Report (best-effort).
+    
     if (weekNumber === TOTAL_WEEKS) {
       try {
         const report = await generateCareerReport(studentId);
@@ -273,7 +273,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
           });
         }
       } catch {
-        // Abaikan kegagalan generate report agar submit tetap sukses.
+        
       }
     }
 
@@ -302,7 +302,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: "Nomor modul harus 1-12" }, { status: 400 });
   }
 
-  // Cabang konselor: buka modul yang terkunci karena batas waktu. body: { weekNumber, unlock: true }
+  
   if (body?.unlock === true) {
     if (!requireRole(request, "COUNSELOR")) {
       return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -348,7 +348,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "User bukan siswa" }, { status: 400 });
     }
 
-    // Akun Free: konselor hanya dapat memberi feedback untuk modul gratis (1-3).
+    
     if (!isPremiumEffective(student.plan, student.institution) && weekNumber > FREE_MODULE_LIMIT) {
       return NextResponse.json(
         { error: "Feedback modul 4-12 hanya tersedia pada akun Premium" },
@@ -379,8 +379,8 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   }
 }
 
-// PUT: mood board saat modul terblokir — siswa mengunggah dokumen,
-// modul dibuka kembali lebih awal, dan konselor diberi tahu.
+
+
 export async function PUT(request: NextRequest, { params }: RouteContext) {
   const { studentId } = await params;
   if (!studentId) {

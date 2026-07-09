@@ -22,7 +22,7 @@ export default function AdminSubscriptionsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
-  // Input per-pengajuan: durasi (bulan) & catatan penolakan.
+  
   const [months, setMonths] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
 

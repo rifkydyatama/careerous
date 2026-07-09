@@ -108,7 +108,7 @@ export default function CareerReportPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-5">
-          {/* Header laporan */}
+          {}
           <div className="relative overflow-hidden rounded-2xl bg-[#2563eb] p-7 shadow-md">
             <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-[#3b82f6]/10 blur-2xl"></div>
             <div className="relative z-10">
@@ -122,7 +122,7 @@ export default function CareerReportPage() {
             </div>
           </div>
 
-          {/* Kartu metrik */}
+          {}
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Sentimen Umum</p>
@@ -161,7 +161,7 @@ export default function CareerReportPage() {
             </div>
           </div>
 
-          {/* Ringkasan naratif */}
+          {}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Ringkasan</p>
             <p className="mt-2 text-[13.5px] leading-relaxed text-slate-700">{report.summary}</p>

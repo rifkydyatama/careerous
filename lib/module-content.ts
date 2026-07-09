@@ -1,5 +1,5 @@
-// Konten modul yang dapat dikelola admin. Default berasal dari lib/modules.ts;
-// admin dapat menimpanya via tabel ModuleContent. Fungsi-fungsi ini server-side.
+
+
 
 import { prisma } from "./prisma";
 import { MODULES, getModule } from "./modules";
@@ -10,7 +10,7 @@ export type ModuleContentItem = {
   prompt: string;
   prompts: string[];
   phaseLabel: string;
-  deadlineAt: Date | null; // batas waktu absolut modul (diatur admin)
+  deadlineAt: Date | null; 
 };
 
 export function parsePrompts(promptStr: string): string[] {
@@ -24,7 +24,7 @@ export function parsePrompts(promptStr: string): string[] {
   return [promptStr.trim()];
 }
 
-// Pastikan 12 baris konten ada (di-seed dari default bila belum).
+
 export async function ensureModuleContents(): Promise<void> {
   const existing = await prisma.moduleContent.findMany({ select: { number: true } });
   const have = new Set(existing.map((m) => m.number));
@@ -39,7 +39,7 @@ export async function ensureModuleContents(): Promise<void> {
   }
 }
 
-// Map nomor modul -> konten (DB override, fallback default).
+
 export async function getModuleContents(): Promise<Map<number, ModuleContentItem>> {
   const rows = await prisma.moduleContent.findMany();
   const map = new Map<number, ModuleContentItem>();
@@ -66,7 +66,7 @@ export async function getModuleContents(): Promise<Map<number, ModuleContentItem
   return map;
 }
 
-// Konten satu modul (DB override, fallback default). `contents` opsional untuk reuse.
+
 export function resolveModule(
   n: number,
   contents?: Map<number, ModuleContentItem>
@@ -84,7 +84,7 @@ export function resolveModule(
   };
 }
 
-// Batas waktu absolut satu modul (null bila belum diatur admin).
+
 export async function getModuleDeadline(n: number): Promise<Date | null> {
   const row = await prisma.moduleContent.findUnique({
     where: { number: n },

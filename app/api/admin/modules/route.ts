@@ -4,7 +4,7 @@ import { requireRole } from "../../../../lib/auth-guard";
 import { ensureModuleContents } from "../../../../lib/module-content";
 import { TOTAL_MODULES } from "../../../../lib/modules";
 
-// GET /api/admin/modules — daftar konten 12 modul (admin only).
+
 export async function GET(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/modules — ubah judul/prompt satu modul. body: { number, title, prompt }
+
 export async function PATCH(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });

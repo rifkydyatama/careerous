@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
           journal.reflectionText
       ).length;
 
-      // Tanda keterlambatan & kunci untuk pendampingan konselor.
+      
       const lateModules = student.journalProgress.filter(
         (journal) => journal.status === "UNLOCKED" && journal.lateCount > 0
       ).length;

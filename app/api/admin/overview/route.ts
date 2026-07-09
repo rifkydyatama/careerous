@@ -3,7 +3,7 @@ import { prisma } from "../../../../lib/prisma";
 import { requireRole } from "../../../../lib/auth-guard";
 import { isInstitutionSubscribed } from "../../../../lib/subscription";
 
-// GET /api/admin/overview — statistik & monitoring seluruh sistem (admin only).
+
 export async function GET(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });

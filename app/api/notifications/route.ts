@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
-// GET /api/notifications?userId=...&limit=20
-// Mengembalikan daftar notifikasi terbaru + jumlah belum dibaca.
+
+
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get("userId");
   if (!userId) {
@@ -31,8 +31,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/notifications  body: { userId, id? , markAllRead? }
-// Tandai satu notifikasi (id) atau semua (markAllRead) sebagai dibaca.
+
+
 export async function PATCH(request: NextRequest) {
   let body: any;
   try {

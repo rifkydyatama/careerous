@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { requireRole } from "../../../../lib/auth-guard";
 
-// Serialisasi pengajuan untuk UI konselor.
+
 function serialize(req: {
   id: string;
   months: number;
@@ -23,8 +23,8 @@ function serialize(req: {
   };
 }
 
-// GET /api/counselor/subscription-request
-// Status langganan institusi konselor + riwayat pengajuannya.
+
+
 export async function GET(request: NextRequest) {
   const session = requireRole(request, "COUNSELOR");
   if (!session) {
@@ -85,8 +85,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/counselor/subscription-request  body: { note?, months? }
-// Konselor mengajukan langganan Premium untuk institusinya (menunggu ACC admin).
+
+
 export async function POST(request: NextRequest) {
   const session = requireRole(request, "COUNSELOR");
   if (!session) {
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Sudah berlangganan aktif (belum kedaluwarsa)?
+    
     const inst = me.institution;
     const stillActive =
       inst.subscriptionActive &&
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Sudah ada pengajuan yang menunggu?
+    
     const pending = await prisma.subscriptionRequest.findFirst({
       where: { institutionId: me.institutionId, status: "PENDING" },
       select: { id: true },

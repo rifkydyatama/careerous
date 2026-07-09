@@ -1,7 +1,7 @@
 "use client";
 
-// Wrapper animasi "reveal saat masuk viewport" berbasis Motion.
-// Dipakai untuk menganimasikan section/kartu saat di-scroll.
+
+
 
 import { motion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
@@ -14,11 +14,11 @@ const variants: Variants = {
 type RevealProps = {
   children: ReactNode;
   className?: string;
-  /** Jeda mulai (detik) untuk efek berurutan. */
+  
   delay?: number;
-  /** Animasikan setiap kali masuk viewport (default sekali saja). */
+  
   repeat?: boolean;
-  /** Render sebagai elemen apa (default div). */
+  
   as?: "div" | "section" | "li" | "article";
 };
 

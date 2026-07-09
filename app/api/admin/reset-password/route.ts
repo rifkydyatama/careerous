@@ -3,7 +3,7 @@ import { prisma } from "../../../../lib/prisma";
 import { requireRole } from "../../../../lib/auth-guard";
 import { hashPassword } from "../../../../lib/portal-session";
 
-// POST /api/admin/reset-password — Admin mereset kata sandi pengguna.
+
 export async function POST(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });

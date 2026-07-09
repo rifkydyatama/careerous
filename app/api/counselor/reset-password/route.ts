@@ -3,7 +3,7 @@ import { prisma } from "../../../../lib/prisma";
 import { getSession } from "../../../../lib/auth-guard";
 import { hashPassword } from "../../../../lib/portal-session";
 
-// POST /api/counselor/reset-password — Konselor mereset kata sandi siswa di institusinya sendiri.
+
 export async function POST(request: NextRequest) {
   const session = getSession(request);
   if (!session || session.role !== "COUNSELOR") {

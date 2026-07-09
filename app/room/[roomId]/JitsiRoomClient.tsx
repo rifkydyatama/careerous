@@ -35,14 +35,14 @@ export default function JitsiRoomClient({
   }
 
   const handleApiReady = (apiObj: any) => {
-    // Optionally listen to events
+    
     apiObj.addListener("videoConferenceLeft", () => {
-      // Redirect back when user leaves
+      
       if (userRole === "COUNSELOR") {
         router.push("/counselor/program");
       } else {
-        // assume STUDENT
-        // we can't easily know student id from here but let's just go to dashboard
+        
+        
         router.push("/dashboard");
       }
     });
@@ -50,7 +50,7 @@ export default function JitsiRoomClient({
 
   return (
     <div className="relative h-screen w-full bg-black">
-      {/* Overlay Mask for Jitsi Watermark */}
+      {}
       <div className="absolute left-0 top-0 z-[100] flex h-[80px] w-[250px] items-start p-4">
         <div className="flex items-center gap-2 rounded-lg bg-black/50 px-3 py-1.5 backdrop-blur-md">
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#2563eb] text-[10px] font-bold text-white shadow-sm">
@@ -69,15 +69,15 @@ export default function JitsiRoomClient({
           disableModeratorIndicator: true,
           enableEmailInStats: false,
           prejoinPageEnabled: false,
-          disableDeepLinking: true, // Mencegah promosi download aplikasi Jitsi di HP
-          hideConferenceSubject: true, // Menyembunyikan judul rapat (opsional, karena ada overlay kita)
+          disableDeepLinking: true, 
+          hideConferenceSubject: true, 
           hideConferenceTimer: false,
           toolbarButtons: [
             'microphone', 'camera', 'desktop', 'fullscreen',
             'hangup', 'profile', 'chat', 'settings', 'raisehand',
             'videoquality', 'filmstrip', 'tileview', 'videobackgroundblur',
             'mute-everyone'
-            // Menghilangkan tombol 'invite', 'help', 'feedback', dsb agar tidak terlihat dari pihak ke-3
+            
           ],
         }}
         interfaceConfigOverwrite={{

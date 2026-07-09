@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import AccessibilityWidget from "./components/AccessibilityWidget";
 
-// Terapkan preferensi aksesibilitas sebelum paint (hindari flash).
+
 const A11Y_BOOTSTRAP = `(function(){try{var k={"a11y-theme-dark":"theme-dark","a11y-dyslexia":"a11y-dyslexia","a11y-contrast":"a11y-contrast","a11y-large":"a11y-large"};for(var s in k){if(localStorage.getItem(s)==="1"){document.documentElement.classList.add(k[s]);}}}catch(e){}})();`;
 
 const geistSans = localFont({

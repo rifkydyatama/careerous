@@ -63,7 +63,7 @@ const SELECT = {
   requestedBy: { select: { id: true, name: true, email: true } },
 } as const;
 
-// GET /api/admin/subscription-requests — semua pengajuan (PENDING dulu, lalu terbaru).
+
 export async function GET(request: NextRequest) {
   if (!requireRole(request, "ADMIN")) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
       select: SELECT,
     });
-    // status "asc": APPROVED, PENDING, REJECTED (alfabet) — kita ingin PENDING teratas.
+    
     const order: Record<string, number> = { PENDING: 0, REJECTED: 1, APPROVED: 2 };
     const sorted = [...requests].sort(
       (a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9)
@@ -88,8 +88,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/subscription-requests
-// body: { id, action: "APPROVE"|"REJECT", months?, decisionNote? }
+
+
 export async function PATCH(request: NextRequest) {
   const session = requireRole(request, "ADMIN");
   if (!session) {
@@ -135,7 +135,7 @@ export async function PATCH(request: NextRequest) {
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + months);
 
-      // Aktifkan langganan institusi + tandai pengajuan disetujui + notifikasi konselor.
+      
       await prisma.$transaction([
         prisma.institution.update({
           where: { id: existing.institutionId },

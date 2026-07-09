@@ -43,14 +43,14 @@ export default function MaintenancePage() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 px-5 text-slate-100 font-sans">
-      {/* GLOW BACKGROUND EFFECT */}
+      {}
       <div className="absolute top-1/4 left-1/4 -z-10 h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[120px] animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 -z-10 h-[300px] w-[300px] rounded-full bg-cyan-500/10 blur-[120px] animate-pulse" />
 
-      {/* DECORATIVE GRID */}
+      {}
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
-      {/* HEADER LOGO */}
+      {}
       <div className="flex flex-col items-center text-center max-w-xl">
         <div className="relative mb-6">
           <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-500 opacity-75 blur-md animate-tilt" />
@@ -75,7 +75,7 @@ export default function MaintenancePage() {
         </p>
       </div>
 
-      {/* COUNTDOWN TIMER */}
+      {}
       {isMounted && (
         <div className="mt-10 grid grid-cols-4 gap-3 sm:gap-4 max-w-lg w-full">
           <CountdownCard value={timeLeft.days} label="Hari" />
@@ -85,7 +85,7 @@ export default function MaintenancePage() {
         </div>
       )}
 
-      {/* FOOTER INFO */}
+      {}
       <div className="mt-12 flex flex-col items-center gap-3 text-center text-xs text-slate-500">
         <div className="flex items-center gap-2 rounded-lg border border-slate-900 bg-slate-900/40 px-4 py-2 text-[11px]">
           <Lock size={12} className="text-amber-500" />
@@ -94,7 +94,7 @@ export default function MaintenancePage() {
         <p className="mt-2">© Careerous — Career Curiosity Platform</p>
       </div>
 
-      {/* STAFF PORTAL SECRET LINK */}
+      {}
       <div className="absolute bottom-5">
         <Link
           href="/login"

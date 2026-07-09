@@ -32,7 +32,7 @@ async function readApiError(response: Response, fallback: string) {
       return payload.error;
     }
   } catch {
-    // Fall through to the fallback message.
+    
   }
 
   return fallback;
@@ -65,7 +65,7 @@ export default function RegisterPage() {
     }
   }, []);
 
-  // Ambil daftar sekolah: siswa memilih dari sini, guru memakainya sebagai saran nama.
+  
   useEffect(() => {
     let active = true;
     fetch("/api/institutions/list", { cache: "no-store" })
@@ -86,14 +86,14 @@ export default function RegisterPage() {
     [role]
   );
 
-  // Sekolah yang boleh dipilih siswa: hanya yang sudah punya guru terdaftar.
+  
   const studentSchools = useMemo(
     () => institutions.filter((item) => item.hasCounselor),
     [institutions]
   );
 
-  // Saran untuk guru: bila mengetik nama yang sudah terdaftar (case-insensitive), tampilkan
-  // nama kanoniknya agar tidak membuat sekolah duplikat dengan ejaan berbeda.
+  
+  
   const institutionSuggestion = useMemo(() => {
     const typed = institutionName.trim().toLowerCase();
     if (!typed) return null;
@@ -127,7 +127,7 @@ export default function RegisterPage() {
       return;
     }
 
-    // Siswa wajib memilih sekolah dari daftar.
+    
     if (role === "STUDENT" && !institutionId) {
       setErrorMessage("Silakan pilih sekolah dari daftar.");
       return;
@@ -147,7 +147,7 @@ export default function RegisterPage() {
           email: trimmedEmail,
           role,
           password,
-          // Siswa: id sekolah dari dropdown. Guru: nama sekolah (find-or-create).
+          
           ...(role === "STUDENT"
             ? { institutionId }
             : { institutionName: institutionName.trim() }),

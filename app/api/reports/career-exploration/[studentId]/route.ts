@@ -7,9 +7,9 @@ type RouteContext = {
   params: Promise<{ studentId: string }>;
 };
 
-// GET /api/reports/career-exploration/[studentId]
-// Mengembalikan Career Exploration Report. Bila belum ada tetapi 12 modul sudah
-// selesai, laporan di-generate otomatis (mock). Bila belum memenuhi syarat -> 409.
+
+
+
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   const { studentId } = await params;
   if (!studentId) {

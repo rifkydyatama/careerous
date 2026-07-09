@@ -78,7 +78,7 @@ export default function CounselorDashboard() {
     return { totalStudents, totalCompleted, totalPending, needAttention, premium, finished, avgProgress };
   }, [students, totalWeeks]);
 
-  // Data grafik: progres per siswa (top 8 berdasarkan progres).
+  
   const progressData = useMemo(
     () =>
       students
@@ -88,7 +88,7 @@ export default function CounselorDashboard() {
     [students]
   );
 
-  // Distribusi status siswa.
+  
   const statusData = useMemo(() => {
     const finished = students.filter((s) => s.completedCount >= totalWeeks).length;
     const attention = students.filter((s) => s.lateModules > 0 || s.lockedModules > 0).length;
@@ -146,7 +146,7 @@ export default function CounselorDashboard() {
         </div>
       ) : (
         <>
-          {/* KPI */}
+          {}
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Kpi icon={Users} label="Total Siswa" value={summary.totalStudents} sub={`${summary.premium} Premium`} color="from-blue-600 to-blue-400" />
             <Kpi icon={TrendingUp} label="Rata-rata Progres" value={`${summary.avgProgress}%`} sub={`${summary.finished} tuntas`} color="from-teal-600 to-teal-400" progress={summary.avgProgress} />
@@ -154,7 +154,7 @@ export default function CounselorDashboard() {
             <Kpi icon={AlertTriangle} label="Perlu Perhatian" value={summary.needAttention} sub="Terblokir" color="from-amber-600 to-amber-400" isRed={summary.needAttention > 0} />
           </div>
 
-          {/* Grafik */}
+          {}
           <div className="mb-6 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-4 text-[14px] font-extrabold text-slate-900">Progres Modul per Siswa</h3>
@@ -202,7 +202,7 @@ export default function CounselorDashboard() {
             </div>
           </div>
 
-          {/* Panel perhatian + alasan keterlambatan */}
+          {}
           <div className="grid gap-5 lg:grid-cols-2">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-3 flex items-center justify-between">

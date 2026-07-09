@@ -6,7 +6,7 @@ export type PortalRoleOption = {
   description: string;
 };
 
-// Opsi peran untuk REGISTRASI (admin tidak bisa daftar sendiri — lihat seed-admin).
+
 export const PORTAL_ROLE_OPTIONS: PortalRoleOption[] = [
   {
     value: "STUDENT",
@@ -20,7 +20,7 @@ export const PORTAL_ROLE_OPTIONS: PortalRoleOption[] = [
   },
 ];
 
-// Opsi peran untuk LOGIN (termasuk Admin yang akunnya dibuat lewat seed).
+
 export const LOGIN_ROLE_OPTIONS: PortalRoleOption[] = [
   ...PORTAL_ROLE_OPTIONS,
   {
@@ -34,7 +34,7 @@ export function normalizeEmail(value: string) {
   return value.trim().toLowerCase();
 }
 
-// Menerima ADMIN juga (dipakai login). Registrasi memblokir ADMIN secara terpisah.
+
 export function normalizeRole(value: unknown): PortalRole | null {
   if (typeof value !== "string") {
     return null;

@@ -101,7 +101,7 @@ export default function StudentLayout({
 
 
       <div className="ml-[260px] flex flex-1 flex-col">
-        {/* Topbar */}
+        {}
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-7">
           <div className="flex items-center gap-2 text-[13px] text-slate-400">
             <span>{UNIVERSITY.app}</span> <span>›</span> <b className="font-bold text-slate-900">Ruang Siswa</b>
@@ -131,7 +131,7 @@ export default function StudentLayout({
           </div>
         </header>
 
-        {/* Content */}
+        {}
         <main className="p-7">
           {children}
         </main>
@@ -157,7 +157,7 @@ function NotificationBell({ userId }: { userId: string }) {
       setItems(res.notifications);
       setUnread(res.unreadCount);
     } catch {
-      // diam: notifikasi tidak kritikal
+      
     }
   };
 
@@ -166,10 +166,10 @@ function NotificationBell({ userId }: { userId: string }) {
     void load();
     const timer = setInterval(() => void load(), 60_000);
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [userId]);
 
-  // Tutup dropdown saat klik di luar.
+  
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -188,7 +188,7 @@ function NotificationBell({ userId }: { userId: string }) {
       setUnread(count);
       setItems((prev) => prev.map((item) => ({ ...item, read: true })));
     } catch {
-      // abaikan
+      
     }
   };
 
@@ -199,7 +199,7 @@ function NotificationBell({ userId }: { userId: string }) {
       setUnread(count);
       setItems((prev) => prev.map((n) => (n.id === item.id ? { ...n, read: true } : n)));
     } catch {
-      // abaikan
+      
     }
   };
 

@@ -24,7 +24,7 @@ async function readApiError(response: Response, fallback: string) {
       return payload.error;
     }
   } catch {
-    // Fall through to the fallback message.
+    
   }
 
   return fallback;
