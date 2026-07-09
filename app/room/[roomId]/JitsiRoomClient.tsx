@@ -69,14 +69,28 @@ export default function JitsiRoomClient({
           disableModeratorIndicator: true,
           enableEmailInStats: false,
           prejoinPageEnabled: false,
+          disableDeepLinking: true, // Mencegah promosi download aplikasi Jitsi di HP
+          hideConferenceSubject: true, // Menyembunyikan judul rapat (opsional, karena ada overlay kita)
+          hideConferenceTimer: false,
+          toolbarButtons: [
+            'microphone', 'camera', 'desktop', 'fullscreen',
+            'hangup', 'profile', 'chat', 'settings', 'raisehand',
+            'videoquality', 'filmstrip', 'tileview', 'videobackgroundblur',
+            'mute-everyone'
+            // Menghilangkan tombol 'invite', 'help', 'feedback', dsb agar tidak terlihat dari pihak ke-3
+          ],
         }}
         interfaceConfigOverwrite={{
+          APP_NAME: "Careerous Meet",
+          NATIVE_APP_NAME: "Careerous Meet",
+          PROVIDER_NAME: "Careerous",
           DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
           SHOW_JITSI_WATERMARK: false,
           SHOW_BRAND_WATERMARK: false,
           SHOW_WATERMARK_FOR_GUESTS: false,
           DEFAULT_LOGO_URL: "",
           DEFAULT_WELCOME_PAGE_LOGO_URL: "",
+          HIDE_INVITE_MORE_HEADER: true,
         }}
         userInfo={{
           displayName: userName,
