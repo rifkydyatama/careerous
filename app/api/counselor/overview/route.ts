@@ -89,6 +89,7 @@ export async function GET() {
             lateCount: true,
             lateReason: true,
             lateMood: true,
+            moodDocumentUrl: true,
             updatedAt: true,
           },
         },

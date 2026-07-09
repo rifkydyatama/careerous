@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { TOTAL_MODULES, FREE_MODULE_LIMIT, isPremiumModule } from "../../../../lib/modules";
-import { processStudentDeadlines, submitLateReason, counselorUnlockModule } from "../../../../lib/deadlines";
+import { processStudentDeadlines, submitMoodDocument, counselorUnlockModule } from "../../../../lib/deadlines";
 import { generateCareerReport } from "../../../../lib/career-report";
 import { isPremiumEffective, premiumSource } from "../../../../lib/subscription";
 import { getModuleContents, resolveModule, getModuleDeadline } from "../../../../lib/module-content";
@@ -376,7 +376,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   }
 }
 
-// PUT: tugas transisi saat modul terkunci — siswa mengirim alasan keterlambatan,
+// PUT: mood board saat modul terblokir — siswa mengunggah dokumen,
 // modul dibuka kembali lebih awal, dan konselor diberi tahu.
 export async function PUT(request: NextRequest, { params }: RouteContext) {
   const { studentId } = await params;
@@ -392,23 +392,22 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
   }
 
   const weekNumber = parseWeekNumber(body?.weekNumber);
-  const lateReason = typeof body?.lateReason === "string" ? body.lateReason : "";
-  const mood = typeof body?.mood === "string" ? body.mood : null;
+  const documentUrl = typeof body?.documentUrl === "string" ? body.documentUrl : "";
 
   if (!weekNumber || weekNumber < 1 || weekNumber > TOTAL_WEEKS) {
     return NextResponse.json({ error: "Nomor modul harus 1-12" }, { status: 400 });
   }
 
   try {
-    const result = await submitLateReason(studentId, weekNumber, lateReason, mood);
+    const result = await submitMoodDocument(studentId, weekNumber, documentUrl);
     if (!result.ok) {
       return NextResponse.json(
-        { error: result.error ?? "Gagal mengirim alasan" },
+        { error: result.error ?? "Gagal mengirim dokumen" },
         { status: result.status ?? 400 }
       );
     }
     return NextResponse.json({ ok: true });
   } catch (error) {
-    return NextResponse.json({ error: "Gagal mengirim alasan" }, { status: 500 });
+    return NextResponse.json({ error: "Gagal mengirim dokumen" }, { status: 500 });
   }
 }

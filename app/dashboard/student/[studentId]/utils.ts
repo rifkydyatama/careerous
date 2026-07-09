@@ -32,6 +32,7 @@ export type JournalItem = {
   lateCount?: number;
   lateReason?: string | null;
   lateMood?: string | null;
+  moodDocumentUrl?: string | null;
   premiumLocked?: boolean;
   title?: string | null;
   prompt?: string | null;
@@ -489,21 +490,31 @@ export function formatDeadlineCountdown(deadlineAt?: string | null): {
   };
 }
 
-// Tugas transisi: kirim alasan keterlambatan (+ mood dari moodboard) untuk membuka
-// kembali modul terkunci.
-export async function submitLateReason(
+// Unggah satu file ke server (Vercel Blob) dan kembalikan URL publiknya.
+export async function uploadFile(file: File): Promise<string> {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await fetch("/api/upload", { method: "POST", body: form });
+  if (!response.ok) {
+    throw new Error(await readApiError(response, "Gagal mengunggah file"));
+  }
+  const payload = (await response.json()) as { url: string };
+  return payload.url;
+}
+
+// Mood board: kirim URL dokumen yang diunggah untuk membuka kembali modul terblokir.
+export async function submitMoodDocument(
   studentId: string,
   weekNumber: number,
-  lateReason: string,
-  mood?: string | null
+  documentUrl: string
 ): Promise<void> {
   const response = await fetch(`/api/journals/${studentId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ weekNumber, lateReason, mood: mood ?? null }),
+    body: JSON.stringify({ weekNumber, documentUrl }),
   });
   if (!response.ok) {
-    throw new Error(await readApiError(response, "Gagal mengirim alasan"));
+    throw new Error(await readApiError(response, "Gagal mengirim dokumen"));
   }
 }
 

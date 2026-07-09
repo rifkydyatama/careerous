@@ -123,8 +123,9 @@ model JournalProgress {
   deadlineAt        DateTime? // batas pengerjaan aktif
   lateCount         Int           @default(0) // berapa kali lewat deadline
   lockedUntil       DateTime? // waktu buka kembali bila terkunci 3 hari
-  lateReason        String?       @db.Text // tugas transisi: alasan keterlambatan dari siswa
-  lateMood          String?       // moodboard: perasaan siswa saat modul terlambat/terkunci (kunci dari MOOD_OPTIONS)
+  lateReason        String?       @db.Text // (lama) alasan keterlambatan; digantikan mood board dokumen
+  lateMood          String?       // (lama) perasaan siswa; digantikan mood board dokumen
+  moodDocumentUrl   String?       // mood board: URL dokumen yang diunggah siswa untuk membuka modul terblokir
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 

@@ -18,7 +18,8 @@ import { useParams } from "next/navigation";
 import {
   fetchStudentDashboard,
   submitStudentJournal,
-  submitLateReason,
+  submitMoodDocument,
+  uploadFile,
   upgradeToPremium,
   formatDateTimeId,
   formatDeadlineCountdown,
@@ -26,7 +27,7 @@ import {
   JournalItem,
   STATUS_CONFIG,
 } from "../utils";
-import { getModule, MOOD_OPTIONS } from "@/lib/modules";
+import { getModule } from "@/lib/modules";
 
 export default function JournalsPage() {
   const params = useParams<{ studentId: string }>();
@@ -345,21 +346,21 @@ function TransitionTaskForm({
   reopenAt: string;
   onReload: () => Promise<void> | void;
 }) {
-  const [reason, setReason] = useState("");
-  const [mood, setMood] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!reason.trim() || !mood) return;
+    if (!file) return;
     setIsSubmitting(true);
     setError(null);
     try {
-      await submitLateReason(studentId, journal.weekNumber, reason.trim(), mood);
+      const url = await uploadFile(file);
+      await submitMoodDocument(studentId, journal.weekNumber, url);
       await onReload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal mengirim alasan");
+      setError(err instanceof Error ? err.message : "Gagal mengirim dokumen");
     } finally {
       setIsSubmitting(false);
     }
@@ -369,63 +370,43 @@ function TransitionTaskForm({
     <div>
       <div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[11px] text-rose-700">
         <div className="flex items-center gap-1.5 font-bold">
-          <CalendarClock size={12} /> Modul terkunci sementara
+          <CalendarClock size={12} /> Modul terblokir sementara
         </div>
         <p className="mt-0.5 leading-snug">
-          Akan otomatis terbuka pada <b>{formatDateTimeId(reopenAt)}</b>. Atau, jelaskan kendalamu
-          di bawah untuk membukanya sekarang.
+          Akan otomatis terbuka pada <b>{formatDateTimeId(reopenAt)}</b>. Atau, unggah dokumen mood
+          board di bawah untuk membukanya sekarang.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
-        {/* Moodboard: bagaimana perasaanmu saat ini? */}
-        <div>
-          <label className="text-[11px] font-semibold leading-snug text-slate-700">
-            Bagaimana perasaanmu saat ini?
-          </label>
-          <div className="mt-2 grid grid-cols-3 gap-1.5">
-            {MOOD_OPTIONS.map((option) => {
-              const selected = mood === option.key;
-              return (
-                <button
-                  type="button"
-                  key={option.key}
-                  onClick={() => setMood(option.key)}
-                  aria-pressed={selected}
-                  className={`flex flex-col items-center gap-0.5 rounded-lg border px-1 py-2 text-center transition-all ${
-                    selected
-                      ? "border-rose-400 bg-rose-50 ring-2 ring-rose-500/20"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <span className="text-lg leading-none">{option.emoji}</span>
-                  <span className="text-[9.5px] font-semibold leading-tight text-slate-600">
-                    {option.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <label className="mt-1 text-[11px] font-semibold leading-snug text-slate-700">
-          Apa yang membuatmu terlambat? Ceritakan kendalamu (akan dibaca konselor untuk membantumu).
+        <label className="text-[11px] font-semibold leading-snug text-slate-700">
+          Unggah dokumen mood board (akan ditinjau konselor untuk membantumu).
         </label>
-        <textarea
-          required
-          rows={3}
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          placeholder="Mis. sedang banyak ujian, kurang sehat, atau bingung dengan materinya..."
-          className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[12.5px] text-slate-700 outline-none transition-all focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20"
-        />
+        <label
+          className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-5 text-center transition-all ${
+            file
+              ? "border-fuchsia-400 bg-fuchsia-50"
+              : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+          }`}
+        >
+          <UploadCloud size={20} className={file ? "text-fuchsia-500" : "text-slate-400"} />
+          <span className="text-[11.5px] font-semibold text-slate-600">
+            {file ? file.name : "Pilih file (PDF / gambar / dokumen, maks 8 MB)"}
+          </span>
+          <input
+            type="file"
+            accept="image/*,.pdf,.doc,.docx,.ppt,.pptx"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          />
+        </label>
         {error && <p className="text-[11px] font-semibold text-rose-600">{error}</p>}
         <button
           type="submit"
-          disabled={isSubmitting || !reason.trim() || !mood}
+          disabled={isSubmitting || !file}
           className="rounded-lg bg-[#2e1065] py-2.5 text-[12px] font-bold text-white transition-all hover:bg-[#3b0764] disabled:bg-slate-300"
         >
-          {isSubmitting ? "Mengirim..." : "Kirim & Buka Modul"}
+          {isSubmitting ? "Mengunggah..." : "Unggah & Buka Modul"}
         </button>
       </form>
     </div>

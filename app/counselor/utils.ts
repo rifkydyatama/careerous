@@ -38,6 +38,7 @@ export type CounselorJournal = {
   lateCount?: number;
   lateReason?: string | null;
   lateMood?: string | null;
+  moodDocumentUrl?: string | null;
   updatedAt?: string;
 };
 

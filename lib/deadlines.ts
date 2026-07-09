@@ -15,7 +15,6 @@
 
 import { prisma } from "./prisma";
 import { isPremiumEffective } from "./subscription";
-import { getMood } from "./modules";
 import { getModuleContents } from "./module-content";
 
 export const GRACE_HOURS = 24; // waktu mengisi moodboard setelah batas terlewat
@@ -143,9 +142,9 @@ export async function processStudentDeadlines(
           userId: studentId,
           type: "MODULE_LOCKED",
           title: `Batas waktu Modul ${journal.weekNumber} terlewat`,
-          body: `Kamu melewati batas waktu Modul ${journal.weekNumber}. Isi moodboard (perasaan & alasan) sebelum ${formatDateId(
+          body: `Kamu melewati batas waktu Modul ${journal.weekNumber}. Unggah dokumen mood board sebelum ${formatDateId(
             graceUntil
-          )} untuk membuka modul kembali (+1 hari). Jika tidak, konselor akan diminta membukakannya.`,
+          )} untuk membuka modul kembali (+1 hari). Jika tidak, maka modul akan terblokir.`,
           moduleNumber: journal.weekNumber,
         },
       });
@@ -184,22 +183,18 @@ export async function processStudentDeadlines(
 }
 
 /**
- * Moodboard: siswa mengisi perasaan + alasan keterlambatan untuk membuka kembali modul terkunci
- * (masa grace). Modul terbuka kembali dengan perpanjangan +1 hari, konselor diberi tahu mood+alasan.
+ * Mood board: siswa mengunggah dokumen untuk membuka kembali modul yang terblokir
+ * (masa grace). Modul terbuka kembali dengan perpanjangan +1 hari, konselor diberi tahu.
  */
-export async function submitLateReason(
+export async function submitMoodDocument(
   studentId: string,
   weekNumber: number,
-  reason: string,
-  mood?: string | null
+  documentUrl: string
 ): Promise<{ ok: boolean; error?: string; status?: number }> {
-  const trimmed = reason.trim();
-  if (!trimmed) {
-    return { ok: false, error: "Alasan wajib diisi", status: 400 };
+  const url = documentUrl.trim();
+  if (!url || !/^https?:\/\//i.test(url)) {
+    return { ok: false, error: "Dokumen wajib diunggah", status: 400 };
   }
-
-  // Moodboard: perasaan siswa (opsional). Simpan hanya bila valid.
-  const moodOption = getMood(mood);
 
   const student = await prisma.user.findUnique({
     where: { id: studentId },
@@ -217,19 +212,20 @@ export async function submitLateReason(
   }
 
   const now = new Date();
-  // Hanya modul yang terkunci karena batas & masih dalam masa grace yang bisa dibuka via moodboard.
+  // Hanya modul yang terblokir karena batas & masih dalam masa grace yang bisa dibuka via mood board.
   const isTempLocked =
     journal.status === "LOCKED" && journal.lockedUntil && journal.lockedUntil > now;
   if (!isTempLocked) {
-    return { ok: false, error: "Modul tidak sedang menunggu moodboard", status: 409 };
+    return { ok: false, error: "Modul tidak sedang menunggu mood board", status: 409 };
   }
 
   const newDeadline = addHours(now, EXTENSION_HOURS);
   await prisma.journalProgress.update({
     where: { id: journal.id },
     data: {
-      lateReason: trimmed,
-      lateMood: moodOption?.key ?? null,
+      moodDocumentUrl: url,
+      lateReason: null,
+      lateMood: null,
       status: "UNLOCKED",
       unlockedAt: now,
       deadlineAt: newDeadline,
@@ -238,20 +234,16 @@ export async function submitLateReason(
     },
   });
 
-  // Beri tahu konselor agar dapat menganalisis kendala siswa.
+  // Beri tahu konselor bahwa siswa mengunggah dokumen mood board.
   const counselors = await getCounselors();
   if (counselors.length > 0) {
     const name = student.name?.trim() || "Seorang siswa";
-    const preview = trimmed.length > 160 ? `${trimmed.slice(0, 160)}…` : trimmed;
-    const moodText = moodOption
-      ? ` Perasaan siswa: ${moodOption.emoji} ${moodOption.label}.`
-      : "";
     await prisma.notification.createMany({
       data: counselors.map((counselor) => ({
         userId: counselor.id,
-        type: "LATE_REASON",
-        title: `${name} menjelaskan keterlambatan (Modul ${weekNumber})`,
-        body: `Alasan keterlambatan: "${preview}".${moodText} Modul dibuka kembali (+1 hari). Pertimbangkan untuk melakukan pendampingan.`,
+        type: "MOOD_DOCUMENT",
+        title: `${name} mengunggah dokumen mood board (Modul ${weekNumber})`,
+        body: `${name} mengunggah dokumen untuk membuka Modul ${weekNumber}. Modul dibuka kembali (+1 hari). Silakan tinjau dokumennya.`,
         moduleNumber: weekNumber,
         relatedStudentId: studentId,
       })),

@@ -18,7 +18,7 @@ import {
   COUNSELOR_RIASEC_DIMENSIONS,
   getInitials,
 } from "../utils";
-import { getModule, getMood } from "@/lib/modules";
+import { getModule } from "@/lib/modules";
 
 export default function StudentsPage() {
   const [students, setStudents] = useState<CounselorStudent[]>([]);
@@ -529,21 +529,15 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
       )}
 
       <div className="p-4">
-        {journal.lateReason && (
-          <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <div className="mb-1 flex flex-wrap items-center gap-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-amber-700">
-              <AlertTriangle size={11} /> Alasan Keterlambatan (Tugas Transisi)
-              {(() => {
-                const m = getMood(journal.lateMood);
-                return m ? (
-                  <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[9.5px] normal-case tracking-normal text-amber-800">
-                    {m.emoji} {m.label}
-                  </span>
-                ) : null;
-              })()}
-            </div>
-            <p className="text-[12.5px] leading-relaxed text-amber-900">{journal.lateReason}</p>
-          </div>
+        {journal.moodDocumentUrl && (
+          <a
+            href={journal.moodDocumentUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mb-3 flex items-center gap-1.5 rounded-lg border border-fuchsia-200 bg-fuchsia-50 p-3 text-[11.5px] font-bold text-fuchsia-700 transition hover:bg-fuchsia-100"
+          >
+            <ExternalLink size={12} /> Lihat Dokumen Mood Board
+          </a>
         )}
 
         <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Mood Board</div>
