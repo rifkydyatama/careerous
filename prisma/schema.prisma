@@ -73,6 +73,7 @@ model User {
   name            String?
   email           String?           @unique
   passwordHash    String?
+  avatar          String?           @db.Text
   role            UserRole          @default(STUDENT)
   plan            PlanTier          @default(FREE)
   institutionId   String?           @db.Uuid

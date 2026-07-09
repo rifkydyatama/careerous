@@ -72,6 +72,8 @@ export type Institution = {
 export type CurrentUser = {
   id: string;
   name: string | null;
+  email?: string | null;
+  avatar?: string | null;
   role: string;
   institutionId: string | null;
   institution: {

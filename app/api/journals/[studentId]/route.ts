@@ -76,6 +76,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         id: true,
         name: true,
         email: true,
+        avatar: true,
         role: true,
         plan: true,
         institution: {
@@ -137,6 +138,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         id: student.id,
         name: student.name,
         email: student.email,
+        avatar: (student as any).avatar ?? null,
       },
       journals: journalsWithGate,
     });

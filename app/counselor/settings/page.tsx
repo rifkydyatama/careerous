@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import {
   fetchCounselorOverview,
+  fetchCurrentUser,
   CounselorStudent,
+  CurrentUser,
 } from "../utils";
+import { AccountSettingsForm } from "../../components/AccountSettingsForm";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [students, setStudents] = useState<CounselorStudent[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -18,8 +22,12 @@ export default function SettingsPage() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      const response = await fetchCounselorOverview();
-      setStudents(response.students);
+      const [overviewRes, userRes] = await Promise.all([
+        fetchCounselorOverview(),
+        fetchCurrentUser(),
+      ]);
+      setStudents(overviewRes.students);
+      setCurrentUser(userRes);
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Gagal memuat data pengaturan"
@@ -115,41 +123,48 @@ export default function SettingsPage() {
           )}
 
           <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Pengaturan Akun</p>
-              <h3 className="mt-1 text-sm font-extrabold text-slate-900">Sari Rahmawati, S.Pd.</h3>
-              <p className="mt-1 text-[13px] text-slate-500">Konselor / Guru BK</p>
+            <div className="flex flex-col gap-4">
+              <AccountSettingsForm
+                initialName={currentUser?.name || ""}
+                initialEmail={currentUser?.email || ""}
+                initialAvatar={currentUser?.avatar || null}
+                onSuccess={() => void loadOverview()}
+              />
+              
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Akses Sistem</p>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Peran</p>
-                  <p className="mt-1 text-[12px] font-semibold text-slate-900">COUNSELOR</p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Peran</p>
+                    <p className="mt-1 text-[12px] font-semibold text-slate-900">COUNSELOR</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Siswa Aktif</p>
+                    <p className="mt-1 text-[12px] font-semibold text-slate-900">{summary.totalStudents} orang</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Reviu Tertunda</p>
+                    <p className="mt-1 text-[12px] font-semibold text-slate-900">{summary.totalPending} jurnal</p>
+                  </div>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Siswa Aktif</p>
-                  <p className="mt-1 text-[12px] font-semibold text-slate-900">{summary.totalStudents} orang</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Reviu Tertunda</p>
-                  <p className="mt-1 text-[12px] font-semibold text-slate-900">{summary.totalPending} jurnal</p>
-                </div>
-              </div>
 
-              <div className="mt-5 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={handleAddStudent}
-                  className="rounded-lg bg-[#2e1065] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#3b0764]"
-                >
-                  Tambah Siswa Baru
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void handleLogout()}
-                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-[12px] font-bold text-red-700 transition-colors hover:bg-red-100"
-                >
-                  Keluar dari Sistem
-                </button>
+                <div className="mt-5 flex flex-wrap gap-3 border-t border-slate-100 pt-5">
+                  <button
+                    type="button"
+                    onClick={handleAddStudent}
+                    className="rounded-lg bg-[#2e1065] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#3b0764]"
+                  >
+                    Tambah Siswa Baru
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleLogout()}
+                    className="rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-[12px] font-bold text-red-700 transition-colors hover:bg-red-100"
+                  >
+                    Keluar dari Sistem
+                  </button>
+                </div>
               </div>
             </div>
 

@@ -43,6 +43,7 @@ export type StudentProfile = {
   id: string;
   name: string | null;
   email: string | null;
+  avatar?: string | null;
 };
 
 export type PremiumSource = "NONE" | "PERSONAL" | "INSTITUTION";

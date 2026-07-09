@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { fetchStudentDashboard, StudentDashboardResponse } from "../utils";
+import { AccountSettingsForm } from "../../../../components/AccountSettingsForm";
 
 export default function SettingsPage() {
   const params = useParams<{ studentId: string }>();
@@ -13,27 +14,24 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
-      try {
-        const response = await fetchStudentDashboard(studentId);
-        if (mounted) setData(response);
-      } catch (error) {
-        if (mounted) {
-          setErrorMessage(
-            error instanceof Error ? error.message : "Gagal memuat data pengaturan"
-          );
-        }
-      } finally {
-        if (mounted) setIsLoading(false);
-      }
-    };
-    void load();
-    return () => { mounted = false; };
+  const load = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const response = await fetchStudentDashboard(studentId);
+      setData(response);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Gagal memuat data pengaturan"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }, [studentId]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const handleLogout = async () => {
     try {
@@ -70,30 +68,36 @@ export default function SettingsPage() {
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Profil Anda</p>
-            <h3 className="mt-1 text-sm font-extrabold text-slate-900">{data.student?.name || "Siswa Tidak Dikenal"}</h3>
-            <p className="mt-1 text-[13px] text-slate-500">{data.student?.email || "Email tidak tersedia"}</p>
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">ID Akses</p>
-                <p className="mt-1 text-[12px] font-semibold text-slate-900">{studentId.slice(0, 8)}...</p>
+          <div className="flex flex-col gap-4">
+            <AccountSettingsForm
+              initialName={data.student?.name || ""}
+              initialEmail={data.student?.email || ""}
+              initialAvatar={data.student?.avatar || null}
+              onSuccess={() => void load()}
+            />
+            
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Akses Sistem</p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">ID Akses</p>
+                  <p className="mt-1 text-[12px] font-semibold text-slate-900">{studentId.slice(0, 8)}...</p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Peran</p>
+                  <p className="mt-1 text-[12px] font-semibold text-slate-900">STUDENT</p>
+                </div>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Peran</p>
-                <p className="mt-1 text-[12px] font-semibold text-slate-900">STUDENT</p>
-              </div>
-            </div>
 
-            <div className="mt-5 border-t border-slate-100 pt-5">
-              <button
-                type="button"
-                onClick={() => void handleLogout()}
-                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-[12px] font-bold text-red-700 transition-colors hover:bg-red-100"
-              >
-                Keluar dari Sistem
-              </button>
+              <div className="mt-5 border-t border-slate-100 pt-5">
+                <button
+                  type="button"
+                  onClick={() => void handleLogout()}
+                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-[12px] font-bold text-red-700 transition-colors hover:bg-red-100 w-full sm:w-auto text-center"
+                >
+                  Keluar dari Sistem
+                </button>
+              </div>
             </div>
           </div>
 
