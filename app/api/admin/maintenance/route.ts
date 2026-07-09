@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
     const updated = await setMaintenanceMode(body.active);
     return NextResponse.json({ success: true, maintenanceMode: updated.maintenanceMode });
   } catch (error) {
-    return NextResponse.json({ error: "Gagal mengubah status pemeliharaan" }, { status: 500 });
+    console.error("MAINTENANCE_TOGGLE_ERROR:", error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : "Gagal mengubah status pemeliharaan" 
+    }, { status: 500 });
   }
 }
