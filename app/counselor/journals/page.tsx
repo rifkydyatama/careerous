@@ -5,6 +5,7 @@ import { RefreshCw, CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, A
 import {
   fetchCounselorOverview,
   submitCounselorFeedback,
+  unlockStudentModule,
   CounselorStudent,
   CounselorJournal,
   formatDateTimeId,
@@ -83,6 +84,36 @@ export default function JournalsPage() {
     []
   );
 
+  const handleUnlockModule = useCallback(
+    async (studentId: string, weekNumber: number) => {
+      await unlockStudentModule(studentId, weekNumber);
+      setStudents((previousStudents) =>
+        previousStudents.map((student) => {
+          if (student.id !== studentId) {
+            return student;
+          }
+
+          const journals = student.journals.map((journal) =>
+            journal.weekNumber === weekNumber
+              ? {
+                  ...journal,
+                  status: "UNLOCKED" as const,
+                  lockedUntil: null,
+                  lateCount: 3,
+                }
+              : journal
+          );
+
+          return {
+            ...student,
+            journals,
+          };
+        })
+      );
+    },
+    []
+  );
+
   const studentsWithJournals = useMemo(() => {
     return students.filter((s) => s.journals.length > 0);
   }, [students]);
@@ -133,7 +164,12 @@ export default function JournalsPage() {
           ) : (
             <div className="flex flex-col gap-3">
               {studentsWithJournals.map((student) => (
-                <StudentJournalRow key={student.id} student={student} onSaveFeedback={handleSaveFeedback} />
+                <StudentJournalRow
+                  key={student.id}
+                  student={student}
+                  onSaveFeedback={handleSaveFeedback}
+                  onUnlockModule={handleUnlockModule}
+                />
               ))}
             </div>
           )}
@@ -143,7 +179,15 @@ export default function JournalsPage() {
   );
 }
 
-function StudentJournalRow({ student, onSaveFeedback }: { student: CounselorStudent; onSaveFeedback: (studentId: string, weekNumber: number, feedbackText: string) => Promise<void>; }) {
+function StudentJournalRow({
+  student,
+  onSaveFeedback,
+  onUnlockModule,
+}: {
+  student: CounselorStudent;
+  onSaveFeedback: (studentId: string, weekNumber: number, feedbackText: string) => Promise<void>;
+  onUnlockModule: (studentId: string, weekNumber: number) => Promise<void>;
+}) {
   const [isOpen, setIsOpen] = useState(student.pendingFeedback > 0);
 
   return (
@@ -180,7 +224,13 @@ function StudentJournalRow({ student, onSaveFeedback }: { student: CounselorStud
       {isOpen && (
         <div className="flex flex-col gap-3 border-t border-slate-200 bg-[#FAFBFD] p-5">
           {student.journals.map((journal) => (
-            <JournalCard key={journal.id} journal={journal} studentId={student.id} onSave={onSaveFeedback} />
+            <JournalCard
+              key={journal.id}
+              journal={journal}
+              studentId={student.id}
+              onSave={onSaveFeedback}
+              onUnlock={onUnlockModule}
+            />
           ))}
         </div>
       )}
@@ -189,10 +239,22 @@ function StudentJournalRow({ student, onSaveFeedback }: { student: CounselorStud
 }
 
 // ─── COMPONENT: Journal Card & Feedback Form ───
-function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal; studentId: string; onSave: (studentId: string, weekNumber: number, feedbackText: string) => Promise<void>; }) {
+function JournalCard({
+  journal,
+  studentId,
+  onSave,
+  onUnlock,
+}: {
+  journal: CounselorJournal;
+  studentId: string;
+  onSave: (studentId: string, weekNumber: number, feedbackText: string) => Promise<void>;
+  onUnlock: (studentId: string, weekNumber: number) => Promise<void>;
+}) {
   const [draft, setDraft] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
   const isPending = !journal.counselorFeedback && Boolean(journal.reflectionText);
 
   const handleSubmit = async () => {
@@ -218,12 +280,28 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
     }
   };
 
+  const handleUnlockClick = async () => {
+    setIsUnlocking(true);
+    setUnlockError(null);
+    try {
+      await onUnlock(studentId, journal.weekNumber);
+    } catch (error) {
+      setUnlockError(
+        error instanceof Error ? error.message : "Gagal membuka kunci modul"
+      );
+    } finally {
+      setIsUnlocking(false);
+    }
+  };
+
   const meta = getModule(journal.weekNumber);
   const isTempLocked =
     journal.status === "LOCKED" &&
     journal.lockedUntil &&
     new Date(journal.lockedUntil).getTime() > Date.now();
   const isLate = journal.status === "UNLOCKED" && (journal.lateCount ?? 0) > 0;
+  const isPermanentlyLocked = journal.status === "LOCKED" && (journal.lateCount ?? 0) >= 2;
+  const isGraceLocked = journal.status === "LOCKED" && (journal.lateCount ?? 0) === 1;
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
@@ -234,12 +312,12 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
         <div className="flex items-center gap-1.5">
           {isLate && (
             <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-amber-700">
-              <AlertTriangle size={10} /> Terblokir
+              <AlertTriangle size={10} /> Terlambat
             </span>
           )}
-          {isTempLocked && (
+          {(isTempLocked || isPermanentlyLocked) && (
             <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-rose-700">
-              <Lock size={10} /> Terblokir
+              <Lock size={10} /> Terkunci
             </span>
           )}
           {journal.reflectionText && (
@@ -252,9 +330,41 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
         </div>
       </div>
 
-      {isTempLocked && (
-        <div className="border-b border-rose-100 bg-rose-50/60 px-4 py-2 text-[11px] font-medium text-rose-700">
-          Modul terkunci hingga {formatDateTimeId(journal.lockedUntil)}. Mohon berikan pendampingan.
+      {isGraceLocked && (
+        <div className="border-b border-amber-100 bg-amber-50/75 px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-[11.5px] font-medium text-amber-800">
+          <div className="flex-1">
+            <span className="font-bold">Masa Tenggang:</span> Modul ini terkunci sementara hingga <b>{formatDateTimeId(journal.lockedUntil)}</b> karena siswa terlambat. Siswa harus mengunggah dokumen mood board untuk membukanya sendiri, atau Anda dapat membukanya sekarang.
+          </div>
+          <button
+            type="button"
+            onClick={handleUnlockClick}
+            disabled={isUnlocking}
+            className="rounded-lg bg-amber-600 px-3.5 py-1.5 text-[11px] font-bold text-white transition hover:bg-amber-700 disabled:opacity-50"
+          >
+            {isUnlocking ? "Membuka..." : "Buka Akses Sekarang"}
+          </button>
+        </div>
+      )}
+
+      {isPermanentlyLocked && (
+        <div className="border-b border-rose-100 bg-rose-50/75 px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-[11.5px] font-medium text-rose-800">
+          <div className="flex-1">
+            <span className="font-bold">Terblokir Permanen:</span> Siswa tidak mengunggah dokumen mood board tepat waktu hingga batas masa tenggang habis. Modul hanya dapat dibuka oleh Anda sebagai Konselor.
+          </div>
+          <button
+            type="button"
+            onClick={handleUnlockClick}
+            disabled={isUnlocking}
+            className="rounded-lg bg-rose-600 px-3.5 py-1.5 text-[11px] font-bold text-white transition hover:bg-rose-700 disabled:opacity-50"
+          >
+            {isUnlocking ? "Membuka..." : "Buka Akses Modul"}
+          </button>
+        </div>
+      )}
+
+      {unlockError && (
+        <div className="border-b border-rose-100 bg-rose-50 px-4 py-2 text-[11px] font-semibold text-rose-600">
+          {unlockError}
         </div>
       )}
 
