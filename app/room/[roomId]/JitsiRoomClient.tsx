@@ -49,7 +49,17 @@ export default function JitsiRoomClient({
   };
 
   return (
-    <div className="h-screen w-full bg-black">
+    <div className="relative h-screen w-full bg-black">
+      {/* Overlay Mask for Jitsi Watermark */}
+      <div className="absolute left-0 top-0 z-[100] flex h-[80px] w-[250px] items-start p-4">
+        <div className="flex items-center gap-2 rounded-lg bg-black/50 px-3 py-1.5 backdrop-blur-md">
+          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#2e1065] text-[10px] font-bold text-white shadow-sm">
+            CR
+          </div>
+          <span className="text-[13px] font-bold tracking-wide text-white">Careerous Meet</span>
+        </div>
+      </div>
+      
       <JitsiMeeting
         domain="meet.jit.si"
         roomName={`careerous-room-${roomId}`}
