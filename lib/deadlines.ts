@@ -180,7 +180,7 @@ export async function submitMoodDocument(
   lateReason?: string
 ): Promise<{ ok: boolean; error?: string; status?: number }> {
   const url = documentUrl.trim();
-  if (!url || !/^https?:\/\//i.test(url)) {
+  if (!url || (!/^https?:\/\//i.test(url) && !/^data:/i.test(url))) {
     return { ok: false, error: "Dokumen wajib diunggah", status: 400 };
   }
 
