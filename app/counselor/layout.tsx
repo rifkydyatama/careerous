@@ -76,8 +76,12 @@ export default function CounselorLayout({
         </div>
 
         <div className="mx-3 mt-3 flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-xs font-extrabold text-white">
-            {initialsOf(me?.name)}
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-xs font-extrabold text-white">
+            {me?.avatar ? (
+              <Image src={me.avatar} alt="Avatar" width={36} height={36} className="h-full w-full object-cover" />
+            ) : (
+              initialsOf(me?.name)
+            )}
           </div>
           <div className="min-w-0">
             <p className="truncate text-[11.5px] font-bold text-slate-900">{counselorName}</p>

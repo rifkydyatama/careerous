@@ -3,12 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { LayoutDashboard, Users, Building2, BookOpen, Clock, LogOut, Inbox } from "lucide-react";
 import { UNIVERSITY } from "@/lib/identity";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [me, setMe] = useState<{ name: string | null; avatar?: string | null } | null>(null);
+
+  useEffect(() => {
+    void fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((d) => { if (d?.user) setMe(d.user); })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -63,13 +73,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <div className="flex items-center gap-2.5">
             <div className="text-right">
-              <p className="text-[11.5px] font-bold text-slate-900">Administrator</p>
+              <p className="text-[11.5px] font-bold text-slate-900">{me?.name || "Administrator"}</p>
               <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">
                 {UNIVERSITY.unit}
               </p>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563eb] text-xs font-extrabold text-white">
-              A
+            <div className="flex h-9 w-9 overflow-hidden items-center justify-center rounded-lg bg-[#2563eb] text-xs font-extrabold text-white">
+              {me?.avatar ? (
+                <Image src={me.avatar} alt="Avatar" width={36} height={36} className="h-full w-full object-cover" />
+              ) : (
+                (me?.name?.[0] || "A").toUpperCase()
+              )}
             </div>
           </div>
         </header>

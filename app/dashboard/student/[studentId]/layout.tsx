@@ -26,6 +26,7 @@ import {
 type MeUser = {
   id: string;
   name: string | null;
+  avatar?: string | null;
   institution?: { name: string } | null;
 };
 
@@ -112,8 +113,12 @@ export default function StudentLayout({
                 <p className="text-[11.5px] font-bold text-slate-900">{me?.name?.split(" ")[0] || "Siswa Aktif"}</p>
                 <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">{schoolName}</p>
               </div>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2563eb] text-xs font-extrabold text-white shadow-sm">
-                {(me?.name?.[0] || "S").toUpperCase()}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#2563eb] text-xs font-extrabold text-white shadow-sm">
+                {me?.avatar ? (
+                  <Image src={me.avatar} alt="Avatar" width={36} height={36} className="h-full w-full object-cover" />
+                ) : (
+                  (me?.name?.[0] || "S").toUpperCase()
+                )}
               </div>
             </div>
           </div>

@@ -80,6 +80,7 @@ export async function GET(request: NextRequest) {
     );
     return NextResponse.json({ requests: sorted.map(serialize) });
   } catch (error) {
+    console.error("GET SubscriptionRequests Error:", error);
     return NextResponse.json(
       { error: "Gagal memuat pengajuan" },
       { status: 500 }
