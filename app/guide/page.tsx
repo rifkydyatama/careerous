@@ -42,8 +42,8 @@ export default function GuidePage() {
       points: [
         "Akses halaman Pendaftaran dari halaman utama.",
         "Pilih peran sebagai <b>Siswa</b>.",
-        "Masukkan nama lengkap, email sekolah/aktif, dan buat kata sandi yang aman (minimal 8 karakter).",
-        "Setelah terdaftar, Anda akan langsung diarahkan ke Dasbor Utama Siswa."
+        "Masukkan nama lengkap, email aktif, dan buat kata sandi yang kuat (minimal 8 karakter).",
+        "Setelah berhasil mendaftar, Anda akan langsung masuk ke Dasbor Siswa."
       ]
     },
     {
@@ -52,10 +52,10 @@ export default function GuidePage() {
       icon: Compass,
       desc: "Menemukan kepribadian RIASEC dominan dan gaya belajar terbaik Anda.",
       points: [
-        "Klik menu <b>Tes RIASEC & Gaya Belajar</b> pada sidebar kiri dasbor.",
-        "Isi kuesioner RIASEC (60 pertanyaan singkat mengenai kesukaan aktivitas Anda).",
-        "Lanjutkan dengan mengisi kuesioner Gaya Belajar (14 pertanyaan pilihan ganda).",
-        "Klik <b>Simpan Jawaban</b> untuk langsung melihat visualisasi diagram minat RIASEC, deskripsi kepribadian, gaya belajar dominan (Visual/Auditorial/Kinestetik), dan rekomendasi cara belajar yang efektif."
+        "Klik menu <b>Tes RIASEC & Gaya Belajar</b> pada baris menu sebelah kiri.",
+        "Isi kuesioner RIASEC yang berisi daftar aktivitas yang mungkin Anda sukai.",
+        "Lanjutkan dengan mengisi kuesioner pilihan ganda tentang Gaya Belajar.",
+        "Klik <b>Simpan Jawaban</b> untuk langsung melihat diagram kepribadian Anda dan cara belajar yang paling pas (Visual, Auditorial, atau Kinestetik)."
       ]
     },
     {
@@ -65,35 +65,35 @@ export default function GuidePage() {
       desc: "Tahapan terpenting untuk mengeksplorasi pemikiran dan pemahaman karier.",
       points: [
         "Masuk ke menu <b>Modul Eksplorasi</b>.",
-        "Anda wajib menyelesaikan 12 modul secara berurutan. Setiap modul berisi pertanyaan reflektif mendalam.",
-        "Tulis jawaban Anda secara jujur dan lengkap pada kolom teks yang disediakan di setiap modul.",
-        "Anda juga dapat mengunggah berkas pendukung (foto, dokumen PDF/Word) di bagian bawah modul untuk memperkuat catatan refleksi Anda.",
-        "<b>Penting (Batas Waktu)</b>: Tiap modul memiliki batas waktu pengerjaan (default: 48 jam). Jika Anda terlambat mengisi, modul akan terblokir. Anda harus mengunggah dokumen/bukti pengisi waktu telat (moodboard/kegiatan) atau meminta Bantuan Konselor untuk membuka kunci modul."
+        "Anda harus menyelesaikan 12 modul secara berurutan. Setiap modul berisi pertanyaan untuk membantu Anda merenungkan rencana masa depan.",
+        "Ketikkan jawaban Anda pada kolom teks yang disediakan.",
+        "Anda juga dapat melampirkan berkas tambahan (seperti foto atau dokumen) jika diperlukan.",
+        "<b>Catatan Waktu</b>: Tiap modul memiliki batas waktu pengerjaan. Jika terlambat, modul akan terkunci secara otomatis. Anda harus meminta bantuan Guru BK untuk membukanya kembali."
       ]
     },
     {
       id: "std-4",
       title: "Konseling & Jadwal Pertemuan",
       icon: Calendar,
-      desc: "Berkonsultasi secara tatap muka atau panggilan video interaktif dengan Guru BK.",
+      desc: "Berkonsultasi secara tatap muka atau panggilan video dengan Guru BK.",
       points: [
-        "Pilih menu <b>Jadwal Konseling</b> di dasbor.",
-        "Lihat daftar jadwal konseling yang disediakan oleh konselor sekolah Anda.",
-        "Klik <b>Booking Jadwal</b> pada slot waktu yang sesuai, lalu ketikkan topik/permasalahan yang ingin Anda diskusikan.",
-        "Setelah disetujui oleh konselor, Anda akan menerima tautan video call (Google Meet/Jitsi) atau instruksi lokasi pertemuan langsung.",
-        "Anda juga dapat memantau riwayat janji temu yang telah selesai maupun yang akan datang."
+        "Pilih menu <b>Jadwal Konseling</b> di dasbor Anda.",
+        "Lihat daftar jadwal konseling yang sudah disiapkan oleh Guru BK di sekolah Anda.",
+        "Klik <b>Booking Jadwal</b> pada waktu yang cocok, lalu tuliskan topik permasalahan yang ingin didiskusikan.",
+        "Setelah disetujui, Anda akan mendapatkan tautan untuk pertemuan online (video call) atau informasi lokasi tatap muka.",
+        "Anda dapat mengecek status janji temu yang telah diajukan."
       ]
     },
     {
       id: "std-5",
-      title: "Mengunduh Laporan Karier AI",
+      title: "Mengunduh Laporan Karier",
       icon: FileText,
-      desc: "Melihat hasil sintesis AI mengenai kecenderungan karier masa depan Anda.",
+      desc: "Melihat hasil ringkasan mengenai kecenderungan karier masa depan Anda.",
       points: [
-        "Setelah Anda menyelesaikan **seluruh 12 modul**, menu **Laporan Karier** akan aktif.",
-        "Sistem AI (GPT) akan menganalisis seluruh tulisan jurnal refleksi Anda untuk menghasilkan laporan komprehensif.",
-        "Laporan berisi: **Analisis Sentimen Jurnal** (positif/netral/campuran), **Tema Karier Dominan** yang terdeteksi, serta **Saran Langkah Selanjutnya**.",
-        "Gunakan laporan ini sebagai bahan diskusi utama bersama Guru BK/Konselor Anda untuk menyusun rencana studi lanjut."
+        "Setelah Anda menyelesaikan <b>seluruh 12 modul</b>, menu <b>Laporan Karier</b> akan otomatis terbuka.",
+        "Sistem akan merangkum seluruh jawaban jurnal yang sudah Anda tulis untuk dijadikan satu laporan utuh.",
+        "Laporan tersebut akan memuat <b>Sentimen Jurnal</b> Anda, <b>Tema Karier Utama</b> yang sering muncul, dan <b>Saran Langkah Selanjutnya</b>.",
+        "Gunakan laporan ini sebagai panduan berdiskusi dengan Guru BK untuk mematangkan rencana studi lanjut."
       ]
     }
   ];
@@ -105,45 +105,45 @@ export default function GuidePage() {
       icon: Users,
       desc: "Melihat data siswa bimbingan secara cepat dan ringkas.",
       points: [
-        "Akses menu <b>Daftar Siswa</b> pada sidebar kiri panel Konselor.",
-        "Data siswa disajikan dalam **tabel ringkas** interaktif: Nama, Progres Modul, Kepribadian RIASEC Teratas, dan Status Akun.",
-        "Gunakan bilah **Pencarian** untuk mencari nama siswa, atau filter tombol cepat seperti <i>Terblokir/Kendala</i> untuk melihat siswa yang butuh bantuan segera.",
-        "Klik salah satu baris siswa untuk membuka **Sliding Drawer (Panel Samping)** yang memuat data detail siswa tanpa menutup halaman utama."
+        "Akses menu <b>Daftar Siswa</b> pada baris menu sebelah kiri.",
+        "Data siswa disajikan dalam tabel yang memuat: Nama, Progres Modul, Kepribadian RIASEC Teratas, dan Status Akun.",
+        "Gunakan kolom <b>Pencarian</b> untuk mencari nama siswa dengan cepat, atau klik tombol filter seperti <i>Terblokir</i> untuk melihat siswa yang butuh bantuan segera.",
+        "Klik baris nama siswa untuk membuka <b>Panel Samping</b> berisi data rincian siswa tanpa harus berpindah halaman."
       ]
     },
     {
       id: "cns-2",
       title: "Reviu & Umpan Balik Jurnal",
       icon: BookOpen,
-      desc: "Membaca refleksi siswa dan memberikan arahan bimbingan.",
+      desc: "Membaca catatan refleksi siswa dan memberikan arahan bimbingan.",
       points: [
         "Pilih menu <b>Reviu Jurnal</b>.",
-        "Anda dapat menyaring jurnal berdasarkan status pengerjaan siswa.",
-        "Klik pada jurnal siswa untuk membaca pertanyaan modul dan jawaban lengkap yang ditulis siswa, serta mengunduh file lampiran jika ada.",
-        "Berikan umpan balik (*feedback*) konstruktif pada kolom komentar di bagian bawah jurnal untuk membimbing pemikiran karier siswa."
+        "Anda dapat menyaring tampilan jurnal berdasarkan status pengerjaannya.",
+        "Klik pada jurnal siswa untuk membaca jawaban lengkap yang mereka tulis, serta mengunduh lampiran file jika ada.",
+        "Berikan tanggapan atau masukan di kolom komentar pada bagian bawah jurnal untuk membimbing arah pemikiran karier siswa."
       ]
     },
     {
       id: "cns-3",
       title: "Mengelola Jadwal Konseling",
       icon: Calendar,
-      desc: "Menyediakan slot waktu bimbingan tatap muka maupun online.",
+      desc: "Menyediakan jadwal bimbingan tatap muka maupun online.",
       points: [
-        "Akses menu <b>Jadwal Program</b>.",
-        "Klik tombol <b>Buat Slot Baru</b>, tentukan tanggal, jam mulai, jam selesai, kapasitas siswa, serta tautan video call (mis. Google Meet/Jitsi) atau lokasi ruang BK.",
-        "Anda akan menerima notifikasi jika ada siswa yang mem-booking slot tersebut.",
-        "Anda dapat menyetujui (*Approve*) atau menolak (*Reject*) dengan pesan arahan tambahan untuk siswa."
+        "Buka menu <b>Jadwal Program</b>.",
+        "Klik tombol <b>Buat Slot Baru</b>, tentukan tanggal, jam mulai, jam selesai, batas maksimal siswa, dan tautan pertemuan online (jika ada).",
+        "Anda akan mendapatkan pemberitahuan jika ada siswa yang mendaftar di jadwal tersebut.",
+        "Anda bisa menyetujui (<i>Approve</i>) atau menolak (<i>Reject</i>) pengajuan dari siswa, disertai dengan pesan singkat jika diperlukan."
       ]
     },
     {
       id: "cns-4",
-      title: "Membuka Kunci Modul Siswa (Unlock)",
+      title: "Membuka Kunci Modul (Unlock)",
       icon: Lock,
-      desc: "Membantu siswa yang mengalami hambatan waktu pengisian jurnal.",
+      desc: "Membantu siswa yang mengalami hambatan waktu saat mengisi jurnal.",
       points: [
-        "Buka profil siswa melalui Sliding Drawer di halaman **Daftar Siswa** atau halaman **Reviu Jurnal**.",
-        "Cari modul siswa yang berstatus **Terblokir** (akibat lewat batas pengerjaan).",
-        "Klik tombol **Buka Akses** di samping modul tersebut untuk langsung membuka kunci modul secara instan, sehingga siswa dapat melanjutkan jurnalnya."
+        "Buka profil siswa melalui Panel Samping di halaman <b>Daftar Siswa</b> atau halaman <b>Reviu Jurnal</b>.",
+        "Cari daftar modul siswa yang berstatus <b>Terblokir</b> (karena batas waktu pengerjaan sudah habis).",
+        "Klik tombol <b>Buka Akses</b> di sebelah modul tersebut agar siswa bisa kembali melanjutkan tugas jurnalnya."
       ]
     },
     {
@@ -152,10 +152,10 @@ export default function GuidePage() {
       icon: ShieldAlert,
       desc: "Membantu memulihkan akses siswa yang lupa kata sandi login.",
       points: [
-        "Pada halaman **Daftar Siswa**, cari siswa yang membutuhkan bantuan reset sandi.",
-        "Klik ikon **Kunci (Reset Sandi)** di kolom aksi tabel, atau buka detail siswa di Sliding Drawer.",
-        "Masukkan kata sandi baru (minimal 8 karakter), lalu simpan.",
-        "Berikan sandi baru tersebut kepada siswa untuk mereka gunakan masuk kembali ke portal."
+        "Di halaman <b>Daftar Siswa</b>, temukan siswa yang membutuhkan bantuan reset sandi.",
+        "Klik ikon <b>Kunci (Reset Sandi)</b> pada kolom aksi, atau buka profil mereka lewat Panel Samping.",
+        "Masukkan kata sandi yang baru (minimal 8 karakter), kemudian klik simpan.",
+        "Serahkan kata sandi baru tersebut ke siswa yang bersangkutan agar mereka bisa masuk kembali ke aplikasi."
       ]
     }
   ];
