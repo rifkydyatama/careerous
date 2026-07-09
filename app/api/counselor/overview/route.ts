@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { getSession } from "../../../../lib/auth-guard";
 import { TOTAL_MODULES } from "../../../../lib/modules";
 import { processAllDeadlines } from "../../../../lib/deadlines";
 import { isPremiumEffective, premiumSource } from "../../../../lib/subscription";
@@ -42,13 +43,25 @@ function serializeAssessment(
   };
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const session = getSession(request);
+  if (!session || session.role !== "COUNSELOR") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    // Pastikan status deadline mutakhir sebelum konselor membaca data.
     await processAllDeadlines();
 
+    const counselor = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { institutionId: true },
+    });
+
     const students = await prisma.user.findMany({
-      where: { role: "STUDENT" },
+      where: { 
+        role: "STUDENT",
+        ...(counselor?.institutionId ? { institutionId: counselor.institutionId } : {})
+      },
       orderBy: { createdAt: "asc" },
       select: {
         id: true,

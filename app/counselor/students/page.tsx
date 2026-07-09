@@ -7,11 +7,9 @@ import {
 } from "lucide-react";
 import {
   fetchCounselorOverview,
-  submitCounselorFeedback,
   fetchStudentReport,
   formatDateTimeId,
   CounselorStudent,
-  CounselorJournal,
   CounselorCareerReport,
   COUNSELOR_TOTAL_WEEKS,
   COUNSELOR_LEARNING_STYLE_LABELS,
@@ -46,52 +44,7 @@ export default function StudentsPage() {
     void loadOverview();
   }, [loadOverview]);
 
-  const handleSaveFeedback = useCallback(
-    async (studentId: string, weekNumber: number, feedbackText: string) => {
-      const trimmedFeedback = feedbackText.trim();
-      const savedJournal = await submitCounselorFeedback(studentId, {
-        weekNumber,
-        counselorFeedback: trimmedFeedback,
-      });
 
-      setStudents((previousStudents) =>
-        previousStudents.map((student) => {
-          if (student.id !== studentId) {
-            return student;
-          }
-
-          const journals = student.journals.map((journal) =>
-            journal.weekNumber === weekNumber
-              ? {
-                  ...journal,
-                  counselorFeedback: savedJournal.counselorFeedback ?? trimmedFeedback,
-                  status: savedJournal.status ?? journal.status,
-                  updatedAt: savedJournal.updatedAt ?? journal.updatedAt,
-                }
-              : journal
-          );
-
-          const completedCount = journals.filter(
-            (journal) => journal.status === "COMPLETED"
-          ).length;
-          const pendingFeedback = journals.filter(
-            (journal) =>
-              journal.status === "COMPLETED" &&
-              !journal.counselorFeedback &&
-              Boolean(journal.reflectionText)
-          ).length;
-
-          return {
-            ...student,
-            journals,
-            completedCount,
-            pendingFeedback,
-          };
-        })
-      );
-    },
-    []
-  );
 
   return (
     <>
@@ -146,7 +99,6 @@ export default function StudentsPage() {
                   key={student.id} 
                   student={student} 
                   totalWeeks={totalWeeks} 
-                  onSaveFeedback={handleSaveFeedback} 
                 />
               ))}
             </div>
@@ -158,7 +110,7 @@ export default function StudentsPage() {
 }
 
 // ─── COMPONENT: Student Row (Collapsible) ───
-function StudentRow({ student, totalWeeks, onSaveFeedback }: { student: CounselorStudent; totalWeeks: number; onSaveFeedback: (studentId: string, weekNumber: number, feedbackText: string) => Promise<void>; }) {
+function StudentRow({ student, totalWeeks }: { student: CounselorStudent; totalWeeks: number; }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const assessment = student.latestAssessment;
@@ -339,19 +291,19 @@ function StudentRow({ student, totalWeeks, onSaveFeedback }: { student: Counselo
 
           <CounselorReportSection studentId={student.id} />
 
-          {student.journals.length === 0 ? (
-            <div className="rounded-xl border-2 border-dashed border-slate-200 p-7 text-center">
-              <FileText size={20} className="mx-auto text-slate-400" />
-              <h5 className="text-[13px] font-bold text-slate-600">Belum Ada Jurnal</h5>
-              <p className="mt-1 text-[11.5px] text-slate-400">Siswa belum mengumpulkan jurnal apapun.</p>
+
+          <div className="mt-4 flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/50 p-4">
+            <div>
+              <p className="text-[13px] font-bold text-slate-900">Jurnal Refleksi Siswa</p>
+              <p className="mt-0.5 text-[11.5px] text-slate-500">Ada {student.journals.length} entri jurnal yang dibuat siswa ini.</p>
             </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {student.journals.map((journal) => (
-                <JournalCard key={journal.id} journal={journal} studentId={student.id} onSave={onSaveFeedback} />
-              ))}
-            </div>
-          )}
+            <a 
+              href="/counselor/journals" 
+              className="rounded-lg bg-white px-4 py-2 text-[12px] font-bold text-blue-700 shadow-sm border border-blue-200 transition hover:bg-blue-50"
+            >
+              Buka Fitur Reviu
+            </a>
+          </div>
         </div>
       )}
     </div>
@@ -454,135 +406,6 @@ function CounselorReportSection({ studentId }: { studentId: string }) {
           ) : null}
         </div>
       )}
-    </div>
-  );
-}
-
-// ─── COMPONENT: Journal Card & Feedback Form ───
-function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal; studentId: string; onSave: (studentId: string, weekNumber: number, feedbackText: string) => Promise<void>; }) {
-  const [draft, setDraft] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const isPending = !journal.counselorFeedback && Boolean(journal.reflectionText);
-
-  const handleSubmit = async () => {
-    const trimmedDraft = draft.trim();
-
-    if (!trimmedDraft) {
-      setErrorMessage("Feedback tidak boleh kosong.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setErrorMessage(null);
-
-    try {
-      await onSave(studentId, journal.weekNumber, trimmedDraft);
-      setDraft("");
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Gagal menyimpan feedback"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const meta = getModule(journal.weekNumber);
-  const isTempLocked =
-    journal.status === "LOCKED" &&
-    journal.lockedUntil &&
-    new Date(journal.lockedUntil).getTime() > Date.now();
-  const isLate = journal.status === "UNLOCKED" && (journal.lateCount ?? 0) > 0;
-
-  return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5">
-        <span className="text-[11px] font-extrabold uppercase tracking-wide text-blue-700">
-          Modul {journal.weekNumber}{meta ? `: ${meta.title}` : ""}
-        </span>
-        <div className="flex items-center gap-1.5">
-          {isLate && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-amber-700">
-              <AlertTriangle size={10} /> Terblokir
-            </span>
-          )}
-          {isTempLocked && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-rose-700">
-              <Lock size={10} /> Terblokir
-            </span>
-          )}
-          {journal.reflectionText && (
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider ${
-              isPending ? "border-amber-200 bg-amber-50 text-amber-700" : "border-green-200 bg-green-50 text-green-700"
-            }`}>
-              {isPending ? <><Clock size={10} /> Menunggu Reviu</> : <><CheckCircle2 size={10} /> Telah Direviu</>}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {isTempLocked && (
-        <div className="border-b border-rose-100 bg-rose-50/60 px-4 py-2 text-[11px] font-medium text-rose-700">
-          Modul terkunci hingga {formatDateTimeId(journal.lockedUntil)}. Mohon berikan pendampingan.
-        </div>
-      )}
-
-      <div className="p-4">
-        {journal.moodDocumentUrl && (
-          <a
-            href={journal.moodDocumentUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mb-3 flex items-center gap-1.5 rounded-lg border border-fuchsia-200 bg-fuchsia-50 p-3 text-[11.5px] font-bold text-fuchsia-700 transition hover:bg-fuchsia-100"
-          >
-            <ExternalLink size={12} /> Lihat Dokumen Mood Board
-          </a>
-        )}
-
-        <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Mood Board</div>
-        <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-[12.5px] leading-relaxed text-slate-600">
-          {journal.reflectionText || <em className="text-slate-400">Tidak ada teks.</em>}
-        </div>
-
-        {journal.evidenceImageUrl && (
-          <a href={journal.evidenceImageUrl} target="_blank" rel="noreferrer" className="mb-3 flex items-center gap-1.5 text-[11.5px] font-semibold text-blue-600 hover:text-blue-800 hover:underline underline-offset-2">
-            <ExternalLink size={12} /> Lihat Lampiran Bukti
-          </a>
-        )}
-
-        {journal.counselorFeedback ? (
-          <>
-            <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-green-600">Umpan Balik Konselor</div>
-            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-[12.5px] leading-relaxed text-green-900">
-              {journal.counselorFeedback}
-            </div>
-          </>
-        ) : (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-            <div className="mb-2 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Tulis Umpan Balik</div>
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              rows={3}
-              placeholder="Masukkan catatan dan arahan untuk siswa..."
-              className="w-full resize-none rounded-lg border border-slate-300 p-3 text-[12.5px] text-slate-700 outline-none transition-all focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
-            />
-            {errorMessage && (
-              <p className="mt-2 text-[11px] font-semibold text-rose-600">{errorMessage}</p>
-            )}
-            <div className="mt-2 flex justify-end">
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="rounded-lg bg-[#2e1065] px-4 py-2 text-[11.5px] font-bold text-white transition-colors hover:bg-[#3b0764] disabled:bg-slate-300"
-              >
-                {isSubmitting ? "Menyimpan..." : "Simpan Umpan Balik"}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
