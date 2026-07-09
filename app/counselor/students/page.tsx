@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   RefreshCw, CheckCircle2, ChevronDown, ChevronUp, Clock, FileText, ExternalLink, Sparkles,
-  AlertTriangle, Lock, Crown
+  AlertTriangle, Lock, Crown, KeyRound
 } from "lucide-react";
 import {
   fetchCounselorOverview,
@@ -23,6 +23,13 @@ export default function StudentsPage() {
   const [totalWeeks, setTotalWeeks] = useState(COUNSELOR_TOTAL_WEEKS);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // States untuk Reset Password
+  const [resetTarget, setResetTarget] = useState<CounselorStudent | null>(null);
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetError, setResetError] = useState<string | null>(null);
+  const [resetSuccess, setResetSuccess] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   const loadOverview = useCallback(async () => {
     setIsLoading(true);
@@ -44,7 +51,35 @@ export default function StudentsPage() {
     void loadOverview();
   }, [loadOverview]);
 
-
+  const handleResetPassword = async () => {
+    if (!resetTarget || resetPassword.length < 8) {
+      setResetError("Kata sandi baru minimal 8 karakter.");
+      return;
+    }
+    setIsResetting(true);
+    setResetError(null);
+    try {
+      const res = await fetch("/api/counselor/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId: resetTarget.id, newPassword: resetPassword }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Gagal mereset kata sandi");
+      }
+      setResetSuccess(`Kata sandi ${resetTarget.name} berhasil direset.`);
+      setResetPassword("");
+      setTimeout(() => {
+        setResetTarget(null);
+        setResetSuccess(null);
+      }, 2000);
+    } catch (err) {
+      setResetError(err instanceof Error ? err.message : "Gagal mereset");
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   return (
     <>
@@ -98,19 +133,70 @@ export default function StudentsPage() {
                 <StudentRow 
                   key={student.id} 
                   student={student} 
-                  totalWeeks={totalWeeks} 
+                  totalWeeks={totalWeeks}
+                  onResetPassword={(s) => {
+                    setResetTarget(s);
+                    setResetPassword("");
+                    setResetError(null);
+                    setResetSuccess(null);
+                  }}
                 />
               ))}
             </div>
           )}
         </>
       )}
+
+      {/* Modal Reset Password */}
+      {resetTarget && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-fade-in">
+            <h3 className="text-lg font-extrabold text-slate-900">Reset Kata Sandi</h3>
+            <p className="mt-1 text-[13px] text-slate-500">
+              Atur ulang kata sandi untuk siswa <b>{resetTarget.name}</b>
+            </p>
+            <input
+              type="password"
+              value={resetPassword}
+              onChange={(e) => setResetPassword(e.target.value)}
+              placeholder="Kata sandi baru (min. 8 karakter)"
+              className="mt-4 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            />
+            {resetError && <p className="mt-2 text-[12px] font-semibold text-rose-600">{resetError}</p>}
+            {resetSuccess && <p className="mt-2 text-[12px] font-semibold text-emerald-600">{resetSuccess}</p>}
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setResetTarget(null)}
+                className="rounded-lg border border-slate-200 px-4 py-2 text-[12px] font-bold text-slate-600 hover:bg-slate-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleResetPassword()}
+                disabled={isResetting}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-[12px] font-bold text-white hover:bg-blue-700 disabled:bg-slate-300"
+              >
+                {isResetting ? "Menyimpan..." : "Reset Kata Sandi"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
-// ─── COMPONENT: Student Row (Collapsible) ───
-function StudentRow({ student, totalWeeks }: { student: CounselorStudent; totalWeeks: number; }) {
+function StudentRow({
+  student,
+  totalWeeks,
+  onResetPassword,
+}: {
+  student: CounselorStudent;
+  totalWeeks: number;
+  onResetPassword: (student: CounselorStudent) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const assessment = student.latestAssessment;
@@ -189,6 +275,14 @@ function StudentRow({ student, totalWeeks }: { student: CounselorStudent; totalW
               <Sparkles size={12} /> Belum isi tes
             </span>
           )}
+
+          <button 
+            type="button"
+            onClick={() => onResetPassword(student)}
+            className="flex items-center gap-1 text-[11.5px] font-bold text-blue-600 border border-blue-200 bg-white hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors"
+          >
+            <KeyRound size={13} /> Reset Sandi
+          </button>
 
           <button 
             onClick={() => setIsOpen(!isOpen)}
