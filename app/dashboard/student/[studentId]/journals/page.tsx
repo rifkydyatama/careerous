@@ -95,7 +95,7 @@ export default function JournalsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat modul</p>
               <p className="text-[13px] text-slate-500">Menyinkronkan data Anda.</p>
@@ -385,11 +385,11 @@ function TransitionTaskForm({
         <label
           className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-5 text-center transition-all ${
             file
-              ? "border-fuchsia-400 bg-fuchsia-50"
+              ? "border-blue-400 bg-blue-50"
               : "border-slate-300 bg-slate-50 hover:bg-slate-100"
           }`}
         >
-          <UploadCloud size={20} className={file ? "text-fuchsia-500" : "text-slate-400"} />
+          <UploadCloud size={20} className={file ? "text-blue-500" : "text-slate-400"} />
           <span className="text-[11.5px] font-semibold text-slate-600">
             {file ? file.name : "Pilih file (PDF / gambar / dokumen, maks 8 MB)"}
           </span>
@@ -404,7 +404,7 @@ function TransitionTaskForm({
         <button
           type="submit"
           disabled={isSubmitting || !file}
-          className="rounded-lg bg-[#2e1065] py-2.5 text-[12px] font-bold text-white transition-all hover:bg-[#3b0764] disabled:bg-slate-300"
+          className="rounded-lg bg-[#2563eb] py-2.5 text-[12px] font-bold text-white transition-all hover:bg-[#1d4ed8] disabled:bg-slate-300"
         >
           {isSubmitting ? "Mengunggah..." : "Unggah & Buka Modul"}
         </button>

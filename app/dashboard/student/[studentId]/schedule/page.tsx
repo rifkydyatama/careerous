@@ -135,7 +135,7 @@ export default function SchedulePage() {
                   <div key={s.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-start gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-white">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
                           {s.type === "GROUP" ? <Users size={18} /> : <User size={18} />}
                         </div>
                         <div>
@@ -152,7 +152,7 @@ export default function SchedulePage() {
                     {s.myBookingStatus === "APPROVED" && (s.meetLink || s.phone || s.location || s.approvalMessage) && (
                       <div className="mt-4 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 p-4">
                         <p className="mb-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
-                          ✅ Sesi Disetujui — Info Komunikasi
+                          Sesi Disetujui — Info Komunikasi
                         </p>
 
                         <div className="space-y-2.5">
@@ -161,16 +161,16 @@ export default function SchedulePage() {
                               href={s.meetLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2.5 rounded-lg border border-fuchsia-200 bg-white px-3.5 py-2.5 text-[12.5px] font-bold text-fuchsia-700 shadow-sm transition hover:border-fuchsia-400 hover:bg-fuchsia-50 hover:shadow-md"
+                              className="flex items-center gap-2.5 rounded-lg border border-blue-200 bg-white px-3.5 py-2.5 text-[12.5px] font-bold text-blue-700 shadow-sm transition hover:border-blue-400 hover:bg-blue-50 hover:shadow-md"
                             >
-                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
                                 <Video size={15} />
                               </div>
                               <div className="flex-1">
                                 <p className="font-bold">Gabung Video Call</p>
-                                <p className="mt-0.5 text-[10.5px] font-normal text-fuchsia-500">Buka ruang interaktif Careerous</p>
+                                <p className="mt-0.5 text-[10.5px] font-normal text-blue-500">Buka ruang interaktif Careerous</p>
                               </div>
-                              <ExternalLink size={14} className="shrink-0 text-fuchsia-400" />
+                              <ExternalLink size={14} className="shrink-0 text-blue-400" />
                             </a>
                           )}
 
@@ -222,7 +222,7 @@ export default function SchedulePage() {
                     {/* Pesan default jika disetujui tanpa info komunikasi */}
                     {s.myBookingStatus === "APPROVED" && !s.meetLink && !s.phone && !s.location && !s.approvalMessage && (
                       <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-[12px] text-emerald-700">
-                        ✅ Sesi konseling kamu sudah disetujui. Sampai jumpa di sesi!
+                        Sesi konseling kamu sudah disetujui. Sampai jumpa di sesi!
                       </div>
                     )}
 
@@ -259,7 +259,7 @@ export default function SchedulePage() {
                 {available.map((s) => (
                   <div key={s.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-transform hover:-translate-y-0.5">
                     <div className="mb-3 flex items-center gap-2">
-                      <span className="rounded-full bg-fuchsia-50 px-2.5 py-1 text-[10px] font-bold text-fuchsia-700">
+                      <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700">
                         {s.type === "GROUP" ? "Kelompok" : "Individu"}
                       </span>
                       <span className="text-[11px] font-semibold text-slate-400">{s.bookedCount}/{s.maxCapacity} terisi</span>
@@ -270,7 +270,7 @@ export default function SchedulePage() {
                     </p>
                     <button
                       onClick={() => { setSelected(s); setTopic(""); }}
-                      className="mt-4 w-full rounded-lg bg-[#2e1065] py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#3b0764]"
+                      className="mt-4 w-full rounded-lg bg-[#2563eb] py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#1d4ed8]"
                     >
                       Pesan Sesi
                     </button>
@@ -287,7 +287,7 @@ export default function SchedulePage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setSelected(null)}>
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="mb-4 flex items-start justify-between">
-              <div className="flex items-center gap-2 text-[#2e1065]">
+              <div className="flex items-center gap-2 text-[#2563eb]">
                 <CalendarClock size={18} />
                 <h4 className="text-base font-extrabold text-slate-900">Pesan Sesi Konseling</h4>
               </div>
@@ -302,13 +302,13 @@ export default function SchedulePage() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Mis. bingung memilih jurusan, ingin cerita kendala belajar..."
-              className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[13px] outline-none focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-400/20"
+              className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[13px] outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
             />
             {error && <p className="mt-2 text-[12px] font-semibold text-rose-600">{error}</p>}
             <button
               onClick={handleBook}
               disabled={!topic.trim() || isSaving}
-              className="mt-4 w-full rounded-lg bg-[#2e1065] py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#3b0764] disabled:bg-slate-300"
+              className="mt-4 w-full rounded-lg bg-[#2563eb] py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#1d4ed8] disabled:bg-slate-300"
             >
               {isSaving ? "Memesan..." : "Kirim Permintaan"}
             </button>

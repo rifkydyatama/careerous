@@ -184,7 +184,7 @@ export default function ProgramPage() {
 
       {/* Form buat slot */}
       <form onSubmit={handleCreate} className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">
+        <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[#2563eb]">
           <CalendarPlus size={14} /> Buat Slot Baru
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -193,7 +193,7 @@ export default function ProgramPage() {
             <select
               value={type}
               onChange={(e) => setType(e.target.value as "INDIVIDUAL" | "GROUP")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400"
             >
               <option value="INDIVIDUAL">Individu</option>
               <option value="GROUP">Kelompok</option>
@@ -201,15 +201,15 @@ export default function ProgramPage() {
           </div>
           <div>
             <label className="mb-1 block text-[11px] font-semibold text-slate-600">Tanggal</label>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400" />
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400" />
           </div>
           <div>
             <label className="mb-1 block text-[11px] font-semibold text-slate-600">Jam mulai</label>
-            <input type="time" value={start} onChange={(e) => setStart(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400" />
+            <input type="time" value={start} onChange={(e) => setStart(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400" />
           </div>
           <div>
             <label className="mb-1 block text-[11px] font-semibold text-slate-600">Jam selesai</label>
-            <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400" />
+            <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400" />
           </div>
           <div>
             <label className="mb-1 block text-[11px] font-semibold text-slate-600">Kuota</label>
@@ -220,20 +220,20 @@ export default function ProgramPage() {
               value={type === "GROUP" ? capacity : 1}
               disabled={type === "INDIVIDUAL"}
               onChange={(e) => setCapacity(Math.max(1, Number(e.target.value)))}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400 disabled:bg-slate-100 disabled:text-slate-400"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400 disabled:bg-slate-100 disabled:text-slate-400"
             />
           </div>
         </div>
 
         {/* Komunikasi */}
-        <div className="mt-4 rounded-xl border border-dashed border-fuchsia-200 bg-fuchsia-50/50 p-4">
-          <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-700">
-            📡 Info Komunikasi (opsional — akan dikirim ke siswa saat disetujui)
+        <div className="mt-4 rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-4">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-blue-700">
+            Info Komunikasi (opsional — akan dikirim ke siswa saat disetujui)
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
               <label className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
-                <Video size={12} className="text-fuchsia-600" /> Link Video Call
+                <Video size={12} className="text-blue-600" /> Link Video Call
               </label>
               <div className="flex h-[38px] w-full items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-500">
                 Dibuat otomatis oleh sistem
@@ -248,7 +248,7 @@ export default function ProgramPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="08123456789"
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400"
               />
             </div>
             <div>
@@ -260,7 +260,7 @@ export default function ProgramPage() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Ruang BK Lt.2"
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-blue-400"
               />
             </div>
           </div>
@@ -270,7 +270,7 @@ export default function ProgramPage() {
         <button
           type="submit"
           disabled={isSaving}
-          className="mt-4 rounded-lg bg-[#2e1065] px-5 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#3b0764] disabled:bg-slate-300"
+          className="mt-4 rounded-lg bg-[#2563eb] px-5 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#1d4ed8] disabled:bg-slate-300"
         >
           {isSaving ? "Menyimpan..." : "Tambah Slot"}
         </button>
@@ -350,7 +350,7 @@ export default function ProgramPage() {
                 disabled={isApproving}
                 className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300"
               >
-                {isApproving ? "Menyetujui..." : "✅ Setujui Booking"}
+                {isApproving ? "Menyetujui..." : "Setujui Booking"}
               </button>
               <button
                 onClick={() => setApproveTarget(null)}
@@ -386,7 +386,7 @@ function ScheduleCard({
     <div className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${isPast ? "opacity-70" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
             <Icon size={18} />
           </div>
           <div>
@@ -415,7 +415,7 @@ function ScheduleCard({
               href={schedule.meetLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 hover:bg-fuchsia-100 transition-colors px-2.5 py-1 text-[10.5px] font-bold text-fuchsia-700"
+              className="inline-flex items-center gap-1 rounded-full bg-blue-50 hover:bg-blue-100 transition-colors px-2.5 py-1 text-[10.5px] font-bold text-blue-700"
             >
               <Video size={11} /> Buka Ruang Video
             </a>

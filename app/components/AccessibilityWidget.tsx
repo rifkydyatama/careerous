@@ -58,7 +58,7 @@ export default function AccessibilityWidget() {
     <div ref={containerRef} className="fixed bottom-5 right-5 z-[100]" data-noinvert>
       {open && (
         <div className="mb-3 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
-          <div className="flex items-center justify-between border-b border-slate-100 bg-[#2e1065] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-slate-100 bg-[#2563eb] px-4 py-3">
             <div className="flex items-center gap-2 text-white">
               <Accessibility size={16} />
               <p className="text-[12px] font-extrabold">Aksesibilitas</p>
@@ -121,7 +121,7 @@ export default function AccessibilityWidget() {
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-label="Pengaturan aksesibilitas"
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2e1065] text-white shadow-xl ring-2 ring-white transition hover:scale-105"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-xl ring-2 ring-white transition hover:scale-105"
       >
         {darkOn ? <Moon size={20} /> : <Accessibility size={20} />}
       </button>

@@ -66,7 +66,7 @@ export default function AdminDashboard() {
     if (!stats) return [];
     const free = Math.max(0, stats.students - stats.premiumUsers);
     return [
-      { name: "Premium", value: stats.premiumUsers, color: "#a855f7" },
+      { name: "Premium", value: stats.premiumUsers, color: "#3b82f6" },
       { name: "Free", value: free, color: "#cbd5e1" },
     ].filter((d) => d.value > 0);
   }, [stats]);
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <p className="text-sm font-bold text-slate-900">Memuat statistik</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
             <StatCard icon={Building2} label="Institusi" value={stats.institutions} color="from-indigo-600 to-indigo-400" sub={`${stats.subscribedInstitutions} berlangganan`} />
             <StatCard icon={Crown} label="Siswa Premium" value={stats.premiumUsers} color="from-amber-600 to-amber-400" />
             <StatCard icon={BookOpenCheck} label="Modul Selesai" value={stats.completedModules} color="from-emerald-600 to-emerald-400" />
-            <StatCard icon={Sparkles} label="Laporan AI" value={stats.reports} color="from-fuchsia-600 to-fuchsia-400" />
+            <StatCard icon={Sparkles} label="Laporan AI" value={stats.reports} color="from-blue-600 to-blue-400" />
             <StatCard icon={ShieldCheck} label="Administrator" value={stats.admins} color="from-slate-700 to-slate-500" />
           </div>
 
@@ -199,13 +199,13 @@ function QuickLink({ href, icon, title, desc }: { href: string; icon: React.Reac
   return (
     <Link
       href={href}
-      className="group flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#2e1065]/30 hover:shadow-md"
+      className="group flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#2563eb]/30 hover:shadow-md"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2e1065]/5 text-[#2e1065]">{icon}</div>
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563eb]/5 text-[#2563eb]">{icon}</div>
       <div className="flex-1">
         <h4 className="text-[14px] font-extrabold text-slate-900">{title}</h4>
         <p className="mt-0.5 text-[12px] leading-relaxed text-slate-500">{desc}</p>
-        <span className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-bold text-[#2e1065]">
+        <span className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-bold text-[#2563eb]">
           Buka <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
         </span>
       </div>

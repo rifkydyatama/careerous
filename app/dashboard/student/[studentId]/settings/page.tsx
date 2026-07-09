@@ -54,7 +54,7 @@ export default function SettingsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat profil</p>
               <p className="text-[13px] text-slate-500">Menyinkronkan data Anda.</p>
@@ -77,7 +77,7 @@ export default function SettingsPage() {
             />
             
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Akses Sistem</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#2563eb]">Akses Sistem</p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">ID Akses</p>

@@ -58,7 +58,7 @@ export default function StudentsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat data siswa</p>
               <p className="text-[13px] text-slate-500">Menghubungkan panel konselor ke database.</p>
@@ -193,7 +193,7 @@ function StudentRow({ student, totalWeeks }: { student: CounselorStudent; totalW
           <button 
             onClick={() => setIsOpen(!isOpen)}
             className={`flex items-center gap-1.5 rounded-lg border px-4 py-2 text-[11.5px] font-bold transition-colors ${
-              isOpen ? "border-[#2e1065] bg-[#2e1065] text-white" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+              isOpen ? "border-[#2563eb] bg-[#2563eb] text-white" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
             }`}
           >
             {isOpen ? "Tutup Panel" : "Buka Panel"}
@@ -212,7 +212,7 @@ function StudentRow({ student, totalWeeks }: { student: CounselorStudent; totalW
           <div className={`mb-4 rounded-xl border p-4 ${assessment ? "border-indigo-200 bg-indigo-50" : "border-dashed border-slate-200 bg-white"}`}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Tes RIASEC & Gaya Belajar</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2563eb]">Tes RIASEC & Gaya Belajar</p>
                 <h5 className="mt-1 text-[13px] font-bold text-slate-900">
                   {assessment ? "Hasil minat karier terbaru" : "Belum ada hasil RIASEC"}
                 </h5>
@@ -250,7 +250,7 @@ function StudentRow({ student, totalWeeks }: { student: CounselorStudent; totalW
                           </div>
                           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200">
                             <div
-                              className="h-full rounded-full bg-[#2e1065]"
+                              className="h-full rounded-full bg-[#2563eb]"
                               style={{ width: `${score * 10}%` }}
                             ></div>
                           </div>

@@ -96,7 +96,7 @@ export default function SettingsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat data pengaturan</p>
               <p className="text-[13px] text-slate-500">Menghubungkan panel konselor ke database.</p>
@@ -132,7 +132,7 @@ export default function SettingsPage() {
               />
               
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2e1065]">Akses Sistem</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2563eb]">Akses Sistem</p>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -153,7 +153,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={handleAddStudent}
-                    className="rounded-lg bg-[#2e1065] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#3b0764]"
+                    className="rounded-lg bg-[#2563eb] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#1d4ed8]"
                   >
                     Tambah Siswa Baru
                   </button>

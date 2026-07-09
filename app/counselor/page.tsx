@@ -173,7 +173,7 @@ export default function CounselorDashboard() {
                         formatter={(v: any) => [`${v} modul`, "Selesai"]}
                         labelFormatter={(l: any, p: any) => p?.[0]?.payload?.full ?? l}
                       />
-                      <Bar dataKey="modul" fill="#2e1065" radius={[6, 6, 0, 0]} maxBarSize={42} />
+                      <Bar dataKey="modul" fill="#2563eb" radius={[6, 6, 0, 0]} maxBarSize={42} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -219,7 +219,7 @@ export default function CounselorDashboard() {
               </div>
               {attentionStudents.length === 0 ? (
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-[12.5px] text-emerald-800">
-                  Tidak ada siswa yang memerlukan tindakan mendesak. 🎉
+                  Tidak ada siswa yang memerlukan tindakan mendesak.
                 </div>
               ) : (
                 <div className="flex flex-col gap-2.5">
@@ -284,7 +284,7 @@ function LoadingCard() {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
-        <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+        <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
         <p className="text-sm font-bold text-slate-900">Memuat data dasbor</p>
       </div>
     </div>

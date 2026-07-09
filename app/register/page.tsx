@@ -37,7 +37,7 @@ async function readApiError(response: Response, fallback: string) {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-fuchsia-400/60 focus:ring-2 focus:ring-fuchsia-400/20";
+  "w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -166,25 +166,25 @@ export default function RegisterPage() {
   };
 
   return (
-    <main data-noinvert className="relative min-h-screen overflow-hidden font-sans text-white">
+    <main className="relative min-h-screen overflow-hidden font-sans text-slate-900">
       <AuroraBackground />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
-        <div className="flex items-center justify-between rounded-full border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-md">
+        <div className="flex items-center justify-between rounded-full border border-slate-200/80 bg-white/70 px-4 py-3 shadow-sm backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-500 text-sm font-black text-white shadow-lg shadow-fuchsia-500/40">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-sky-500 text-sm font-black text-white shadow-lg shadow-blue-500/30">
               C
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-fuchsia-300">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-600">
                 Careerous
               </p>
-              <h1 className="text-sm font-bold text-white">Daftar akun baru</h1>
+              <h1 className="text-sm font-bold text-slate-900">Daftar akun baru</h1>
             </div>
           </div>
           <Link
             href="/"
-            className="text-xs font-semibold text-white/70 transition hover:text-white"
+            className="text-xs font-semibold text-slate-500 transition hover:text-slate-900"
           >
             ← Beranda
           </Link>
@@ -193,46 +193,46 @@ export default function RegisterPage() {
         <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[1fr_0.95fr]">
           <Reveal>
             <section className="max-w-2xl">
-              <div className="relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[12px] font-semibold text-white backdrop-blur">
-                <Sparkles size={14} className="text-fuchsia-300" />
-                Gratis buat siswa & konselor 🎉
+              <div className="relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-[12px] font-semibold text-blue-700">
+                <Sparkles size={14} className="text-blue-500" />
+                Gratis untuk siswa dan konselor
                 <span className="shimmer pointer-events-none absolute inset-0" />
               </div>
               <h2 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-                Mulai <span className="text-gradient">petualangan kariermu</span> 🚀
+                Mulai <span className="text-gradient">perjalanan kariermu</span>
               </h2>
-              <p className="mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-                Buat akun, pilih sekolahmu, dan langsung mulai eksplorasi minat &
-                bakat bareng Careerous.
+              <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+                Buat akun, pilih sekolahmu, dan mulai eksplorasi minat serta bakat
+                bersama Careerous.
               </p>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <Card icon={UserPlus} emoji="🙋" title="Akun baru" text="Nama & email jadi identitas." />
-                <Card icon={BadgePlus} emoji="🎭" title="Pilih peran" text="Siswa / mahasiswa atau konselor." />
-                <Card icon={Mail} emoji="⚡" title="Langsung aktif" text="Data tersimpan otomatis." />
+                <Card icon={UserPlus} title="Akun baru" text="Nama & email jadi identitas." />
+                <Card icon={BadgePlus} title="Pilih peran" text="Siswa/mahasiswa atau konselor." />
+                <Card icon={Mail} title="Langsung aktif" text="Data tersimpan otomatis." />
               </div>
             </section>
           </Reveal>
 
           <Reveal delay={0.15}>
             <section className="relative">
-              <div className="absolute -inset-3 -z-10 rounded-[36px] bg-gradient-to-br from-fuchsia-500/25 via-purple-500/15 to-cyan-400/15 blur-2xl glow-pulse" />
-              <div className="glass rounded-[30px] p-6 shadow-2xl shadow-black/40 sm:p-7">
+              <div className="absolute -inset-3 -z-10 rounded-[36px] bg-gradient-to-br from-blue-400/20 via-sky-400/15 to-cyan-300/15 blur-2xl glow-pulse" />
+              <div className="glass rounded-[30px] p-6 shadow-xl shadow-blue-500/10 sm:p-7">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400">
                       Form daftar
                     </p>
-                    <h3 className="mt-1 text-xl font-bold text-white">Bikin akun ✨</h3>
+                    <h3 className="mt-1 text-xl font-bold text-slate-900">Buat akun</h3>
                   </div>
-                  <span className="rounded-full border border-emerald-400/30 bg-emerald-400/15 px-3 py-1 text-[11px] font-bold text-emerald-300">
+                  <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-600">
                     Gratis
                   </span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                       Nama lengkap
                     </label>
                     <input
@@ -241,12 +241,12 @@ export default function RegisterPage() {
                       onChange={(event) => setName(event.target.value)}
                       placeholder="Nama lengkap"
                       autoComplete="name"
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-fuchsia-400/60 focus:ring-2 focus:ring-fuchsia-400/20"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                       Email aktif
                     </label>
                     <div className="relative">
@@ -263,7 +263,7 @@ export default function RegisterPage() {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                       Kata sandi
                     </label>
                     <div className="relative">
@@ -280,7 +280,7 @@ export default function RegisterPage() {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                       Konfirmasi kata sandi
                     </label>
                     <div className="relative">
@@ -297,28 +297,28 @@ export default function RegisterPage() {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                    <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                       Peran akun
                     </label>
                     <select
                       value={role}
                       onChange={(event) => setRole(event.target.value as PortalRole)}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-fuchsia-400/60 focus:ring-2 focus:ring-fuchsia-400/20"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
                     >
                       {PORTAL_ROLE_OPTIONS.map((item) => (
-                        <option key={item.value} value={item.value} className="bg-[#160b26]">
+                        <option key={item.value} value={item.value} className="bg-white">
                           {item.label}
                         </option>
                       ))}
                     </select>
                     {selectedRole && (
-                      <p className="mt-2 text-xs text-slate-400">{selectedRole.description}</p>
+                      <p className="mt-2 text-xs text-slate-500">{selectedRole.description}</p>
                     )}
                   </div>
 
                   {role === "STUDENT" ? (
                     <div>
-                      <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                      <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                         Sekolah
                       </label>
                       <div className="relative">
@@ -327,21 +327,21 @@ export default function RegisterPage() {
                           value={institutionId}
                           onChange={(event) => setInstitutionId(event.target.value)}
                           disabled={studentSchools.length === 0}
-                          className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white outline-none transition focus:border-fuchsia-400/60 focus:ring-2 focus:ring-fuchsia-400/20 disabled:cursor-not-allowed disabled:opacity-70"
+                          className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 disabled:cursor-not-allowed disabled:opacity-70"
                         >
-                          <option value="" className="bg-[#160b26]">
+                          <option value="" className="bg-white">
                             {studentSchools.length === 0
                               ? "Belum ada sekolah terdaftar"
                               : "— Pilih sekolah —"}
                           </option>
                           {studentSchools.map((item) => (
-                            <option key={item.id} value={item.id} className="bg-[#160b26]">
+                            <option key={item.id} value={item.id} className="bg-white">
                               {item.name}
                             </option>
                           ))}
                         </select>
                       </div>
-                      <p className="mt-2 text-xs text-slate-400">
+                      <p className="mt-2 text-xs text-slate-500">
                         {studentSchools.length === 0
                           ? "Sekolah baru muncul setelah guru dari sekolahmu mendaftar terlebih dahulu."
                           : "Pilih sekolahmu. Daftar ini berisi sekolah yang gurunya sudah terdaftar."}
@@ -349,7 +349,7 @@ export default function RegisterPage() {
                     </div>
                   ) : (
                     <div>
-                      <label className="mb-1.5 block text-[12px] font-semibold text-slate-200">
+                      <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
                         Sekolah / Institusi <span className="font-normal text-slate-400">(opsional)</span>
                       </label>
                       <div className="relative">
@@ -373,12 +373,12 @@ export default function RegisterPage() {
                         <button
                           type="button"
                           onClick={() => setInstitutionName(institutionSuggestion)}
-                          className="mt-2 text-xs font-bold text-fuchsia-300 hover:text-fuchsia-200"
+                          className="mt-2 text-xs font-bold text-blue-600 hover:text-blue-700"
                         >
                           Sekolah ini sudah terdaftar sebagai “{institutionSuggestion}” — gunakan nama itu
                         </button>
                       ) : (
-                        <p className="mt-2 text-xs text-slate-400">
+                        <p className="mt-2 text-xs text-slate-500">
                           Ketik nama sekolahmu. Jika sudah pernah didaftarkan guru lain, pilih dari saran
                           agar tidak terjadi duplikat. Siswa akan memilih sekolah ini saat mendaftar.
                         </p>
@@ -387,7 +387,7 @@ export default function RegisterPage() {
                   )}
 
                   {errorMessage && (
-                    <div className="rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-sm font-medium text-rose-200">
+                    <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
                       {errorMessage}
                     </div>
                   )}
@@ -402,9 +402,9 @@ export default function RegisterPage() {
                   </button>
                 </form>
 
-                <div className="mt-5 flex items-center justify-between gap-4 text-xs text-slate-400">
+                <div className="mt-5 flex items-center justify-between gap-4 text-xs text-slate-500">
                   <span>Sudah punya akun?</span>
-                  <Link href="/login" className="font-bold text-fuchsia-300 hover:text-fuchsia-200">
+                  <Link href="/login" className="font-bold text-blue-600 hover:text-blue-700">
                     Masuk ke portal →
                   </Link>
                 </div>
@@ -427,23 +427,20 @@ function InputIcon({ icon: Icon }: { icon: LucideIcon }) {
 
 function Card({
   icon: Icon,
-  emoji,
   title,
   text,
 }: {
   icon: LucideIcon;
-  emoji: string;
   title: string;
   text: string;
 }) {
   return (
-    <div className="card-hover rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
-      <div className="flex items-center gap-2">
-        <span className="text-xl">{emoji}</span>
-        <Icon size={15} className="text-fuchsia-300" />
-      </div>
-      <p className="mt-3 text-sm font-semibold text-white">{title}</p>
-      <p className="mt-1 text-xs text-slate-400">{text}</p>
+    <div className="card-hover rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <span className="inline-flex rounded-xl bg-blue-50 p-2 text-blue-600">
+        <Icon size={16} />
+      </span>
+      <p className="mt-3 text-sm font-semibold text-slate-900">{title}</p>
+      <p className="mt-1 text-xs text-slate-500">{text}</p>
     </div>
   );
 }

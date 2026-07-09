@@ -99,7 +99,7 @@ export default function JournalsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Memuat data jurnal</p>
               <p className="text-[13px] text-slate-500">Menghubungkan panel konselor ke database.</p>
@@ -169,7 +169,7 @@ function StudentJournalRow({ student, onSaveFeedback }: { student: CounselorStud
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className={`flex items-center gap-1.5 rounded-lg border px-4 py-2 text-[11.5px] font-bold transition-colors ${
-            isOpen ? "border-[#2e1065] bg-[#2e1065] text-white" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+            isOpen ? "border-[#2563eb] bg-[#2563eb] text-white" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
           }`}
         >
           {isOpen ? "Tutup Jurnal" : "Buka Jurnal"}
@@ -264,7 +264,7 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
             href={journal.moodDocumentUrl}
             target="_blank"
             rel="noreferrer"
-            className="mb-3 flex items-center gap-1.5 rounded-lg border border-fuchsia-200 bg-fuchsia-50 p-3 text-[11.5px] font-bold text-fuchsia-700 transition hover:bg-fuchsia-100"
+            className="mb-3 flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 p-3 text-[11.5px] font-bold text-blue-700 transition hover:bg-blue-100"
           >
             <ExternalLink size={12} /> Lihat Dokumen Mood Board
           </a>
@@ -305,7 +305,7 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="rounded-lg bg-[#2e1065] px-4 py-2 text-[11.5px] font-bold text-white transition-colors hover:bg-[#3b0764] disabled:bg-slate-300"
+                className="rounded-lg bg-[#2563eb] px-4 py-2 text-[11.5px] font-bold text-white transition-colors hover:bg-[#1d4ed8] disabled:bg-slate-300"
               >
                 {isSubmitting ? "Menyimpan..." : "Simpan Umpan Balik"}
               </button>

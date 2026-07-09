@@ -63,25 +63,25 @@ export default function CounselorLayout({
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f6f4fd] font-sans text-slate-900">
+    <div className="flex min-h-screen bg-[#f0f5ff] font-sans text-slate-900">
       
       {/* ─── SIDEBAR ─── */}
-      <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col bg-gradient-to-b from-[#2e1065] via-[#3b0764] to-[#1a0636] shadow-2xl shadow-fuchsia-900/40">
-        <div className="flex items-center gap-3 border-b border-white/10 p-5">
+      <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col border-r border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center gap-3 border-b border-slate-200 p-5">
           <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0" />
           <div>
-            <h1 className="text-sm font-extrabold leading-tight text-white">{UNIVERSITY.app} BK</h1>
-            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-white/40">{schoolName}</p>
+            <h1 className="text-sm font-extrabold leading-tight text-slate-900">{UNIVERSITY.app} BK</h1>
+            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">{schoolName}</p>
           </div>
         </div>
 
-        <div className="mx-3 mt-3 flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 p-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-400 to-purple-600 text-xs font-extrabold text-white">
+        <div className="mx-3 mt-3 flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-xs font-extrabold text-white">
             {initialsOf(me?.name)}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-[11.5px] font-bold text-white">{counselorName}</p>
-            <p className="mt-0.5 text-[9.5px] text-white/40">Konselor / Guru BK</p>
+            <p className="truncate text-[11.5px] font-bold text-slate-900">{counselorName}</p>
+            <p className="mt-0.5 text-[9.5px] text-slate-500">Konselor / Guru BK</p>
           </div>
         </div>
 
@@ -97,11 +97,11 @@ export default function CounselorLayout({
           <NavItem href="/counselor/settings" icon={<Settings size={17} />} label="Pengaturan" active={pathname === "/counselor/settings"} />
         </div>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-slate-200 p-3">
           <button
             type="button"
             onClick={() => void handleLogout()}
-            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-[12.5px] font-semibold text-white/45 transition-colors hover:bg-red-500/15 hover:text-red-400"
+            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-[12.5px] font-semibold text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
           >
             <LogOut size={16} /> Keluar dari Sistem
           </button>
@@ -117,7 +117,7 @@ export default function CounselorLayout({
           </div>
           <div className="flex items-center gap-2.5">
             <CounselorNotificationBell />
-            <button onClick={handleAddStudent} className="flex items-center gap-1.5 rounded-lg bg-[#2e1065] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#3b0764]">
+            <button onClick={handleAddStudent} className="flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#1d4ed8]">
               <UserPlus size={13} /> Tambah Siswa
             </button>
           </div>
@@ -265,14 +265,14 @@ function CounselorNotificationBell() {
 
 // ─── SMALL UI COMPONENTS ───
 const MenuSection = ({ title }: { title: string }) => (
-  <div className="px-5 pb-1 pt-4 text-[9px] font-bold uppercase tracking-[1.2px] text-white/30">{title}</div>
+  <div className="px-5 pb-1 pt-4 text-[9px] font-bold uppercase tracking-[1.2px] text-slate-400">{title}</div>
 );
 
 const NavItem = ({ href, icon, label, badge, active }: any) => (
   <Link href={href} className={`mx-2 my-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
-    active ? "border-[#a855f7]/30 bg-[#a855f7]/20 font-bold text-[#e879f9]" : "text-white/55 hover:bg-white/5 hover:text-white/90"
+    active ? "border-blue-200 bg-blue-50 font-bold text-blue-700" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
   }`}>
-    <span className={active ? "text-[#e879f9]" : ""}>{icon}</span>
+    <span className={active ? "text-blue-600" : "text-slate-400"}>{icon}</span>
     {label}
     {badge && <span className="ml-auto rounded-full bg-red-600 px-1.5 py-0.5 text-[9.5px] font-bold text-white">{badge}</span>}
   </Link>

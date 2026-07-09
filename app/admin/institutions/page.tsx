@@ -93,7 +93,7 @@ export default function AdminInstitutionsPage() {
           type="button"
           onClick={() => void handleCreate()}
           disabled={isCreating || !newName.trim()}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2e1065] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#3b0764] disabled:bg-slate-300"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-4 py-2.5 text-[12px] font-bold text-white transition hover:bg-[#1d4ed8] disabled:bg-slate-300"
         >
           <Plus size={14} /> {isCreating ? "Menyimpan..." : "Tambah"}
         </button>
@@ -102,7 +102,7 @@ export default function AdminInstitutionsPage() {
       {isLoading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <RefreshCw size={18} className="animate-spin text-[#2e1065]" />
+            <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <p className="text-sm font-bold text-slate-900">Memuat institusi</p>
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function AdminInstitutionsPage() {
                   className={`rounded-lg px-3 py-2 text-[11.5px] font-bold transition disabled:opacity-60 ${
                     inst.subscriptionActive
                       ? "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
-                      : "bg-[#2e1065] text-white hover:bg-[#3b0764]"
+                      : "bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
                   }`}
                 >
                   {savingId === inst.id

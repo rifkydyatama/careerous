@@ -157,7 +157,7 @@ export function AccountSettingsForm({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="mt-3 text-[12px] font-bold text-[#2e1065] hover:text-[#3b0764] transition-colors"
+              className="mt-3 text-[12px] font-bold text-[#2563eb] hover:text-[#1d4ed8] transition-colors"
             >
               Ubah Foto
             </button>
@@ -182,7 +182,7 @@ export function AccountSettingsForm({
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2e1065] focus:ring-1 focus:ring-[#2e1065]"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
             />
           </div>
           
@@ -193,7 +193,7 @@ export function AccountSettingsForm({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2e1065] focus:ring-1 focus:ring-[#2e1065]"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
             />
           </div>
         </div>
@@ -214,7 +214,7 @@ export function AccountSettingsForm({
           <button
             type="submit"
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-[#2e1065] px-5 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#3b0764] disabled:opacity-70"
+            className="flex items-center gap-2 rounded-lg bg-[#2563eb] px-5 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#1d4ed8] disabled:opacity-70"
           >
             {isSaving && <Loader2 size={14} className="animate-spin" />}
             {isSaving ? "Menyimpan..." : "Simpan Perubahan"}

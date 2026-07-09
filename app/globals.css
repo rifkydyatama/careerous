@@ -70,17 +70,18 @@ html.a11y-large body {
    ══════════════════════════════════════════════════════════════════ */
 
 :root {
-  --c-violet: #8b5cf6;
-  --c-fuchsia: #ec4899;
-  --c-blue: #3b82f6;
-  --c-cyan: #22d3ee;
-  --c-lime: #a3e635;
+  --c-blue: #2563eb;
+  --c-indigo: #4f46e5;
+  --c-sky: #0ea5e9;
+  --c-cyan: #06b6d4;
+  --c-slate: #1e293b;
+  /* Gradasi brand: biru profesional yang tetap hidup (biru → indigo → sky → cyan) */
   --grad-brand: linear-gradient(
     120deg,
-    #a855f7 0%,
-    #ec4899 38%,
-    #6366f1 72%,
-    #22d3ee 100%
+    #1d4ed8 0%,
+    #2563eb 34%,
+    #0ea5e9 70%,
+    #06b6d4 100%
   );
 }
 
@@ -94,36 +95,37 @@ html.a11y-large body {
   animation: gradientShift 8s ease infinite;
 }
 
-/* Kartu kaca membulat */
+/* Kartu kaca membulat (versi terang: kaca putih lembut di atas latar terang) */
 .glass {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(15, 23, 42, 0.07);
   backdrop-filter: blur(16px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
-/* Angkat & bercahaya saat hover (kartu interaktif) */
+/* Angkat & bercahaya halus saat hover (kartu interaktif) */
 .card-hover {
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease,
     border-color 0.35s ease;
 }
 .card-hover:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 70px -20px rgba(168, 85, 247, 0.55);
-  border-color: rgba(236, 72, 153, 0.45);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 48px -24px rgba(37, 99, 235, 0.4);
+  border-color: rgba(37, 99, 235, 0.35);
 }
 
-/* Tombol gradient utama */
+/* Tombol gradient utama (glow biru yang halus) */
 .btn-glow {
   position: relative;
   background: var(--grad-brand);
   background-size: 200% 200%;
   animation: gradientShift 8s ease infinite;
-  box-shadow: 0 10px 30px -8px rgba(168, 85, 247, 0.6);
+  box-shadow: 0 10px 26px -10px rgba(37, 99, 235, 0.5);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .btn-glow:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 18px 45px -10px rgba(236, 72, 153, 0.7);
+  box-shadow: 0 16px 38px -12px rgba(14, 165, 233, 0.55);
 }
 
 /* Kilau melintas (shimmer) untuk badge/chip */

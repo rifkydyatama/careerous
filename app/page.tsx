@@ -2,12 +2,16 @@ import Link from "next/link";
 import {
   ArrowRight,
   BookOpenCheck,
+  ClipboardList,
   Compass,
+  GraduationCap,
+  HeartHandshake,
   LayoutDashboard,
   MessageCircleHeart,
+  PencilLine,
   Rocket,
+  ShieldCheck,
   Sparkles,
-  Star,
   Target,
   Users,
   type LucideIcon,
@@ -16,14 +20,13 @@ import AuroraBackground from "./components/AuroraBackground";
 import Reveal from "./components/Reveal";
 
 type StatItem = {
-  emoji: string;
+  icon: LucideIcon;
   label: string;
   value: string;
   helper: string;
 };
 
 type FeatureItem = {
-  emoji: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -32,92 +35,89 @@ type FeatureItem = {
 };
 
 type StepItem = {
-  emoji: string;
+  icon: LucideIcon;
   title: string;
   text: string;
 };
 
 const HERO_STATS: StatItem[] = [
   {
-    emoji: "🎯",
+    icon: Target,
     label: "Program",
     value: "12 modul",
-    helper: "eksplorasi karier bertahap dalam 3 fase seru",
+    helper: "Eksplorasi karier bertahap dalam tiga fase terstruktur.",
   },
   {
-    emoji: "🤝",
+    icon: HeartHandshake,
     label: "Didampingi",
     value: "Guru & Konselor",
-    helper: "ada yang bantu di tiap langkahmu",
+    helper: "Pendampingan pada setiap langkah perjalananmu.",
   },
   {
-    emoji: "🧭",
+    icon: Compass,
     label: "Hasil",
-    value: "Arah jelas",
-    helper: "kenali minat, bakat, dan jurusan impian",
+    value: "Arah yang jelas",
+    helper: "Kenali minat, bakat, dan jurusan yang sesuai.",
   },
 ];
 
 const FEATURE_ITEMS: FeatureItem[] = [
   {
-    emoji: "📚",
-    eyebrow: "Step by step",
-    title: "Modul kebuka bertahap",
+    eyebrow: "Terstruktur",
+    title: "Modul terbuka bertahap",
     description:
-      "Ikuti 12 modul eksplorasi karier yang tersusun rapi dalam 3 fase — nggak bikin bingung, tinggal jalanin satu per satu.",
+      "Dua belas modul eksplorasi karier tersusun rapi dalam tiga fase, sehingga kamu dapat menyelesaikannya satu per satu dengan terarah.",
     icon: BookOpenCheck,
-    glow: "from-fuchsia-500/30 to-pink-500/10",
+    glow: "from-blue-500/20 to-sky-500/10",
   },
   {
-    emoji: "💬",
-    eyebrow: "Selalu didampingi",
-    title: "Konselor pantau progresmu",
+    eyebrow: "Didampingi konselor",
+    title: "Progres yang terpantau",
     description:
-      "Setiap refleksi yang kamu tulis bisa dilihat konselor, jadi kamu dapat feedback dan dukungan yang pas.",
+      "Setiap refleksi yang kamu tulis dapat ditinjau konselor, sehingga kamu memperoleh umpan balik dan dukungan yang tepat sasaran.",
     icon: MessageCircleHeart,
-    glow: "from-violet-500/30 to-indigo-500/10",
+    glow: "from-indigo-500/20 to-blue-500/10",
   },
   {
-    emoji: "✨",
     eyebrow: "Satu portal",
-    title: "Semua di satu tempat",
+    title: "Semua kebutuhan di satu tempat",
     description:
-      "Refleksi, jurnal, jadwal, sampai laporan kariermu ada dalam satu portal yang gampang dipakai dari HP maupun laptop.",
+      "Refleksi, jurnal, jadwal konseling, hingga laporan karier tersedia dalam satu portal yang mudah diakses dari ponsel maupun laptop.",
     icon: Compass,
-    glow: "from-sky-500/30 to-cyan-500/10",
+    glow: "from-sky-500/20 to-cyan-400/10",
   },
 ];
 
 const STEPS: StepItem[] = [
-  { emoji: "📝", title: "Daftar & pilih sekolah", text: "Bikin akun, pilih sekolahmu, langsung mulai." },
-  { emoji: "🧩", title: "Kerjakan modul", text: "Isi refleksi & jurnal tiap minggu dengan santai." },
-  { emoji: "🚀", title: "Temukan arahmu", text: "Dapat gambaran minat, bakat, dan jurusan impian." },
+  { icon: ClipboardList, title: "Daftar & pilih sekolah", text: "Buat akun, pilih sekolahmu, dan mulai program." },
+  { icon: PencilLine, title: "Kerjakan modul", text: "Isi refleksi dan jurnal secara bertahap setiap pekan." },
+  { icon: GraduationCap, title: "Temukan arahmu", text: "Peroleh gambaran minat, bakat, dan jurusan yang sesuai." },
 ];
 
 export default function HomePage() {
   return (
-    <main data-noinvert className="relative min-h-screen overflow-hidden font-sans text-white">
+    <main className="relative min-h-screen overflow-hidden font-sans text-slate-900">
       <AuroraBackground />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 pb-16 pt-5 sm:px-8 lg:px-10">
         {/* ─── Navbar ─── */}
-        <header className="flex items-center justify-between rounded-full border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-md">
+        <header className="flex items-center justify-between rounded-full border border-slate-200/80 bg-white/70 px-4 py-3 shadow-sm backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-500 text-sm font-black text-white shadow-lg shadow-fuchsia-500/40 animate-float-slow">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-sky-500 text-sm font-black text-white shadow-lg shadow-blue-500/30 animate-float-slow">
               C
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-fuchsia-300">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-600">
                 Career Curiosity Platform
               </p>
-              <h1 className="text-sm font-bold text-white">Careerous</h1>
+              <h1 className="text-sm font-bold text-slate-900">Careerous</h1>
             </div>
           </div>
 
           <div className="hidden items-center gap-3 sm:flex">
             <Link
               href="/login"
-              className="rounded-full px-4 py-2 text-sm font-semibold text-white/80 transition hover:text-white"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
             >
               Masuk
             </Link>
@@ -134,22 +134,21 @@ export default function HomePage() {
         <section className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:py-16">
           <Reveal>
             <div className="max-w-2xl">
-              <div className="relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[12px] font-semibold text-white backdrop-blur">
-                <Sparkles size={14} className="text-fuchsia-300" />
-                Platform eksplorasi karier buat pelajar
+              <div className="relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-[12px] font-semibold text-blue-700">
+                <Sparkles size={14} className="text-blue-500" />
+                Platform eksplorasi karier untuk pelajar
                 <span className="shimmer pointer-events-none absolute inset-0" />
               </div>
 
               <h2 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
                 Temukan{" "}
-                <span className="text-gradient">potensi & jurusan impianmu</span>{" "}
-                🚀
+                <span className="text-gradient">potensi dan jurusan impianmu</span>
               </h2>
 
-              <p className="mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-                Careerous bantu kamu kenali minat dan bakat lewat modul seru,
-                jurnal refleksi, dan pendampingan konselor — semua dalam satu
-                portal yang asik dipakai.
+              <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+                Careerous membantu kamu mengenali minat dan bakat melalui modul
+                terstruktur, jurnal refleksi, dan pendampingan konselor — semuanya
+                dalam satu portal yang mudah digunakan.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -162,7 +161,7 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                 >
                   <LayoutDashboard size={16} />
                   Sudah punya akun
@@ -182,62 +181,62 @@ export default function HomePage() {
           {/* Kartu akses cepat melayang */}
           <Reveal delay={0.15}>
             <div className="relative">
-              <div className="absolute -inset-4 -z-10 rounded-[40px] bg-gradient-to-br from-fuchsia-500/30 via-purple-500/20 to-cyan-400/20 blur-2xl glow-pulse" />
-              <div className="glass animate-float-slow rounded-[32px] p-6 shadow-2xl shadow-black/40 sm:p-7">
+              <div className="absolute -inset-4 -z-10 rounded-[40px] bg-gradient-to-br from-blue-400/25 via-sky-400/15 to-cyan-300/15 blur-2xl glow-pulse" />
+              <div className="glass animate-float-slow rounded-[32px] p-6 shadow-xl shadow-blue-500/10 sm:p-7">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400">
                       Akses cepat
                     </p>
-                    <h3 className="mt-1 text-xl font-bold text-white">
-                      Yuk gabung! 🎉
+                    <h3 className="mt-1 text-xl font-bold text-slate-900">
+                      Mulai perjalananmu
                     </h3>
                   </div>
-                  <span className="flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-400/15 px-3 py-1 text-[11px] font-bold text-emerald-300">
-                    <Star size={11} className="fill-emerald-300" /> Gratis
+                  <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-600">
+                    <ShieldCheck size={12} /> Gratis
                   </span>
                 </div>
 
                 <div className="mt-6 grid gap-3">
                   <Link
                     href="/register"
-                    className="card-hover group flex items-center justify-between rounded-2xl border border-white/10 bg-gradient-to-r from-fuchsia-500/20 to-purple-500/10 px-4 py-4"
+                    className="card-hover group flex items-center justify-between rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 px-4 py-4"
                   >
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-fuchsia-300">
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
                         Daftar
                       </p>
-                      <p className="mt-1 text-sm font-semibold text-white">
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
                         Buat akun siswa
                       </p>
-                      <p className="mt-1 text-xs text-slate-300">
+                      <p className="mt-1 text-xs text-slate-500">
                         Pilih sekolahmu dan mulai eksplorasi.
                       </p>
                     </div>
                     <ArrowRight
                       size={18}
-                      className="text-fuchsia-300 transition-transform group-hover:translate-x-1"
+                      className="text-blue-500 transition-transform group-hover:translate-x-1"
                     />
                   </Link>
 
                   <Link
                     href="/login"
-                    className="card-hover group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-4"
+                    className="card-hover group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-4"
                   >
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">
-                        Login
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                        Masuk
                       </p>
-                      <p className="mt-1 text-sm font-semibold text-white">
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
                         Masuk sesuai peran
                       </p>
-                      <p className="mt-1 text-xs text-slate-300">
+                      <p className="mt-1 text-xs text-slate-500">
                         Siswa, konselor, atau admin.
                       </p>
                     </div>
                     <ArrowRight
                       size={18}
-                      className="text-white/70 transition-transform group-hover:translate-x-1"
+                      className="text-slate-400 transition-transform group-hover:translate-x-1"
                     />
                   </Link>
                 </div>
@@ -250,11 +249,11 @@ export default function HomePage() {
         <section className="pb-16" id="fitur">
           <Reveal>
             <div className="mb-8 text-center">
-              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-fuchsia-300">
+              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-blue-600">
                 Kenapa Careerous?
               </p>
-              <h3 className="mt-3 text-3xl font-black sm:text-4xl">
-                Dibikin biar kamu <span className="text-gradient">nggak bingung</span>
+              <h3 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                Dirancang agar kamu <span className="text-gradient">lebih terarah</span>
               </h3>
             </div>
           </Reveal>
@@ -273,30 +272,35 @@ export default function HomePage() {
           <Reveal>
             <div className="glass rounded-[32px] p-6 sm:p-10">
               <div className="mb-8 flex flex-col gap-2 text-center">
-                <h3 className="text-2xl font-black sm:text-3xl">
-                  Cuma 3 langkah ✌️
+                <h3 className="text-2xl font-black text-slate-900 sm:text-3xl">
+                  Hanya tiga langkah
                 </h3>
-                <p className="text-sm text-slate-300">
-                  Gampang banget, bisa dari HP.
+                <p className="text-sm text-slate-500">
+                  Proses sederhana, dapat diakses dari mana saja.
                 </p>
               </div>
               <div className="grid gap-5 md:grid-cols-3">
-                {STEPS.map((step, i) => (
-                  <Reveal key={step.title} delay={i * 0.1}>
-                    <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] p-6">
-                      <span className="absolute -top-4 left-6 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-500 text-sm font-black text-white shadow-lg shadow-fuchsia-500/40">
-                        {i + 1}
-                      </span>
-                      <div className="text-3xl">{step.emoji}</div>
-                      <h4 className="mt-3 text-lg font-bold text-white">
-                        {step.title}
-                      </h4>
-                      <p className="mt-2 text-sm leading-6 text-slate-300">
-                        {step.text}
-                      </p>
-                    </div>
-                  </Reveal>
-                ))}
+                {STEPS.map((step, i) => {
+                  const Icon = step.icon;
+                  return (
+                    <Reveal key={step.title} delay={i * 0.1}>
+                      <div className="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <span className="absolute -top-4 left-6 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-sm font-black text-white shadow-lg shadow-blue-500/30">
+                          {i + 1}
+                        </span>
+                        <div className="inline-flex rounded-2xl bg-blue-50 p-3 text-blue-600">
+                          <Icon size={22} />
+                        </div>
+                        <h4 className="mt-3 text-lg font-bold text-slate-900">
+                          {step.title}
+                        </h4>
+                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                          {step.text}
+                        </p>
+                      </div>
+                    </Reveal>
+                  );
+                })}
               </div>
             </div>
           </Reveal>
@@ -304,19 +308,21 @@ export default function HomePage() {
 
         {/* ─── CTA akhir ─── */}
         <Reveal>
-          <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-fuchsia-600/30 via-purple-600/20 to-cyan-500/20 p-8 text-center sm:p-12">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-fuchsia-500/40 blur-3xl glow-pulse" />
-            <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-cyan-400/30 blur-3xl glow-pulse" />
+          <section className="relative overflow-hidden rounded-[32px] border border-blue-100 bg-gradient-to-br from-blue-50 via-sky-50 to-white p-8 text-center shadow-sm sm:p-12">
+            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-400/20 blur-3xl glow-pulse" />
+            <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-sky-400/20 blur-3xl glow-pulse" />
             <div className="relative">
               <div className="mb-4 flex justify-center">
-                <Target size={40} className="text-fuchsia-300 animate-float" />
+                <span className="inline-flex rounded-2xl bg-white p-3.5 text-blue-600 shadow-sm animate-float">
+                  <Target size={32} />
+                </span>
               </div>
-              <h3 className="text-2xl font-black sm:text-4xl">
-                Siap kenali dirimu lebih dalam?
+              <h3 className="text-2xl font-black text-slate-900 sm:text-4xl">
+                Siap mengenali dirimu lebih dalam?
               </h3>
-              <p className="mx-auto mt-3 max-w-lg text-sm text-slate-200 sm:text-base">
-                Gabung sekarang, gratis. Temukan minat, bakat, dan arah kariermu
-                bareng Careerous.
+              <p className="mx-auto mt-3 max-w-lg text-sm text-slate-600 sm:text-base">
+                Bergabunglah sekarang secara gratis. Temukan minat, bakat, dan arah
+                kariermu bersama Careerous.
               </p>
               <div className="mt-7 flex flex-wrap justify-center gap-3">
                 <Link
@@ -328,7 +334,7 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                 >
                   Masuk
                   <ArrowRight size={16} />
@@ -338,7 +344,7 @@ export default function HomePage() {
           </section>
         </Reveal>
 
-        <footer className="mt-10 text-center text-xs text-white/40">
+        <footer className="mt-10 text-center text-xs text-slate-400">
           © Careerous — Career Curiosity Platform
         </footer>
       </div>
@@ -347,16 +353,19 @@ export default function HomePage() {
 }
 
 function StatPill({ item }: { item: StatItem }) {
+  const Icon = item.icon;
   return (
-    <div className="card-hover rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
+    <div className="card-hover rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-2xl">{item.emoji}</span>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
+        <span className="inline-flex rounded-xl bg-blue-50 p-2 text-blue-600">
+          <Icon size={18} />
+        </span>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
           {item.label}
         </p>
       </div>
-      <div className="mt-2 text-xl font-black text-white">{item.value}</div>
-      <p className="mt-1 text-xs leading-5 text-slate-400">{item.helper}</p>
+      <div className="mt-2 text-xl font-black text-slate-900">{item.value}</div>
+      <p className="mt-1 text-xs leading-5 text-slate-500">{item.helper}</p>
     </div>
   );
 }
@@ -365,22 +374,19 @@ function FeatureCard({ item }: { item: FeatureItem }) {
   const Icon = item.icon;
 
   return (
-    <div className="card-hover group relative h-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-6">
+    <div className="card-hover group relative h-full overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div
         className={`absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br ${item.glow} blur-2xl transition-opacity group-hover:opacity-100`}
       />
       <div className="relative">
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{item.emoji}</span>
-          <div className="inline-flex rounded-2xl border border-white/15 bg-white/10 p-2.5 text-white">
-            <Icon size={18} />
-          </div>
+        <div className="inline-flex rounded-2xl bg-blue-50 p-3 text-blue-600">
+          <Icon size={20} />
         </div>
-        <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.28em] text-fuchsia-300">
+        <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.28em] text-blue-600">
           {item.eyebrow}
         </p>
-        <h4 className="mt-2 text-xl font-bold text-white">{item.title}</h4>
-        <p className="mt-3 text-sm leading-6 text-slate-300">
+        <h4 className="mt-2 text-xl font-bold text-slate-900">{item.title}</h4>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
           {item.description}
         </p>
       </div>
