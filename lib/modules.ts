@@ -44,84 +44,110 @@ export type ModuleInfo = {
   phase: ModulePhase;
   phaseLabel: string;
   title: string;
+  prompts: string[];
+  /** @deprecated Use prompts instead. Kept for backward compat with DB. */
   prompt: string;
 };
 
-const RAW_MODULES: Array<Omit<ModuleInfo, "phase" | "phaseLabel">> = [
+const RAW_MODULES: Array<Omit<ModuleInfo, "phase" | "phaseLabel" | "prompt">> = [
   // ── Fase 1: Eksplorasi Diri (1-4) ──
   {
     number: 1,
     title: "Mengenali Diri",
-    prompt:
+    prompts: [
       "Tuliskan tiga hal yang paling kamu nikmati saat melakukannya sampai lupa waktu. Apa yang membuat aktivitas itu terasa menyenangkan?",
+      "Ceritakan satu momen di mana kamu merasa paling percaya diri. Apa yang sedang kamu lakukan saat itu?",
+    ],
   },
   {
     number: 2,
     title: "Nilai & Motivasi",
-    prompt:
+    prompts: [
       "Hal apa yang menurutmu paling penting dalam hidup dan pekerjaan (misalnya membantu orang, kebebasan, penghasilan, kreativitas)? Mengapa hal itu penting bagimu?",
+      "Bayangkan kamu sudah bekerja. Situasi seperti apa yang membuatmu merasa puas dan bermakna?",
+    ],
   },
   {
     number: 3,
     title: "Kekuatan & Kelemahan",
-    prompt:
+    prompts: [
       "Sebutkan dua kelebihan yang sering dipuji orang lain darimu dan satu hal yang masih ingin kamu kembangkan. Beri contoh nyatanya.",
+      "Apa satu kebiasaan atau keahlian yang kamu miliki yang jarang dimiliki teman-temanmu?",
+    ],
   },
   {
     number: 4,
     title: "Gaya Belajarku",
-    prompt:
+    prompts: [
       "Bagaimana cara belajar yang paling cocok untukmu (melihat, mendengar, praktik, atau membaca/menulis)? Ceritakan satu pengalaman belajar yang berhasil.",
+      "Apa yang biasanya menghambat proses belajarmu, dan bagaimana kamu mengatasinya?",
+    ],
   },
   // ── Fase 2: Eksplorasi Lingkungan (5-8) ──
   {
     number: 5,
     title: "Dunia Profesi",
-    prompt:
+    prompts: [
       "Pilih satu profesi yang membuatmu penasaran. Apa yang sebenarnya dikerjakan orang dalam profesi itu sehari-hari? Apa yang menarik darinya?",
+      "Keterampilan apa yang dibutuhkan profesi tersebut? Apakah kamu sudah memiliki sebagian dari keterampilan itu?",
+    ],
   },
   {
     number: 6,
     title: "Wawancara Mini",
-    prompt:
+    prompts: [
       "Ajak bicara (langsung atau lewat artikel/video) seseorang yang bekerja di bidang yang kamu minati. Apa pelajaran terpenting yang kamu dapat dari kisahnya?",
+      "Apa satu hal mengejutkan yang kamu pelajari dari pengalaman orang tersebut tentang dunia kerja?",
+    ],
   },
   {
     number: 7,
     title: "Jurusan & Jalur Studi",
-    prompt:
+    prompts: [
       "Cari satu jurusan kuliah atau jalur pendidikan yang relevan dengan minatmu. Mata pelajaran/keterampilan apa yang dibutuhkan, dan seberapa cocok dengan dirimu?",
+      "Apa rencana cadanganmu jika kamu tidak diterima di jurusan pilihan pertamamu?",
+    ],
   },
   {
     number: 8,
     title: "Peluang di Sekitar",
-    prompt:
+    prompts: [
       "Peluang, komunitas, atau kegiatan apa di sekitarmu (sekolah, kota, online) yang bisa membantu mengembangkan minat kariermu? Bagaimana cara memulainya?",
+      "Sebutkan satu langkah kecil yang bisa kamu ambil minggu ini untuk mendekatkan dirimu ke peluang tersebut.",
+    ],
   },
   // ── Fase 3: Sintesis & Refleksi (9-12) ──
   {
     number: 9,
     title: "Menghubungkan Titik",
-    prompt:
+    prompts: [
       "Lihat kembali catatan modul-modul sebelumnya. Pola atau benang merah apa yang kamu temukan antara minat, nilai, dan peluang yang sudah kamu jelajahi?",
+      "Apakah ada hal baru tentang dirimu yang baru kamu sadari setelah menjalani modul-modul sebelumnya?",
+    ],
   },
   {
     number: 10,
     title: "Membayangkan Masa Depan",
-    prompt:
+    prompts: [
       "Bayangkan dirimu 5 tahun ke depan dalam versi terbaik. Sedang melakukan apa kamu? Lingkungan seperti apa yang ada di sekitarmu?",
+      "Apa satu pencapaian yang ingin kamu raih dalam 5 tahun dan mengapa itu bermakna bagimu?",
+    ],
   },
   {
     number: 11,
     title: "Hambatan & Strategi",
-    prompt:
+    prompts: [
       "Apa hambatan terbesar yang mungkin menghalangimu mencapai arah karier itu? Tuliskan satu strategi konkret untuk menghadapinya.",
+      "Siapa orang di sekitarmu yang bisa membantumu mengatasi hambatan tersebut? Bagaimana kamu bisa meminta bantuannya?",
+    ],
   },
   {
     number: 12,
     title: "Rencana Langkah Pertama",
-    prompt:
+    prompts: [
       "Tetapkan satu langkah nyata yang bisa kamu mulai bulan ini menuju arah kariermu. Kapan dan bagaimana kamu akan melakukannya?",
+      "Tuliskan satu kalimat komitmen untuk dirimu sendiri tentang perjalanan kariermu ke depan.",
+    ],
   },
 ];
 
@@ -137,6 +163,7 @@ export const MODULES: ModuleInfo[] = RAW_MODULES.map((mod) => {
     ...mod,
     phase: phase.key,
     phaseLabel: phase.label,
+    prompt: mod.prompts[0] ?? "",
   };
 });
 

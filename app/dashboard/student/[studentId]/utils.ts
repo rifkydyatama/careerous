@@ -36,6 +36,7 @@ export type JournalItem = {
   premiumLocked?: boolean;
   title?: string | null;
   prompt?: string | null;
+  prompts?: string[];
   phaseLabel?: string | null;
 };
 

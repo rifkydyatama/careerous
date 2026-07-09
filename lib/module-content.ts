@@ -8,9 +8,21 @@ export type ModuleContentItem = {
   number: number;
   title: string;
   prompt: string;
+  prompts: string[];
   phaseLabel: string;
   deadlineAt: Date | null; // batas waktu absolut modul (diatur admin)
 };
+
+export function parsePrompts(promptStr: string): string[] {
+  if (!promptStr) return [];
+  if (promptStr.includes("|||")) {
+    return promptStr.split("|||").map((p) => p.trim()).filter(Boolean);
+  }
+  if (promptStr.includes("\n\n")) {
+    return promptStr.split("\n\n").map((p) => p.trim()).filter(Boolean);
+  }
+  return [promptStr.trim()];
+}
 
 // Pastikan 12 baris konten ada (di-seed dari default bila belum).
 export async function ensureModuleContents(): Promise<void> {
@@ -36,6 +48,7 @@ export async function getModuleContents(): Promise<Map<number, ModuleContentItem
       number: m.number,
       title: m.title,
       prompt: m.prompt,
+      prompts: m.prompts,
       phaseLabel: m.phaseLabel,
       deadlineAt: null,
     });
@@ -45,6 +58,7 @@ export async function getModuleContents(): Promise<Map<number, ModuleContentItem
       number: row.number,
       title: row.title,
       prompt: row.prompt,
+      prompts: parsePrompts(row.prompt),
       phaseLabel: row.phaseLabel,
       deadlineAt: row.deadlineAt ?? null,
     });
@@ -64,6 +78,7 @@ export function resolveModule(
     number: def.number,
     title: def.title,
     prompt: def.prompt,
+    prompts: def.prompts,
     phaseLabel: def.phaseLabel,
     deadlineAt: null,
   };

@@ -218,7 +218,13 @@ export default function LoginPage() {
                   </button>
                 </form>
 
-                <div className="mt-5 flex items-center justify-between gap-4 text-xs text-slate-500">
+                <div className="mt-3 text-center">
+                  <Link href="/forgot-password" className="text-xs font-semibold text-slate-500 transition hover:text-blue-600">
+                    Lupa kata sandi?
+                  </Link>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between gap-4 text-xs text-slate-500">
                   <span>Belum punya akun?</span>
                   <Link href="/register" className="font-bold text-blue-600 hover:text-blue-700">
                     Daftar gratis →

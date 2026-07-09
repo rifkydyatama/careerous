@@ -178,6 +178,7 @@ function ModuleCard({
   const meta = {
     title: journal.title ?? fallback?.title ?? "",
     prompt: journal.prompt ?? fallback?.prompt ?? "",
+    prompts: fallback?.prompts ?? [journal.prompt ?? fallback?.prompt ?? ""],
     phaseLabel: journal.phaseLabel ?? fallback?.phaseLabel ?? "",
   };
   const isPremiumGate = journal.premiumLocked && journal.status !== "COMPLETED";
@@ -235,7 +236,7 @@ function ModuleCard({
             <JournalEntryForm
               studentId={studentId}
               weekNumber={journal.weekNumber}
-              prompt={meta.prompt}
+              prompts={meta.prompts}
               onSubmitSuccess={onSubmitSuccess}
             />
           </>
@@ -447,30 +448,65 @@ function CompletedCard({ journal }: { journal: JournalItem }) {
 function JournalEntryForm({
   studentId,
   weekNumber,
-  prompt,
+  prompts,
   onSubmitSuccess,
 }: {
   studentId: string;
   weekNumber: number;
-  prompt?: string;
+  prompts: string[];
   onSubmitSuccess: (journal: JournalItem) => Promise<JournalItem> | void;
 }) {
-  const [reflectionText, setReflectionText] = useState("");
+  const [answers, setAnswers] = useState<string[]>(() => prompts.map(() => ""));
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const updateAnswer = (index: number, value: string) => {
+    setAnswers((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
+
+  const allFilled = answers.every((a) => a.trim().length > 0);
+
+  const handleFileChange = async (selectedFile: File | null) => {
+    if (!selectedFile) return;
+    setFile(selectedFile);
+    setIsUploading(true);
+    setError(null);
+    try {
+      const url = await uploadFile(selectedFile);
+      setUploadedUrl(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal mengunggah file");
+      setFile(null);
+      setUploadedUrl(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!reflectionText.trim()) return;
+    if (!allFilled) return;
 
     setIsSubmitting(true);
     setError(null);
 
+    // Gabungkan jawaban dengan separator yang jelas
+    const combined = answers
+      .map((a, i) => `[Pertanyaan ${i + 1}]\n${a.trim()}`)
+      .join("\n\n");
+
     try {
       const savedJournal = await submitStudentJournal(studentId, {
         weekNumber,
-        reflectionText: reflectionText.trim(),
-        evidenceImageUrl: null,
+        reflectionText: combined,
+        evidenceImageUrl: uploadedUrl,
       });
       await onSubmitSuccess(savedJournal);
     } catch (err) {
@@ -482,32 +518,57 @@ function JournalEntryForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <div>
-        <label className="mb-1 block text-[11px] font-semibold leading-snug text-slate-700">
-          {prompt || "Apa yang Anda pelajari pada modul ini?"}
-        </label>
-        <textarea
-          required
-          rows={4}
-          value={reflectionText}
-          onChange={(e) => setReflectionText(e.target.value)}
-          placeholder="Tuliskan jawaban dan refleksimu di sini..."
-          className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[12.5px] text-slate-700 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-        />
-      </div>
+      {prompts.map((prompt, index) => (
+        <div key={index}>
+          <label className="mb-1 block text-[11px] font-semibold leading-snug text-slate-700">
+            <span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-100 text-[9px] font-extrabold text-blue-700">
+              {index + 1}
+            </span>
+            {prompt}
+          </label>
+          <textarea
+            required
+            rows={3}
+            value={answers[index] ?? ""}
+            onChange={(e) => updateAnswer(index, e.target.value)}
+            placeholder={`Jawaban pertanyaan ${index + 1}...`}
+            className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[12.5px] text-slate-700 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+        </div>
+      ))}
 
       <div>
         <label className="mb-1 block text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Lampiran Bukti (Opsional)</label>
-        <button type="button" className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 py-2.5 text-[11.5px] font-semibold text-slate-500 transition-colors hover:bg-slate-100">
-          <UploadCloud size={14} /> Unggah Foto / Dokumen
-        </button>
+        <label
+          className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[11.5px] font-semibold transition-colors ${
+            file
+              ? "border-blue-400 bg-blue-50 text-blue-700"
+              : "border-slate-300 bg-slate-50 text-slate-500 hover:bg-slate-100"
+          }`}
+        >
+          <UploadCloud size={14} />
+          {isUploading
+            ? "Mengunggah..."
+            : file
+              ? file.name
+              : "Unggah Foto / Dokumen"}
+          <input
+            type="file"
+            accept="image/*,.pdf,.doc,.docx,.ppt,.pptx"
+            className="hidden"
+            onChange={(e) => void handleFileChange(e.target.files?.[0] ?? null)}
+          />
+        </label>
+        {uploadedUrl && (
+          <p className="mt-1 text-[10px] font-semibold text-emerald-600">✓ File berhasil diunggah</p>
+        )}
       </div>
 
       {error && <p className="text-[11px] font-semibold text-rose-600">{error}</p>}
 
       <button
         type="submit"
-        disabled={isSubmitting || !reflectionText.trim()}
+        disabled={isSubmitting || isUploading || !allFilled}
         className="mt-1 rounded-lg bg-blue-600 py-2.5 text-[12px] font-bold text-white shadow-sm transition-all hover:bg-blue-700 disabled:bg-slate-300"
       >
         {isSubmitting ? "Mengirim..." : "Kirim Jawaban Modul"}

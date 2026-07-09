@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80) || "dokumen";
-    const key = `moodboard/${session.userId}/${Date.now()}-${safeName}`;
+    const key = `journals/${session.userId}/${Date.now()}-${safeName}`;
     const blob = await put(key, file, { access: "public" });
     return NextResponse.json({ url: blob.url });
   } catch {

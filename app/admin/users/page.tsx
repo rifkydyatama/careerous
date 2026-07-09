@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, Trash2, Search } from "lucide-react";
+import { RefreshCw, Trash2, Search, KeyRound } from "lucide-react";
 import {
   fetchAdminUsers,
   updateAdminUser,
@@ -24,6 +24,11 @@ export default function AdminUsersPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [resetTarget, setResetTarget] = useState<AdminUser | null>(null);
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetError, setResetError] = useState<string | null>(null);
+  const [resetSuccess, setResetSuccess] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -82,6 +87,36 @@ export default function AdminUsersPage() {
       setUsers((prev) => prev.filter((x) => x.id !== u.id));
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Gagal menghapus");
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetTarget || resetPassword.length < 8) {
+      setResetError("Kata sandi baru minimal 8 karakter.");
+      return;
+    }
+    setIsResetting(true);
+    setResetError(null);
+    try {
+      const res = await fetch("/api/admin/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: resetTarget.id, newPassword: resetPassword }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Gagal mereset kata sandi");
+      }
+      setResetSuccess(`Kata sandi ${resetTarget.name || resetTarget.email} berhasil direset.`);
+      setResetPassword("");
+      setTimeout(() => {
+        setResetTarget(null);
+        setResetSuccess(null);
+      }, 2000);
+    } catch (err) {
+      setResetError(err instanceof Error ? err.message : "Gagal mereset");
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -186,13 +221,22 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-4 py-3 text-slate-500">{formatDateId(u.createdAt)}</td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      type="button"
-                      onClick={() => void handleDelete(u)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-bold text-rose-600 transition hover:bg-rose-50"
-                    >
-                      <Trash2 size={12} /> Hapus
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => { setResetTarget(u); setResetPassword(""); setResetError(null); setResetSuccess(null); }}
+                        className="inline-flex items-center gap-1 rounded-lg border border-blue-200 px-2.5 py-1.5 text-[11px] font-bold text-blue-600 transition hover:bg-blue-50"
+                      >
+                        <KeyRound size={12} /> Reset
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDelete(u)}
+                        className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-bold text-rose-600 transition hover:bg-rose-50"
+                      >
+                        <Trash2 size={12} /> Hapus
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -205,6 +249,44 @@ export default function AdminUsersPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal Reset Password */}
+      {resetTarget && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <h3 className="text-lg font-extrabold text-slate-900">Reset Kata Sandi</h3>
+            <p className="mt-1 text-[13px] text-slate-500">
+              Atur ulang kata sandi untuk <b>{resetTarget.name || resetTarget.email}</b>
+            </p>
+            <input
+              type="password"
+              value={resetPassword}
+              onChange={(e) => setResetPassword(e.target.value)}
+              placeholder="Kata sandi baru (min. 8 karakter)"
+              className="mt-4 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            />
+            {resetError && <p className="mt-2 text-[12px] font-semibold text-rose-600">{resetError}</p>}
+            {resetSuccess && <p className="mt-2 text-[12px] font-semibold text-emerald-600">{resetSuccess}</p>}
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setResetTarget(null)}
+                className="rounded-lg border border-slate-200 px-4 py-2 text-[12px] font-bold text-slate-600 hover:bg-slate-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleResetPassword()}
+                disabled={isResetting}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-[12px] font-bold text-white hover:bg-blue-700 disabled:bg-slate-300"
+              >
+                {isResetting ? "Menyimpan..." : "Reset Kata Sandi"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

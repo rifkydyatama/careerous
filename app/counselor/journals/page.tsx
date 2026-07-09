@@ -266,11 +266,25 @@ function JournalCard({ journal, studentId, onSave }: { journal: CounselorJournal
             rel="noreferrer"
             className="mb-3 flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 p-3 text-[11.5px] font-bold text-blue-700 transition hover:bg-blue-100"
           >
-            <ExternalLink size={12} /> Lihat Dokumen Mood Board
+            <ExternalLink size={12} /> Lihat Dokumen Pendukung
           </a>
         )}
 
-        <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Mood Board</div>
+        {meta?.prompts && meta.prompts.length > 0 && (
+          <div className="mb-3">
+            <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-blue-500">Pertanyaan Modul</div>
+            <div className="space-y-2">
+              {meta.prompts.map((q: string, i: number) => (
+                <div key={i} className="flex gap-2 rounded-lg border border-blue-100 bg-blue-50/50 p-3 text-[12px] leading-relaxed text-blue-800">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-200 text-[9px] font-extrabold text-blue-800">{i + 1}</span>
+                  <span className="italic">{q}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Hasil Journaling</div>
         <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-[12.5px] leading-relaxed text-slate-600">
           {journal.reflectionText || <em className="text-slate-400">Tidak ada teks.</em>}
         </div>
