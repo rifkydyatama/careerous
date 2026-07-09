@@ -47,7 +47,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const role: PortalRole = "STUDENT";
+  const [role, setRole] = useState<PortalRole>("STUDENT");
   const [institutionName, setInstitutionName] = useState("");
   const [institutionId, setInstitutionId] = useState("");
   const [institutions, setInstitutions] = useState<InstitutionOption[]>([]);
@@ -55,6 +55,15 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    const roleParam = new URLSearchParams(window.location.search).get("role");
+    const normalizedRole = normalizeRole(roleParam);
+
+    if (normalizedRole) {
+      setRole(normalizedRole);
+    }
+  }, []);
 
   // Ambil daftar sekolah: siswa memilih dari sini, guru memakainya sebagai saran nama.
   useEffect(() => {
@@ -203,7 +212,7 @@ export default function RegisterPage() {
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 <Card icon={UserPlus} title="Akun baru" text="Nama & email jadi identitas." />
-                <Card icon={BadgePlus} title="Role Siswa" text="Akun khusus siswa/mahasiswa." />
+                <Card icon={BadgePlus} title="Pilih peran" text="Siswa/mahasiswa atau konselor." />
                 <Card icon={Mail} title="Langsung aktif" text="Data tersimpan otomatis." />
               </div>
             </section>
@@ -307,34 +316,93 @@ export default function RegisterPage() {
 
                   <div>
                     <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
-                      Sekolah
+                      Peran akun
                     </label>
-                    <div className="relative">
-                      <InputIcon icon={School} />
-                      <select
-                        value={institutionId}
-                        onChange={(event) => setInstitutionId(event.target.value)}
-                        disabled={studentSchools.length === 0}
-                        className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 disabled:cursor-not-allowed disabled:opacity-70"
-                      >
-                        <option value="" className="bg-white">
-                          {studentSchools.length === 0
-                            ? "Belum ada sekolah terdaftar"
-                            : "— Pilih sekolah —"}
+                    <select
+                      value={role}
+                      onChange={(event) => setRole(event.target.value as PortalRole)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                    >
+                      {PORTAL_ROLE_OPTIONS.map((item) => (
+                        <option key={item.value} value={item.value} className="bg-white">
+                          {item.label}
                         </option>
-                        {studentSchools.map((item) => (
-                          <option key={item.id} value={item.id} className="bg-white">
-                            {item.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <p className="mt-2 text-xs text-slate-500">
-                      {studentSchools.length === 0
-                        ? "Sekolah baru muncul setelah guru dari sekolahmu mendaftar terlebih dahulu."
-                        : "Pilih sekolahmu. Daftar ini berisi sekolah yang gurunya sudah terdaftar."}
-                    </p>
+                      ))}
+                    </select>
+                    {selectedRole && (
+                      <p className="mt-2 text-xs text-slate-500">{selectedRole.description}</p>
+                    )}
                   </div>
+
+                  {role === "STUDENT" ? (
+                    <div>
+                      <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
+                        Sekolah
+                      </label>
+                      <div className="relative">
+                        <InputIcon icon={School} />
+                        <select
+                          value={institutionId}
+                          onChange={(event) => setInstitutionId(event.target.value)}
+                          disabled={studentSchools.length === 0}
+                          className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 disabled:cursor-not-allowed disabled:opacity-70"
+                        >
+                          <option value="" className="bg-white">
+                            {studentSchools.length === 0
+                              ? "Belum ada sekolah terdaftar"
+                              : "— Pilih sekolah —"}
+                          </option>
+                          {studentSchools.map((item) => (
+                            <option key={item.id} value={item.id} className="bg-white">
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <p className="mt-2 text-xs text-slate-500">
+                        {studentSchools.length === 0
+                          ? "Sekolah baru muncul setelah guru dari sekolahmu mendaftar terlebih dahulu."
+                          : "Pilih sekolahmu. Daftar ini berisi sekolah yang gurunya sudah terdaftar."}
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="mb-1.5 block text-[12px] font-semibold text-slate-700">
+                        Sekolah / Institusi <span className="font-normal text-slate-400">(opsional)</span>
+                      </label>
+                      <div className="relative">
+                        <InputIcon icon={School} />
+                        <input
+                          type="text"
+                          value={institutionName}
+                          onChange={(event) => setInstitutionName(event.target.value)}
+                          placeholder="mis. SMA Negeri 1 Malang"
+                          list="institution-suggestions"
+                          autoComplete="off"
+                          className={inputClass}
+                        />
+                        <datalist id="institution-suggestions">
+                          {institutions.map((item) => (
+                            <option key={item.id} value={item.name} />
+                          ))}
+                        </datalist>
+                      </div>
+                      {institutionSuggestion ? (
+                        <button
+                          type="button"
+                          onClick={() => setInstitutionName(institutionSuggestion)}
+                          className="mt-2 text-xs font-bold text-blue-600 hover:text-blue-700"
+                        >
+                          Sekolah ini sudah terdaftar sebagai “{institutionSuggestion}” — gunakan nama itu
+                        </button>
+                      ) : (
+                        <p className="mt-2 text-xs text-slate-500">
+                          Ketik nama sekolahmu. Jika sudah pernah didaftarkan guru lain, pilih dari saran
+                          agar tidak terjadi duplikat. Siswa akan memilih sekolah ini saat mendaftar.
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {errorMessage && (
                     <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
