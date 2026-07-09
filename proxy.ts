@@ -3,13 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 const EXCLUDED_PATHS = [
   "/maintenance",
   "/admin-access",
-  "/login",
-  "/guide",
-  "/api/auth/",
+  "/api/auth/maintenance-check",
   "/_next",
   "/logo.jpg",
   "/favicon.ico",
-  "/static",
 ];
 
 export async function proxy(request: NextRequest) {
