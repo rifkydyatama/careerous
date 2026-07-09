@@ -57,9 +57,14 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // STUDENT: slot mendatang yang belum dibatalkan.
+  // STUDENT: slot mendatang yang belum dibatalkan, ATAU slot (lampau/mendatang) yang sudah pernah dibooking siswa ini.
   const schedules = await prisma.counselingSchedule.findMany({
-    where: { startTime: { gte: now }, status: { not: "CANCELLED" } },
+    where: {
+      OR: [
+        { startTime: { gte: now }, status: { not: "CANCELLED" } },
+        { bookings: { some: { studentId: session.userId } } }
+      ]
+    },
     orderBy: { startTime: "asc" },
     include: {
       counselor: { select: { name: true } },
