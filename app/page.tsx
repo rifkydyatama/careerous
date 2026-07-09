@@ -108,7 +108,7 @@ export default function HomePage() {
             </div>
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-fuchsia-300">
-                Universitas Negeri Malang
+                Career Curiosity Platform
               </p>
               <h1 className="text-sm font-bold text-white">Careerous</h1>
             </div>
@@ -339,7 +339,7 @@ export default function HomePage() {
         </Reveal>
 
         <footer className="mt-10 text-center text-xs text-white/40">
-          © Careerous — Universitas Negeri Malang
+          © Careerous — Career Curiosity Platform
         </footer>
       </div>
     </main>

@@ -1,12 +1,12 @@
-// Identitas institusi (Universitas Negeri Malang) untuk branding seluruh aplikasi.
-// Ganti logo dengan mengganti file di public/logo-um.svg.
+// Identitas aplikasi Careerous (generik, tidak terikat institusi tertentu).
+// Nama sekolah ditampilkan secara dinamis dari data institusi masing-masing user.
 
 export const UNIVERSITY = {
-  name: "Universitas Negeri Malang",
-  short: "UM",
+  name: "Careerous",
+  short: "CR",
   unit: "Layanan Bimbingan Karier",
   app: "Careerous",
   appTagline: "Career Curiosity Platform",
   logo: "/logo-um.svg",
-  copyright: "© Universitas Negeri Malang",
+  copyright: "© Careerous",
 };

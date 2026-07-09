@@ -9,7 +9,7 @@ type ScheduleType = "INDIVIDUAL" | "GROUP";
 
 // GET /api/counseling/schedules
 // - Konselor: slot miliknya + daftar booking (nama siswa, topik, status).
-// - Siswa: slot mendatang yang tersedia + status booking dirinya.
+// - Siswa: slot mendatang yang tersedia + status booking dirinya + info komunikasi (jika disetujui).
 export async function GET(request: NextRequest) {
   const session = getSession(request);
   if (!session) {
@@ -38,6 +38,9 @@ export async function GET(request: NextRequest) {
         maxCapacity: s.maxCapacity,
         startTime: s.startTime.toISOString(),
         endTime: s.endTime.toISOString(),
+        meetLink: s.meetLink,
+        location: s.location,
+        phone: s.phone,
         status: s.status,
         bookedCount: s.bookings.filter((b) => ACTIVE_BOOKING.includes(b.status as never)).length,
         bookings: s.bookings.map((b) => ({
@@ -47,6 +50,7 @@ export async function GET(request: NextRequest) {
           topic: b.topic,
           status: b.status,
           notes: b.notes,
+          approvalMessage: b.approvalMessage,
           createdAt: b.createdAt.toISOString(),
         })),
       })),
@@ -59,7 +63,14 @@ export async function GET(request: NextRequest) {
     orderBy: { startTime: "asc" },
     include: {
       counselor: { select: { name: true } },
-      bookings: { select: { id: true, studentId: true, status: true } },
+      bookings: {
+        select: {
+          id: true,
+          studentId: true,
+          status: true,
+          approvalMessage: true,
+        },
+      },
     },
   });
 
@@ -68,6 +79,7 @@ export async function GET(request: NextRequest) {
     schedules: schedules.map((s) => {
       const active = s.bookings.filter((b) => ACTIVE_BOOKING.includes(b.status as never));
       const myBooking = s.bookings.find((b) => b.studentId === session.userId) ?? null;
+      const isApproved = myBooking?.status === "APPROVED";
       return {
         id: s.id,
         type: s.type,
@@ -79,6 +91,11 @@ export async function GET(request: NextRequest) {
         isFull: active.length >= s.maxCapacity,
         myBookingStatus: myBooking?.status ?? null,
         myBookingId: myBooking?.id ?? null,
+        // Info komunikasi hanya ditampilkan jika booking disetujui.
+        meetLink: isApproved ? s.meetLink : null,
+        location: isApproved ? s.location : null,
+        phone: isApproved ? s.phone : null,
+        approvalMessage: isApproved ? (myBooking?.approvalMessage ?? null) : null,
       };
     }),
   });
@@ -107,6 +124,9 @@ export async function POST(request: NextRequest) {
       : type === "GROUP"
         ? 5
         : 1;
+  const meetLink = typeof body?.meetLink === "string" ? body.meetLink.trim() || null : null;
+  const location = typeof body?.location === "string" ? body.location.trim() || null : null;
+  const phone = typeof body?.phone === "string" ? body.phone.trim() || null : null;
 
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return NextResponse.json({ error: "Waktu tidak valid" }, { status: 400 });
@@ -122,6 +142,9 @@ export async function POST(request: NextRequest) {
       maxCapacity,
       startTime: start,
       endTime: end,
+      meetLink,
+      location,
+      phone,
     },
   });
 

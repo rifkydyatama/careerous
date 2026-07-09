@@ -23,6 +23,12 @@ import {
   NotificationItem,
 } from "./utils";
 
+type MeUser = {
+  id: string;
+  name: string | null;
+  institution?: { name: string } | null;
+};
+
 export default function StudentLayout({
   children,
 }: {
@@ -32,6 +38,17 @@ export default function StudentLayout({
   const pathname = usePathname();
   const params = useParams<{ studentId: string }>();
   const studentId = params.studentId;
+
+  const [me, setMe] = useState<MeUser | null>(null);
+
+  useEffect(() => {
+    void fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((d) => { if (d?.user) setMe(d.user); })
+      .catch(() => {});
+  }, []);
+
+  const schoolName = me?.institution?.name ?? UNIVERSITY.name;
 
   const handleLogout = async () => {
     try {
@@ -51,7 +68,7 @@ export default function StudentLayout({
           <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0" />
           <div>
             <h1 className="text-sm font-extrabold leading-tight text-white">{UNIVERSITY.app}</h1>
-            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-white/40">{UNIVERSITY.name}</p>
+            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-white/40">{schoolName}</p>
           </div>
         </div>
 
@@ -92,11 +109,11 @@ export default function StudentLayout({
             <div className="h-8 w-px bg-slate-200"></div>
             <div className="flex items-center gap-2.5">
               <div className="text-right">
-                <p className="text-[11.5px] font-bold text-slate-900">Siswa Aktif</p>
-                <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">Peserta Program</p>
+                <p className="text-[11.5px] font-bold text-slate-900">{me?.name?.split(" ")[0] || "Siswa Aktif"}</p>
+                <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">{schoolName}</p>
               </div>
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2e1065] text-xs font-extrabold text-white shadow-sm">
-                S
+                {(me?.name?.[0] || "S").toUpperCase()}
               </div>
             </div>
           </div>

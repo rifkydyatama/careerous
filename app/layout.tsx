@@ -61,7 +61,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Careerous Portal | Universitas Negeri Malang",
+  title: "Careerous Portal | Career Curiosity Platform",
   description: "Portal layanan bimbingan karier untuk mahasiswa dan konselor.",
 };
 

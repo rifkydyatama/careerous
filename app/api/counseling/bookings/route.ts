@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 }
 
 // PATCH /api/counseling/bookings — ubah status booking.
-// Konselor: { id, status: APPROVED|REJECTED, notes? }. Siswa: { id, status: CANCELLED }.
+// Konselor: { id, status: APPROVED|REJECTED, approvalMessage? }. Siswa: { id, status: CANCELLED }.
 export async function PATCH(request: NextRequest) {
   const session = getSession(request);
   if (!session) {
@@ -104,7 +104,17 @@ export async function PATCH(request: NextRequest) {
 
   const booking = await prisma.counselingBooking.findUnique({
     where: { id },
-    include: { schedule: { select: { counselorId: true, startTime: true } } },
+    include: {
+      schedule: {
+        select: {
+          counselorId: true,
+          startTime: true,
+          meetLink: true,
+          location: true,
+          phone: true,
+        },
+      },
+    },
   });
   if (!booking) {
     return NextResponse.json({ error: "Booking tidak ditemukan" }, { status: 404 });
@@ -127,27 +137,50 @@ export async function PATCH(request: NextRequest) {
     if (status !== "APPROVED" && status !== "REJECTED") {
       return NextResponse.json({ error: "Status tidak valid" }, { status: 400 });
     }
+
+    const approvalMessage = typeof body?.approvalMessage === "string" ? body.approvalMessage.trim() || null : null;
     const notes = typeof body?.notes === "string" ? body.notes.trim() : undefined;
+
     await prisma.counselingBooking.update({
       where: { id },
-      data: { status, ...(notes !== undefined ? { notes } : {}) },
-    });
-
-    // Beri tahu siswa.
-    await prisma.notification.create({
       data: {
-        userId: booking.studentId,
-        type: "BOOKING",
-        title:
-          status === "APPROVED"
-            ? `Sesi konseling ${formatId(booking.schedule.startTime)} disetujui`
-            : `Permintaan konseling ${formatId(booking.schedule.startTime)} ditolak`,
-        body:
-          status === "APPROVED"
-            ? "Konselor menyetujui permintaan konselingmu. Sampai jumpa di sesi!"
-            : "Konselor belum dapat menerima permintaan konselingmu. Silakan pilih slot lain.",
+        status,
+        ...(approvalMessage !== null ? { approvalMessage } : {}),
+        ...(notes !== undefined ? { notes } : {}),
       },
     });
+
+    // Beri tahu siswa — sertakan info komunikasi jika disetujui.
+    if (status === "APPROVED") {
+      const schedule = booking.schedule;
+      const commParts: string[] = [];
+      commParts.push("Konselor menyetujui permintaan konselingmu! 🎉");
+      if (schedule.meetLink) commParts.push(`🎥 Video Call: ${schedule.meetLink}`);
+      if (schedule.phone) commParts.push(`📞 Telepon/WA: ${schedule.phone}`);
+      if (schedule.location) commParts.push(`📍 Lokasi: ${schedule.location}`);
+      if (approvalMessage) commParts.push(`💬 Pesan: ${approvalMessage}`);
+      if (!schedule.meetLink && !schedule.phone && !schedule.location) {
+        commParts.push("Sampai jumpa di sesi konseling!");
+      }
+
+      await prisma.notification.create({
+        data: {
+          userId: booking.studentId,
+          type: "BOOKING",
+          title: `Sesi konseling ${formatId(booking.schedule.startTime)} disetujui ✅`,
+          body: commParts.join("\n"),
+        },
+      });
+    } else {
+      await prisma.notification.create({
+        data: {
+          userId: booking.studentId,
+          type: "BOOKING",
+          title: `Permintaan konseling ${formatId(booking.schedule.startTime)} ditolak`,
+          body: "Konselor belum dapat menerima permintaan konselingmu. Silakan pilih slot lain.",
+        },
+      });
+    }
 
     return NextResponse.json({ ok: true });
   }

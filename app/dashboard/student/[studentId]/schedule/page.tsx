@@ -1,7 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CalendarClock, Clock, User, Users, RefreshCw, X } from "lucide-react";
+import {
+  CalendarClock,
+  Clock,
+  User,
+  Users,
+  RefreshCw,
+  X,
+  Video,
+  Phone,
+  MapPin,
+  MessageSquare,
+  ExternalLink,
+} from "lucide-react";
 
 type BookingStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
@@ -16,6 +28,10 @@ type StudentSchedule = {
   isFull: boolean;
   myBookingStatus: BookingStatus | null;
   myBookingId: string | null;
+  meetLink: string | null;
+  location: string | null;
+  phone: string | null;
+  approvalMessage: string | null;
 };
 
 function formatId(value: string): string {
@@ -131,6 +147,92 @@ export default function SchedulePage() {
                       </div>
                       {s.myBookingStatus && <StatusBadge status={s.myBookingStatus} />}
                     </div>
+
+                    {/* ── Panel Komunikasi (hanya jika disetujui) ── */}
+                    {s.myBookingStatus === "APPROVED" && (s.meetLink || s.phone || s.location || s.approvalMessage) && (
+                      <div className="mt-4 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 p-4">
+                        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                          ✅ Sesi Disetujui — Info Komunikasi
+                        </p>
+
+                        <div className="space-y-2.5">
+                          {s.meetLink && (
+                            <a
+                              href={s.meetLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2.5 rounded-lg border border-fuchsia-200 bg-white px-3.5 py-2.5 text-[12.5px] font-bold text-fuchsia-700 shadow-sm transition hover:border-fuchsia-400 hover:bg-fuchsia-50 hover:shadow-md"
+                            >
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white">
+                                <Video size={15} />
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-bold">Gabung Video Call</p>
+                                <p className="mt-0.5 text-[10.5px] font-normal text-fuchsia-500 truncate">{s.meetLink}</p>
+                              </div>
+                              <ExternalLink size={14} className="shrink-0 text-fuchsia-400" />
+                            </a>
+                          )}
+
+                          {s.phone && (
+                            <a
+                              href={`https://wa.me/${s.phone.replace(/[^0-9+]/g, "").replace(/^0/, "62")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-white px-3.5 py-2.5 text-[12.5px] font-bold text-emerald-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50 hover:shadow-md"
+                            >
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 text-white">
+                                <Phone size={15} />
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-bold">Hubungi via WhatsApp / Telepon</p>
+                                <p className="mt-0.5 text-[10.5px] font-normal text-emerald-500">{s.phone}</p>
+                              </div>
+                              <ExternalLink size={14} className="shrink-0 text-emerald-400" />
+                            </a>
+                          )}
+
+                          {s.location && (
+                            <div className="flex items-center gap-2.5 rounded-lg border border-blue-200 bg-white px-3.5 py-2.5 text-[12.5px] text-blue-700">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                                <MapPin size={15} />
+                              </div>
+                              <div>
+                                <p className="font-bold">Lokasi Tatap Muka</p>
+                                <p className="mt-0.5 text-[10.5px] font-normal text-blue-500">{s.location}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {s.approvalMessage && (
+                            <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-white px-3.5 py-2.5 text-[12.5px] text-amber-800">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 text-white">
+                                <MessageSquare size={15} />
+                              </div>
+                              <div>
+                                <p className="font-bold">Pesan dari Konselor</p>
+                                <p className="mt-0.5 text-[10.5px] font-normal leading-relaxed text-amber-600">{s.approvalMessage}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Pesan default jika disetujui tanpa info komunikasi */}
+                    {s.myBookingStatus === "APPROVED" && !s.meetLink && !s.phone && !s.location && !s.approvalMessage && (
+                      <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-[12px] text-emerald-700">
+                        ✅ Sesi konseling kamu sudah disetujui. Sampai jumpa di sesi!
+                      </div>
+                    )}
+
+                    {/* Pesan jika ditolak */}
+                    {s.myBookingStatus === "REJECTED" && (
+                      <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-[12px] text-rose-700">
+                        Permintaan ditolak. Silakan pilih slot lain yang tersedia.
+                      </div>
+                    )}
+
                     {(s.myBookingStatus === "PENDING" || s.myBookingStatus === "APPROVED") && s.myBookingId && (
                       <button
                         onClick={() => handleCancel(s.myBookingId!)}

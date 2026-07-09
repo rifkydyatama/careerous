@@ -160,6 +160,9 @@ model CounselingSchedule {
   maxCapacity Int            @default(1)
   startTime   DateTime
   endTime     DateTime
+  meetLink    String?        // Link video call (Google Meet, Zoom, dll.)
+  location    String?        // Lokasi tatap muka (opsional)
+  phone       String?        // Nomor telepon/WhatsApp konselor (opsional)
   status      ScheduleStatus @default(AVAILABLE)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -170,16 +173,17 @@ model CounselingSchedule {
 }
 
 model CounselingBooking {
-  id         String             @id @default(uuid()) @db.Uuid
-  scheduleId String             @db.Uuid
-  schedule   CounselingSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-  studentId  String             @db.Uuid
-  student    User               @relation("StudentBookings", fields: [studentId], references: [id], onDelete: Cascade)
-  topic      String             @db.Text
-  status     BookingStatus      @default(PENDING)
-  notes      String?            @db.Text // Counselor notes for this specific student after session
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
+  id              String             @id @default(uuid()) @db.Uuid
+  scheduleId      String             @db.Uuid
+  schedule        CounselingSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  studentId       String             @db.Uuid
+  student         User               @relation("StudentBookings", fields: [studentId], references: [id], onDelete: Cascade)
+  topic           String             @db.Text
+  status          BookingStatus      @default(PENDING)
+  notes           String?            @db.Text // Counselor notes for this specific student after session
+  approvalMessage String?            @db.Text // Pesan/instruksi konselor saat menyetujui booking
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
   @@unique([scheduleId, studentId])
   @@index([scheduleId])

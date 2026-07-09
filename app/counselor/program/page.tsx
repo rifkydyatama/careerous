@@ -10,6 +10,10 @@ import {
   X,
   Clock,
   RefreshCw,
+  Video,
+  Phone,
+  MapPin,
+  MessageSquare,
 } from "lucide-react";
 
 type BookingStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
@@ -21,6 +25,7 @@ type Booking = {
   topic: string;
   status: BookingStatus;
   notes: string | null;
+  approvalMessage: string | null;
   createdAt: string;
 };
 
@@ -30,6 +35,9 @@ type Schedule = {
   maxCapacity: number;
   startTime: string;
   endTime: string;
+  meetLink: string | null;
+  location: string | null;
+  phone: string | null;
   status: string;
   bookedCount: number;
   bookings: Booking[];
@@ -55,7 +63,15 @@ export default function ProgramPage() {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [capacity, setCapacity] = useState(1);
+  const [meetLink, setMeetLink] = useState("");
+  const [location, setLocation] = useState("");
+  const [phone, setPhone] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  // Modal approve
+  const [approveTarget, setApproveTarget] = useState<Booking | null>(null);
+  const [approvalMessage, setApprovalMessage] = useState("");
+  const [isApproving, setIsApproving] = useState(false);
 
   const load = async () => {
     try {
@@ -97,6 +113,9 @@ export default function ProgramPage() {
           maxCapacity: type === "GROUP" ? capacity : 1,
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
+          meetLink: meetLink.trim() || null,
+          location: location.trim() || null,
+          phone: phone.trim() || null,
         }),
       });
       if (!res.ok) {
@@ -106,6 +125,9 @@ export default function ProgramPage() {
       setDate("");
       setStart("");
       setEnd("");
+      setMeetLink("");
+      setLocation("");
+      setPhone("");
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Gagal membuat slot");
@@ -119,12 +141,30 @@ export default function ProgramPage() {
     await load();
   };
 
-  const handleBooking = async (id: string, status: "APPROVED" | "REJECTED") => {
+  const handleReject = async (id: string) => {
     await fetch("/api/counseling/bookings", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
+      body: JSON.stringify({ id, status: "REJECTED" }),
     });
+    await load();
+  };
+
+  const handleApproveConfirm = async () => {
+    if (!approveTarget) return;
+    setIsApproving(true);
+    await fetch("/api/counseling/bookings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: approveTarget.id,
+        status: "APPROVED",
+        approvalMessage: approvalMessage.trim() || null,
+      }),
+    });
+    setApproveTarget(null);
+    setApprovalMessage("");
+    setIsApproving(false);
     await load();
   };
 
@@ -186,6 +226,52 @@ export default function ProgramPage() {
             />
           </div>
         </div>
+
+        {/* Komunikasi */}
+        <div className="mt-4 rounded-xl border border-dashed border-fuchsia-200 bg-fuchsia-50/50 p-4">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-700">
+            📡 Info Komunikasi (opsional — akan dikirim ke siswa saat disetujui)
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <label className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
+                <Video size={12} className="text-fuchsia-600" /> Link Video Call
+              </label>
+              <input
+                type="url"
+                value={meetLink}
+                onChange={(e) => setMeetLink(e.target.value)}
+                placeholder="https://meet.google.com/..."
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
+              />
+            </div>
+            <div>
+              <label className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
+                <Phone size={12} className="text-emerald-600" /> Telepon / WhatsApp
+              </label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="08123456789"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
+              />
+            </div>
+            <div>
+              <label className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
+                <MapPin size={12} className="text-blue-600" /> Lokasi Tatap Muka
+              </label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Ruang BK Lt.2"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] outline-none focus:border-fuchsia-400"
+              />
+            </div>
+          </div>
+        </div>
+
         {error && <p className="mt-3 text-[12px] font-semibold text-rose-600">{error}</p>}
         <button
           type="submit"
@@ -209,17 +295,77 @@ export default function ProgramPage() {
             </p>
           )}
           {upcoming.map((s) => (
-            <ScheduleCard key={s.id} schedule={s} onDelete={handleDelete} onBooking={handleBooking} />
+            <ScheduleCard
+              key={s.id}
+              schedule={s}
+              onDelete={handleDelete}
+              onReject={handleReject}
+              onApproveStart={(b) => { setApproveTarget(b); setApprovalMessage(""); }}
+            />
           ))}
 
           {past.length > 0 && (
             <>
               <h3 className="mt-8 text-sm font-extrabold text-slate-500">Slot Lampau ({past.length})</h3>
               {past.map((s) => (
-                <ScheduleCard key={s.id} schedule={s} onDelete={handleDelete} onBooking={handleBooking} isPast />
+                <ScheduleCard
+                  key={s.id}
+                  schedule={s}
+                  onDelete={handleDelete}
+                  onReject={handleReject}
+                  onApproveStart={(b) => { setApproveTarget(b); setApprovalMessage(""); }}
+                  isPast
+                />
               ))}
             </>
           )}
+        </div>
+      )}
+
+      {/* Modal Approve */}
+      {approveTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setApproveTarget(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex items-start justify-between">
+              <div className="flex items-center gap-2 text-emerald-700">
+                <Check size={18} />
+                <h4 className="text-base font-extrabold text-slate-900">Setujui Booking</h4>
+              </div>
+              <button onClick={() => setApproveTarget(null)} className="text-slate-400 hover:text-slate-700"><X size={18} /></button>
+            </div>
+
+            <div className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-[12px] text-emerald-800">
+              <p className="font-bold">{approveTarget.studentName || "Siswa"}</p>
+              <p className="mt-0.5 text-emerald-600">Topik: {approveTarget.topic}</p>
+            </div>
+
+            <label className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-slate-700">
+              <MessageSquare size={13} /> Pesan untuk siswa (opsional)
+            </label>
+            <textarea
+              rows={3}
+              value={approvalMessage}
+              onChange={(e) => setApprovalMessage(e.target.value)}
+              placeholder="Mis. Silakan gabung via link Meet yang sudah dikirim, siapkan buku catatan..."
+              className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[13px] outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+            />
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={handleApproveConfirm}
+                disabled={isApproving}
+                className="flex-1 rounded-lg bg-emerald-600 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300"
+              >
+                {isApproving ? "Menyetujui..." : "✅ Setujui Booking"}
+              </button>
+              <button
+                onClick={() => setApproveTarget(null)}
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-[13px] font-semibold text-slate-600 transition hover:bg-slate-50"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
@@ -229,15 +375,19 @@ export default function ProgramPage() {
 function ScheduleCard({
   schedule,
   onDelete,
-  onBooking,
+  onReject,
+  onApproveStart,
   isPast,
 }: {
   schedule: Schedule;
   onDelete: (id: string) => void;
-  onBooking: (id: string, status: "APPROVED" | "REJECTED") => void;
+  onReject: (id: string) => void;
+  onApproveStart: (b: Booking) => void;
   isPast?: boolean;
 }) {
   const Icon = schedule.type === "GROUP" ? Users : User;
+  const hasComm = Boolean(schedule.meetLink || schedule.phone || schedule.location);
+
   return (
     <div className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${isPast ? "opacity-70" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -263,6 +413,27 @@ function ScheduleCard({
         )}
       </div>
 
+      {/* Info komunikasi */}
+      {hasComm && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {schedule.meetLink && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2.5 py-1 text-[10.5px] font-bold text-fuchsia-700">
+              <Video size={11} /> Meet
+            </span>
+          )}
+          {schedule.phone && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[10.5px] font-bold text-emerald-700">
+              <Phone size={11} /> {schedule.phone}
+            </span>
+          )}
+          {schedule.location && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[10.5px] font-bold text-blue-700">
+              <MapPin size={11} /> {schedule.location}
+            </span>
+          )}
+        </div>
+      )}
+
       {schedule.bookings.filter((b) => b.status !== "CANCELLED").length > 0 && (
         <div className="mt-4 space-y-2 border-t border-slate-100 pt-4">
           {schedule.bookings
@@ -278,13 +449,13 @@ function ScheduleCard({
                   {b.status === "PENDING" && !isPast && (
                     <>
                       <button
-                        onClick={() => onBooking(b.id, "APPROVED")}
+                        onClick={() => onApproveStart(b)}
                         className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-bold text-white transition hover:bg-emerald-700"
                       >
                         <Check size={12} /> Setujui
                       </button>
                       <button
-                        onClick={() => onBooking(b.id, "REJECTED")}
+                        onClick={() => onReject(b.id)}
                         className="flex items-center gap-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-[11px] font-bold text-slate-600 transition hover:bg-slate-100"
                       >
                         <X size={12} /> Tolak
