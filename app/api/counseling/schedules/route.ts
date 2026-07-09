@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getSession } from "../../../../lib/auth-guard";
 
+export const dynamic = "force-dynamic";
+
 // Booking yang masih memakai kuota (PENDING/APPROVED).
 const ACTIVE_BOOKING = ["PENDING", "APPROVED"] as const;
 

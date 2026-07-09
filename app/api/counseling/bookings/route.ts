@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getSession } from "../../../../lib/auth-guard";
 
+export const dynamic = "force-dynamic";
+
 const ACTIVE_BOOKING = ["PENDING", "APPROVED"];
 
 function formatId(date: Date): string {
