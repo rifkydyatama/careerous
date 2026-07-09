@@ -96,7 +96,7 @@ const STEPS: StepItem[] = [
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen overflow-hidden font-sans text-white">
+    <main data-noinvert className="relative min-h-screen overflow-hidden font-sans text-white">
       <AuroraBackground />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 pb-16 pt-5 sm:px-8 lg:px-10">

@@ -166,7 +166,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden font-sans text-white">
+    <main data-noinvert className="relative min-h-screen overflow-hidden font-sans text-white">
       <AuroraBackground />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
