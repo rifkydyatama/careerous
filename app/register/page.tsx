@@ -11,6 +11,8 @@ import {
   School,
   Sparkles,
   UserPlus,
+  Eye,
+  EyeOff,
   type LucideIcon,
 } from "lucide-react";
 import { PORTAL_ROLE_OPTIONS, normalizeRole, type PortalRole } from "../../lib/portal-auth";
@@ -51,6 +53,8 @@ export default function RegisterPage() {
   const [institutions, setInstitutions] = useState<InstitutionOption[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     const roleParam = new URLSearchParams(window.location.search).get("role");
@@ -269,13 +273,20 @@ export default function RegisterPage() {
                     <div className="relative">
                       <InputIcon icon={Lock} />
                       <input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                         placeholder="Minimal 8 karakter"
                         autoComplete="new-password"
                         className={inputClass}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 focus:outline-none"
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
                     </div>
                   </div>
 
@@ -286,13 +297,20 @@ export default function RegisterPage() {
                     <div className="relative">
                       <InputIcon icon={Lock} />
                       <input
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         value={confirmPassword}
                         onChange={(event) => setConfirmPassword(event.target.value)}
                         placeholder="Ulangi kata sandi"
                         autoComplete="new-password"
                         className={inputClass}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 focus:outline-none"
+                      >
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
                     </div>
                   </div>
 

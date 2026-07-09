@@ -10,6 +10,8 @@ import {
   ShieldCheck,
   Sparkles,
   UserRound,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { LOGIN_ROLE_OPTIONS, type PortalRole } from "../../lib/portal-auth";
 import AuroraBackground from "../components/AuroraBackground";
@@ -35,6 +37,7 @@ export default function LoginPage() {
   const [role, setRole] = useState<PortalRole>("STUDENT");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const selectedRole = useMemo(
     () => LOGIN_ROLE_OPTIONS.find((item) => item.value === role),
@@ -163,13 +166,20 @@ export default function LoginPage() {
                   <Field label="Kata sandi">
                     <InputIcon icon={Lock} />
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       placeholder="Masukkan kata sandi"
                       autoComplete="current-password"
                       className={inputClass}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </Field>
 
                   <div>
