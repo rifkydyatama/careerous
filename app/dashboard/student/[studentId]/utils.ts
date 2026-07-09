@@ -128,14 +128,26 @@ export type AssessmentSubmissionPayload = {
   learningStyle: LearningStyle;
 };
 
-export type RiasecResponseMap = Partial<Record<string, number>>;
-
-export type RiasecQuestion = {
+// RIASEC: pernyataan yang dicentang (sesuai) atau tidak. Skor tiap dimensi = jumlah centang.
+export type RiasecStatement = {
   id: string;
   dimension: RiasecScoreKey;
-  prompt: string;
-  context: string;
+  text: string;
 };
+
+// Peta centang RIASEC: id pernyataan -> true bila dicentang.
+export type RiasecCheckMap = Record<string, boolean>;
+
+// Gaya belajar: tiap soal dijawab a/b/c (a=Visual, b=Auditorial, c=Kinestetik).
+export type LearningStyleChoice = "a" | "b" | "c";
+
+export type LearningStyleQuestion = {
+  id: string;
+  prompt: string;
+  options: { a: string; b: string; c: string };
+};
+
+export type LearningStyleAnswerMap = Record<string, LearningStyleChoice>;
 
 export const STUDENT_SCHEDULE_ITEMS = [
   {
@@ -223,86 +235,82 @@ export const LEARNING_STYLE_OPTIONS: Array<{ value: LearningStyle; label: string
   },
 ];
 
-export const RIASEC_RESPONSE_OPTIONS = [
-  { value: 0, label: "Sangat tidak sesuai" },
-  { value: 1, label: "Tidak sesuai" },
-  { value: 2, label: "Sesuai" },
-  { value: 3, label: "Sangat sesuai" },
-] as const;
+// 48 pernyataan RIASEC (8 per dimensi), diurutkan selang-seling agar tidak terlihat
+// mengelompok per huruf di tampilan. Siswa cukup mencentang yang sesuai dirinya.
+export const RIASEC_STATEMENTS: RiasecStatement[] = [
+  { id: "r1", dimension: "riasecRealistic", text: "Saya adalah seseorang yang praktis" },
+  { id: "i1", dimension: "riasecInvestigative", text: "Saya adalah seseorang yang memiliki rasa ingin tahu" },
+  { id: "a1", dimension: "riasecArtistic", text: "Saya adalah seseorang yang kreatif" },
+  { id: "s1", dimension: "riasecSocial", text: "Saya senang membantu orang lain" },
+  { id: "e1", dimension: "riasecEnterprising", text: "Saya adalah seseorang yang percaya diri" },
+  { id: "c1", dimension: "riasecConventional", text: "Saya adalah seseorang yang teratur dan rapi" },
 
-export const RIASEC_QUESTIONS: RiasecQuestion[] = [
-  {
-    id: "riasec-q-1",
-    dimension: "riasecRealistic",
-    prompt: "Saya suka merakit, memperbaiki, atau mengutak-atik alat dan benda.",
-    context: "Aktivitas yang menekankan kerja langsung dan hasil konkret.",
-  },
-  {
-    id: "riasec-q-2",
-    dimension: "riasecRealistic",
-    prompt: "Saya lebih nyaman belajar lewat praktik langsung daripada membaca teori panjang.",
-    context: "Minat pada pengalaman langsung dan tugas yang bersifat teknis.",
-  },
-  {
-    id: "riasec-q-3",
-    dimension: "riasecInvestigative",
-    prompt: "Saya senang mencari jawaban lewat analisis data, logika, atau eksperimen.",
-    context: "Aktivitas yang menuntut observasi dan penalaran.",
-  },
-  {
-    id: "riasec-q-4",
-    dimension: "riasecInvestigative",
-    prompt: "Saya tertarik memahami sebab-akibat di balik sebuah masalah.",
-    context: "Kecenderungan untuk menyelidiki dan menemukan pola.",
-  },
-  {
-    id: "riasec-q-5",
-    dimension: "riasecArtistic",
-    prompt: "Saya menikmati membuat karya yang unik seperti desain, tulisan, atau visual.",
-    context: "Ruang untuk berekspresi dan menghasilkan ide orisinal.",
-  },
-  {
-    id: "riasec-q-6",
-    dimension: "riasecArtistic",
-    prompt: "Saya lebih bersemangat saat diberi kebebasan untuk bereksperimen dengan ide baru.",
-    context: "Kreativitas yang tidak terlalu dibatasi aturan kaku.",
-  },
-  {
-    id: "riasec-q-7",
-    dimension: "riasecSocial",
-    prompt: "Saya senang membantu orang lain memahami masalah dan memberi dukungan.",
-    context: "Peran yang berhubungan dengan empati dan pendampingan.",
-  },
-  {
-    id: "riasec-q-8",
-    dimension: "riasecSocial",
-    prompt: "Saya nyaman menjadi pendengar atau fasilitator saat teman membutuhkan bantuan.",
-    context: "Kegiatan yang menekankan kerja sama dan hubungan interpersonal.",
-  },
-  {
-    id: "riasec-q-9",
-    dimension: "riasecEnterprising",
-    prompt: "Saya mudah memimpin diskusi, menyampaikan ide, atau mengajak orang lain bergerak.",
-    context: "Situasi yang menuntut inisiatif dan pengaruh sosial.",
-  },
-  {
-    id: "riasec-q-10",
-    dimension: "riasecEnterprising",
-    prompt: "Saya percaya diri saat harus meyakinkan orang lain tentang sebuah ide.",
-    context: "Kecenderungan untuk tampil, memimpin, dan mengambil keputusan.",
-  },
-  {
-    id: "riasec-q-11",
-    dimension: "riasecConventional",
-    prompt: "Saya teliti saat mengatur jadwal, data, atau langkah kerja yang rapi.",
-    context: "Kegiatan yang menuntut ketelitian dan struktur.",
-  },
-  {
-    id: "riasec-q-12",
-    dimension: "riasecConventional",
-    prompt: "Saya suka memastikan detail dan prosedur berjalan tepat tanpa banyak kesalahan.",
-    context: "Preferensi pada keteraturan, sistem, dan akurasi.",
-  },
+  { id: "r2", dimension: "riasecRealistic", text: "Saya suka bekerja menggunakan tangan dan peralatan" },
+  { id: "i2", dimension: "riasecInvestigative", text: "Saya suka memecahkan soal atau teka-teki" },
+  { id: "a2", dimension: "riasecArtistic", text: "Saya suka menggambar, melukis, atau mendesain" },
+  { id: "s2", dimension: "riasecSocial", text: "Saya suka mengajar atau menjelaskan sesuatu kepada teman" },
+  { id: "e2", dimension: "riasecEnterprising", text: "Saya suka memimpin sebuah tim atau kegiatan" },
+  { id: "c2", dimension: "riasecConventional", text: "Saya teliti dalam mengerjakan tugas" },
+
+  { id: "r3", dimension: "riasecRealistic", text: "Saya mampu memperbaiki peralatan elektronik" },
+  { id: "i3", dimension: "riasecInvestigative", text: "Saya senang melakukan percobaan atau penelitian" },
+  { id: "a3", dimension: "riasecArtistic", text: "Saya senang menulis cerita, puisi, atau lagu" },
+  { id: "s3", dimension: "riasecSocial", text: "Saya mudah berempati dengan perasaan orang lain" },
+  { id: "e3", dimension: "riasecEnterprising", text: "Saya mampu meyakinkan orang lain dengan pendapat saya" },
+  { id: "c3", dimension: "riasecConventional", text: "Saya suka bekerja dengan angka atau data" },
+
+  { id: "r4", dimension: "riasecRealistic", text: "Saya senang melakukan kegiatan di luar ruangan" },
+  { id: "i4", dimension: "riasecInvestigative", text: "Saya tertarik memahami cara kerja sesuatu" },
+  { id: "a4", dimension: "riasecArtistic", text: "Saya menikmati bermain musik atau bernyanyi" },
+  { id: "s4", dimension: "riasecSocial", text: "Saya senang bekerja dalam kelompok" },
+  { id: "e4", dimension: "riasecEnterprising", text: "Saya tertarik pada dunia bisnis atau wirausaha" },
+  { id: "c4", dimension: "riasecConventional", text: "Saya senang mengikuti prosedur dan aturan yang jelas" },
+
+  { id: "r5", dimension: "riasecRealistic", text: "Saya tertarik pada mesin, kendaraan, atau teknologi" },
+  { id: "i5", dimension: "riasecInvestigative", text: "Saya suka menganalisis data dan fakta" },
+  { id: "a5", dimension: "riasecArtistic", text: "Saya suka tampil atau berakting" },
+  { id: "s5", dimension: "riasecSocial", text: "Saya suka mendengarkan masalah orang lain" },
+  { id: "e5", dimension: "riasecEnterprising", text: "Saya senang menyampaikan ide di depan banyak orang" },
+  { id: "c5", dimension: "riasecConventional", text: "Saya suka mencatat dan menyusun informasi" },
+
+  { id: "r6", dimension: "riasecRealistic", text: "Saya lebih suka melakukan langsung daripada membaca teori" },
+  { id: "i6", dimension: "riasecInvestigative", text: "Saya menikmati pelajaran sains atau matematika" },
+  { id: "a6", dimension: "riasecArtistic", text: "Saya senang berimajinasi dan menghasilkan ide baru" },
+  { id: "s6", dimension: "riasecSocial", text: "Saya tertarik pada kegiatan sosial atau relawan" },
+  { id: "e6", dimension: "riasecEnterprising", text: "Saya suka mengambil keputusan dan tanggung jawab" },
+  { id: "c6", dimension: "riasecConventional", text: "Saya nyaman mengerjakan tugas administratif" },
+
+  { id: "r7", dimension: "riasecRealistic", text: "Saya menikmati aktivitas fisik atau olahraga" },
+  { id: "i7", dimension: "riasecInvestigative", text: "Saya suka membaca hal-hal ilmiah" },
+  { id: "a7", dimension: "riasecArtistic", text: "Saya menghargai keindahan dan seni" },
+  { id: "s7", dimension: "riasecSocial", text: "Saya nyaman berkenalan dengan orang baru" },
+  { id: "e7", dimension: "riasecEnterprising", text: "Saya bersemangat mencapai target atau kemenangan" },
+  { id: "c7", dimension: "riasecConventional", text: "Saya suka membuat jadwal dan rencana yang terperinci" },
+
+  { id: "r8", dimension: "riasecRealistic", text: "Saya suka membuat atau merakit sesuatu" },
+  { id: "i8", dimension: "riasecInvestigative", text: "Saya senang berpikir mendalam tentang suatu masalah" },
+  { id: "a8", dimension: "riasecArtistic", text: "Saya suka mengekspresikan diri dengan cara yang unik" },
+  { id: "s8", dimension: "riasecSocial", text: "Saya senang merawat atau membimbing orang lain" },
+  { id: "e8", dimension: "riasecEnterprising", text: "Saya suka menjual atau mempromosikan sesuatu" },
+  { id: "c8", dimension: "riasecConventional", text: "Saya lebih suka pekerjaan yang terstruktur" },
+];
+
+// Kuesioner gaya belajar (14 soal). Pilihan a=Visual, b=Auditorial, c=Kinestetik.
+export const LEARNING_STYLE_QUESTIONS: LearningStyleQuestion[] = [
+  { id: "ls1", prompt: "Saya sangat suka…", options: { a: "Mencatat", b: "Bercerita", c: "Menjiplak" } },
+  { id: "ls2", prompt: "Saya suka membaca dengan…", options: { a: "Cepat", b: "Suara keras", c: "Jari sebagai penunjuk" } },
+  { id: "ls3", prompt: "Saya paling suka belajar dengan…", options: { a: "Membaca", b: "Mendengarkan", c: "Bergerak" } },
+  { id: "ls4", prompt: "Saya mudah mengingat dengan apa yang…", options: { a: "Saya lihat", b: "Saya dengar", c: "Saya tulis" } },
+  { id: "ls5", prompt: "Apabila mencatat, saya…", options: { a: "Banyak catatan disertai gambar", b: "Sedikit mencatat karena lebih suka mendengarkan", c: "Banyak catatan namun tidak disertai gambar" } },
+  { id: "ls6", prompt: "Saya menjawab pertanyaan dengan jawaban…", options: { a: "Ya atau tidak", b: "Panjang lebar (suka bercerita)", c: "Diikuti dengan gerakan anggota tubuh" } },
+  { id: "ls7", prompt: "Saat belajar saya…", options: { a: "Tidak mudah terganggu dengan keributan", b: "Mudah terganggu dengan keributan", c: "Tidak dapat duduk diam dalam waktu lama" } },
+  { id: "ls8", prompt: "Saya mengingat dengan cara…", options: { a: "Membayangkan", b: "Mengucapkan", c: "Sambil berjalan dan melihat" } },
+  { id: "ls9", prompt: "Saya berbicara lebih suka…", options: { a: "Melihat wajah langsung", b: "Lewat telepon", c: "Memperhatikan gerakan tubuh" } },
+  { id: "ls10", prompt: "Ketika berbicara saya…", options: { a: "Cepat", b: "Intonasi/berirama", c: "Lambat" } },
+  { id: "ls11", prompt: "Cara saya belajar biasanya suka…", options: { a: "Mengikuti petunjuk gambar", b: "Sambil berbicara", c: "Berbicara sambil menulis" } },
+  { id: "ls12", prompt: "Saya sering mengisi waktu luang dengan…", options: { a: "Menonton", b: "Mendengarkan musik", c: "Bermain game" } },
+  { id: "ls13", prompt: "Saya lebih mudah memahami pelajaran dengan…", options: { a: "Melihat peraga", b: "Berdiskusi", c: "Praktik" } },
+  { id: "ls14", prompt: "Saya lebih menyukai…", options: { a: "Gambar", b: "Musik", c: "Permainan" } },
 ];
 
 export const DEFAULT_RIASEC_SCORES: RiasecScores = {
@@ -325,34 +333,55 @@ export function buildRiasecTop3(scores: RiasecScores) {
     .join(", ");
 }
 
-export function calculateRiasecScoresFromResponses(responses: RiasecResponseMap) {
-  const rawScores: RiasecScores = { ...DEFAULT_RIASEC_SCORES };
-  const maxScores: RiasecScores = { ...DEFAULT_RIASEC_SCORES };
+// Jumlah pernyataan per dimensi (untuk skala tampilan).
+export const RIASEC_MAX_PER_DIMENSION = RIASEC_STATEMENTS.reduce<RiasecScores>(
+  (acc, s) => {
+    acc[s.dimension] += 1;
+    return acc;
+  },
+  { ...DEFAULT_RIASEC_SCORES }
+);
+
+// Skor RIASEC = jumlah pernyataan yang dicentang pada tiap dimensi.
+export function computeRiasecScores(checks: RiasecCheckMap) {
+  const scores: RiasecScores = { ...DEFAULT_RIASEC_SCORES };
+  let checkedCount = 0;
+  for (const statement of RIASEC_STATEMENTS) {
+    if (checks[statement.id]) {
+      scores[statement.dimension] += 1;
+      checkedCount += 1;
+    }
+  }
+  return { scores, checkedCount };
+}
+
+// Gaya belajar dari jawaban a/b/c: hitung tiap pilihan, terbanyak = dominan.
+// a=Visual, b=Auditorial(AUDITORY), c=Kinestetik. Seri di puncak -> MULTIMODAL.
+export function computeLearningStyle(answers: LearningStyleAnswerMap): {
+  style: LearningStyle;
+  counts: { a: number; b: number; c: number };
+  answeredCount: number;
+} {
+  const counts = { a: 0, b: 0, c: 0 };
   let answeredCount = 0;
-
-  for (const question of RIASEC_QUESTIONS) {
-    maxScores[question.dimension] += 3;
-
-    const answer = responses[question.id];
-    if (typeof answer === "number") {
-      rawScores[question.dimension] += answer;
+  for (const q of LEARNING_STYLE_QUESTIONS) {
+    const choice = answers[q.id];
+    if (choice === "a" || choice === "b" || choice === "c") {
+      counts[choice] += 1;
       answeredCount += 1;
     }
   }
 
-  const normalizedScores = RIASEC_DIMENSIONS.reduce<RiasecScores>((accumulator, dimension) => {
-    const maxScore = maxScores[dimension.key];
-    const score = rawScores[dimension.key];
+  const max = Math.max(counts.a, counts.b, counts.c);
+  const topCount = [counts.a, counts.b, counts.c].filter((n) => n === max).length;
+  let style: LearningStyle = "MULTIMODAL";
+  if (max > 0 && topCount === 1) {
+    if (counts.a === max) style = "VISUAL";
+    else if (counts.b === max) style = "AUDITORY";
+    else style = "KINESTHETIC";
+  }
 
-    accumulator[dimension.key] = maxScore > 0 ? Math.round((score / maxScore) * 10) : 0;
-    return accumulator;
-  }, { ...DEFAULT_RIASEC_SCORES });
-
-  return {
-    scores: normalizedScores,
-    answeredCount,
-    totalQuestions: RIASEC_QUESTIONS.length,
-  };
+  return { style, counts, answeredCount };
 }
 
 export async function readApiError(response: Response, fallback: string) {
