@@ -164,7 +164,7 @@ export default function AdminSettingsPage() {
               </div>
               <p className="text-[11px] text-emerald-700 mb-3">
                 Simpan link ini. Hanya melalui link ini Anda dapat mengakses sistem selama mode pemeliharaan aktif.
-                Link berlaku selama <strong>8 jam</strong> per sesi browser.
+                Sesi bypass berlaku selama <strong>7 hari</strong> di browser Anda (atau sampai cookie dihapus).
               </p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 break-all rounded-lg border border-emerald-200 bg-white px-3 py-2 text-[10.5px] font-mono text-emerald-800">
