@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
           const base64 = bodyPart.replace(/-/g, "+").replace(/_/g, "/");
           const decodedStr = atob(base64);
           const session = JSON.parse(decodedStr);
-          
+
           if (
             session &&
             session.role === "ADMIN" &&
