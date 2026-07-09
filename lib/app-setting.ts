@@ -19,7 +19,6 @@ export async function getAppSetting() {
 
     return setting;
   } catch (error) {
-    // Fallback jika database belum siap/error
     return {
       id: "singleton",
       deadlineHours: 48,

@@ -16,7 +16,6 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // State untuk Mode Pemeliharaan
   const [maintenanceActive, setMaintenanceActive] = useState(false);
   const [isMaintenanceLoading, setIsMaintenanceLoading] = useState(false);
   const [maintenanceError, setMaintenanceError] = useState<string | null>(null);
@@ -25,10 +24,8 @@ export default function AdminSettingsPage() {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      // Load deadlines
       setModules(await fetchModuleDeadlines());
       
-      // Load maintenance mode
       const mRes = await fetch("/api/admin/maintenance");
       if (mRes.ok) {
         const mData = await mRes.json();

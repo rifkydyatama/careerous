@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Hammer, Lock, ShieldAlert, Cpu, Sparkles } from "lucide-react";
 
-// Target waktu pemeliharaan berakhir: 16 Juli 2026 pukul 12:00:00 UTC
 const TARGET_DATE = new Date("2026-07-16T12:00:00Z").getTime();
 
 export default function MaintenancePage() {
