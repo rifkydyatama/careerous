@@ -6,8 +6,24 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const setting = await getAppSetting();
-    return NextResponse.json({ maintenanceMode: setting.maintenanceMode });
+    const response = NextResponse.json({ maintenanceMode: setting.maintenanceMode });
+    
+    // Cegah cache di tingkat CDN, proxy, dan browser secara agresif
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+    
+    return response;
   } catch {
-    return NextResponse.json({ maintenanceMode: false });
+    return NextResponse.json(
+      { maintenanceMode: false },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      }
+    );
   }
 }

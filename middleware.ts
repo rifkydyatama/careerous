@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   let isMaintenance = false;
   try {
     const origin = request.nextUrl.origin;
-    const res = await fetch(`${origin}/api/auth/maintenance-check`, {
+    const res = await fetch(`${origin}/api/auth/maintenance-check?t=${Date.now()}`, {
       cache: "no-store",
     });
     if (res.ok) {
