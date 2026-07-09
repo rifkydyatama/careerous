@@ -212,7 +212,7 @@ export default function RegisterPage() {
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 <Card icon={UserPlus} title="Akun baru" text="Nama & email jadi identitas." />
-                <Card icon={BadgePlus} title="Pilih peran" text="Siswa/mahasiswa atau konselor." />
+                <Card icon={BadgePlus} title="Pilih peran" text="Siswa atau konselor." />
                 <Card icon={Mail} title="Langsung aktif" text="Data tersimpan otomatis." />
               </div>
             </section>

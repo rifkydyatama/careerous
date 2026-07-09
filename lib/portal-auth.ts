@@ -10,7 +10,7 @@ export type PortalRoleOption = {
 export const PORTAL_ROLE_OPTIONS: PortalRoleOption[] = [
   {
     value: "STUDENT",
-    label: "Siswa / Mahasiswa",
+    label: "Siswa",
     description: "Mengisi jurnal dan membaca umpan balik konselor.",
   },
   {
