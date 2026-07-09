@@ -4,7 +4,6 @@
 // analisis sentimen sederhana + ekstraksi tema karier dominan + minat RIASEC teratas.
 // `isAiGenerated=false` menandai ini pratinjau; integrasi AI penuh = roadmap.
 
-import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "./prisma";
 import { TOTAL_MODULES } from "./modules";
 import { getModuleContents, resolveModule } from "./module-content";
@@ -150,46 +149,84 @@ const REPORT_SCHEMA = {
 async function generateReportWithAI(
   qaPairs: QAPair[]
 ): Promise<CareerReportData | null> {
-  if (!process.env.ANTHROPIC_API_KEY?.trim()) {
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  if (!apiKey) {
     return null;
   }
 
   try {
-    const client = new Anthropic();
-
     const journalText = qaPairs
       .map((qa, i) => `Modul ${i + 1} — ${qa.question}\nJawaban siswa: ${qa.answer}`)
       .join("\n\n");
 
-    const response = await client.messages.create({
-      model: "claude-opus-4-8",
-      max_tokens: 2000,
-      output_config: {
-        effort: "low",
-        format: { type: "json_schema", schema: REPORT_SCHEMA },
+    const systemPrompt =
+      "Anda adalah asisten konselor karier untuk siswa SMA di Indonesia. " +
+      "Analisis jawaban journaling eksplorasi karier siswa dan hasilkan laporan ringkas " +
+      "yang reflektif, akurat, dan suportif. Gunakan Bahasa Indonesia yang baik. " +
+      "Jangan mengarang fakta yang tidak ada dalam jawaban siswa.";
+
+    const userPrompt =
+      `Berikut seluruh jawaban journaling eksplorasi karier seorang siswa selama 12 modul.\n\n` +
+      `${journalText}\n\n` +
+      `Hasilkan Career Exploration Report sesuai skema HANYA berdasarkan jawaban modul di atas. ` +
+      `Jangan menyertakan hasil tes RIASEC atau gaya belajar.`;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
-      system:
-        "Anda adalah asisten konselor karier untuk siswa SMA di Indonesia. " +
-        "Analisis jawaban journaling eksplorasi karier siswa dan hasilkan laporan ringkas " +
-        "yang reflektif, akurat, dan suportif. Gunakan Bahasa Indonesia yang baik. " +
-        "Jangan mengarang fakta yang tidak ada dalam jawaban siswa.",
-      messages: [
-        {
-          role: "user",
-          content:
-            `Berikut seluruh jawaban journaling eksplorasi karier seorang siswa selama 12 modul.\n\n` +
-            `${journalText}\n\n` +
-            `Hasilkan Career Exploration Report sesuai skema HANYA berdasarkan jawaban modul di atas: ` +
-            `ringkasan perjalanan, tema karier dominan yang teridentifikasi, dan analisis sentimen umum ` +
-            `(POSITIF/NETRAL/CAMPURAN) beserta skor 0-100. Jangan menyertakan hasil tes RIASEC atau gaya belajar.`,
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "career_report",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                summary: {
+                  type: "string",
+                  description: "Ringkasan naratif 3-5 kalimat perjalanan eksplorasi karier siswa, dalam Bahasa Indonesia, hangat dan suportif."
+                },
+                dominantThemes: {
+                  type: "array",
+                  items: { type: "string" },
+                  description: "2-4 tema karier dominan (mis. 'Teknologi', 'Seni & Kreativitas')."
+                },
+                sentimentLabel: {
+                  type: "string",
+                  enum: ["POSITIF", "NETRAL", "CAMPURAN"]
+                },
+                sentimentScore: {
+                  type: "integer",
+                  description: "Skor sentimen positif 0-100."
+                }
+              },
+              required: ["summary", "dominantThemes", "sentimentLabel", "sentimentScore"],
+              additionalProperties: false
+            }
+          }
         },
-      ],
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.7,
+      }),
     });
 
-    const textBlock = response.content.find((block) => block.type === "text");
-    if (!textBlock || textBlock.type !== "text") return null;
+    if (!response.ok) {
+      return null;
+    }
 
-    const parsed = JSON.parse(textBlock.text) as {
+    const responseData = await response.json();
+    const content = responseData?.choices?.[0]?.message?.content;
+    if (!content) return null;
+
+    const parsed = JSON.parse(content) as {
       summary: string;
       dominantThemes: string[];
       sentimentLabel: string;

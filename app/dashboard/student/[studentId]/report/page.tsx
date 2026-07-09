@@ -113,7 +113,7 @@ export default function CareerReportPage() {
             <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-[#3b82f6]/10 blur-2xl"></div>
             <div className="relative z-10">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3b82f6]/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#0ea5e9]">
-                <Sparkles size={11} /> {report.isAiGenerated ? "AI Insight (Claude)" : "AI Insight (Pratinjau)"}
+                <Sparkles size={11} /> {report.isAiGenerated ? "AI Insight (GPT)" : "AI Insight (Pratinjau)"}
               </span>
               <h3 className="mt-3 text-xl font-extrabold text-white">Ringkasan Eksplorasi Karier</h3>
               <p className="mt-1 text-[12px] text-white/50">
@@ -171,7 +171,7 @@ export default function CareerReportPage() {
             <Info size={15} className="mt-0.5 shrink-0" />
             <p>
               {report.isAiGenerated
-                ? "Laporan ini dihasilkan otomatis oleh AI (Claude) dari seluruh jawaban journaling Anda. Gunakan sebagai bahan diskusi bersama guru BK Anda."
+                ? "Laporan ini dihasilkan otomatis oleh AI (GPT) dari seluruh jawaban journaling Anda. Gunakan sebagai bahan diskusi bersama guru BK Anda."
                 : "Laporan ini dihasilkan otomatis sebagai pratinjau (analisis rule-based) karena AI belum aktif. Gunakan sebagai bahan diskusi bersama guru BK Anda."}
             </p>
           </div>
