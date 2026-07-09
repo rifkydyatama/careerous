@@ -161,7 +161,7 @@ export default function StudentDashboardPage() {
 
           {}
           <div className="mb-6 grid gap-5 lg:grid-cols-[1.1fr_1.4fr]">
-            <ActiveModuleCard studentId={studentId} active={activeModule} completed={stats.completed} total={stats.total} />
+            <ActiveModuleCard studentId={studentId} active={activeModule} completed={stats.completed} total={stats.total} serverTime={data.serverTime} />
             <PhaseProgressCard phases={phaseProgress} />
           </div>
 
@@ -322,13 +322,15 @@ function ActiveModuleCard({
   active,
   completed,
   total,
+  serverTime,
 }: {
   studentId: string;
   active: StudentDashboardResponse["journals"][number] | null;
   completed: number;
   total: number;
+  serverTime?: string | null;
 }) {
-  const countdown = active?.deadlineAt ? formatDeadlineCountdown(active.deadlineAt) : null;
+  const countdown = active?.deadlineAt ? formatDeadlineCountdown(active.deadlineAt, serverTime) : null;
   const allDone = completed >= total;
 
   return (

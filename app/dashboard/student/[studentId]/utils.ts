@@ -55,6 +55,7 @@ export type StudentDashboardResponse = {
   plan: PlanTier;
   premium: boolean;
   premiumSource: PremiumSource;
+  serverTime?: string;
   institutionName: string | null;
   freeModuleLimit: number;
   hasReport: boolean;
@@ -497,7 +498,10 @@ export function formatDateTimeId(value?: string | null): string {
 }
 
 
-export function formatDeadlineCountdown(deadlineAt?: string | null): {
+export function formatDeadlineCountdown(
+  deadlineAt?: string | null,
+  serverTime?: string | null
+): {
   text: string;
   overdue: boolean;
 } | null {
@@ -505,15 +509,26 @@ export function formatDeadlineCountdown(deadlineAt?: string | null): {
   const target = new Date(deadlineAt).getTime();
   if (Number.isNaN(target)) return null;
 
-  const diffMs = target - Date.now();
+  const baseTime = serverTime ? new Date(serverTime).getTime() : Date.now();
+  const diffMs = target - baseTime;
   const overdue = diffMs < 0;
   const absMs = Math.abs(diffMs);
-  const hours = Math.floor(absMs / (60 * 60 * 1000));
-  const days = Math.floor(hours / 24);
-  const remHours = hours % 24;
+  const totalMinutes = Math.floor(absMs / (60 * 1000));
+  
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const remHours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const remMinutes = totalMinutes % 60;
 
-  const span =
-    days > 0 ? `${days} hari ${remHours} jam` : hours > 0 ? `${hours} jam` : "kurang dari 1 jam";
+  let span = "";
+  if (days > 0) {
+    span = `${days} hari ${remHours} jam`;
+  } else if (remHours > 0) {
+    span = `${remHours} jam ${remMinutes} menit`;
+  } else if (remMinutes > 0) {
+    span = `${remMinutes} menit`;
+  } else {
+    span = "kurang dari 1 menit";
+  }
 
   return {
     text: overdue ? `Lewat ${span}` : `${span} lagi`,
@@ -537,12 +552,14 @@ export async function uploadFile(file: File): Promise<string> {
 export async function submitMoodDocument(
   studentId: string,
   weekNumber: number,
-  documentUrl: string
+  documentUrl: string,
+  lateMood?: string,
+  lateReason?: string
 ): Promise<void> {
   const response = await fetch(`/api/journals/${studentId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ weekNumber, documentUrl }),
+    body: JSON.stringify({ weekNumber, documentUrl, lateMood, lateReason }),
   });
   if (!response.ok) {
     throw new Error(await readApiError(response, "Gagal mengirim dokumen"));

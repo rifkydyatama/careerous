@@ -52,14 +52,15 @@ model AppSetting {
 
 // Institusi/sekolah. Langganan institusi memberi akses Premium ke seluruh siswanya.
 model Institution {
-  id                    String    @id @default(uuid()) @db.Uuid
+  id                    String                      @id @default(uuid()) @db.Uuid
   name                  String
-  subscriptionActive    Boolean   @default(false)
+  subscriptionActive    Boolean                     @default(false)
   subscriptionExpiresAt DateTime?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
   users                 User[]
   subscriptionRequests  SubscriptionRequest[]
+  moduleDeadlines       InstitutionModuleDeadline[]
 }
 
 // Pengajuan langganan Premium oleh konselor (BK), disetujui/ditolak admin.
@@ -268,4 +269,16 @@ model CareerExplorationReport {
   isAiGenerated  Boolean  @default(false)
   generatedAt    DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model InstitutionModuleDeadline {
+  id            String      @id @default(uuid()) @db.Uuid
+  institutionId String      @db.Uuid
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  moduleNumber  Int
+  deadlineAt    DateTime?
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([institutionId, moduleNumber])
+  @@index([institutionId])
 }

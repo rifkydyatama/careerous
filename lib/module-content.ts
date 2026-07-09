@@ -85,7 +85,20 @@ export function resolveModule(
 }
 
 
-export async function getModuleDeadline(n: number): Promise<Date | null> {
+export async function getModuleDeadline(n: number, institutionId?: string | null): Promise<Date | null> {
+  if (institutionId) {
+    const schoolDeadline = await prisma.institutionModuleDeadline.findUnique({
+      where: {
+        institutionId_moduleNumber: {
+          institutionId,
+          moduleNumber: n,
+        },
+      },
+    });
+    if (schoolDeadline) {
+      return schoolDeadline.deadlineAt;
+    }
+  }
   const row = await prisma.moduleContent.findUnique({
     where: { number: n },
     select: { deadlineAt: true },

@@ -152,6 +152,7 @@ export default function JournalsPage() {
                 key={journal.id}
                 studentId={studentId}
                 journal={journal}
+                serverTime={data.serverTime}
                 onSubmitSuccess={handleJournalSubmit}
                 onReload={load}
               />
@@ -166,11 +167,13 @@ export default function JournalsPage() {
 function ModuleCard({
   studentId,
   journal,
+  serverTime,
   onSubmitSuccess,
   onReload,
 }: {
   studentId: string;
   journal: JournalItem;
+  serverTime?: string | null;
   onSubmitSuccess: (journal: JournalItem) => Promise<JournalItem> | void;
   onReload: () => Promise<void> | void;
 }) {
@@ -232,7 +235,7 @@ function ModuleCard({
           <LockedCard journal={journal} studentId={studentId} onReload={onReload} />
         ) : journal.status === "UNLOCKED" ? (
           <>
-            <DeadlineBanner journal={journal} />
+            <DeadlineBanner journal={journal} serverTime={serverTime} />
             <JournalEntryForm
               studentId={studentId}
               weekNumber={journal.weekNumber}
@@ -313,6 +316,8 @@ function TransitionTaskForm({
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lateMood, setLateMood] = useState("Bingung");
+  const [lateReason, setLateReason] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -321,7 +326,7 @@ function TransitionTaskForm({
     setError(null);
     try {
       const url = await uploadFile(file);
-      await submitMoodDocument(studentId, journal.weekNumber, url);
+      await submitMoodDocument(studentId, journal.weekNumber, url, lateMood, lateReason);
       await onReload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal mengirim dokumen");
@@ -330,6 +335,15 @@ function TransitionTaskForm({
     }
   };
 
+  const moods = [
+    { label: "Bingung", emoji: "😕" },
+    { label: "Cemas", emoji: "😰" },
+    { label: "Sedih", emoji: "😭" },
+    { label: "Stres", emoji: "🥵" },
+    { label: "Lelah", emoji: "🥱" },
+    { label: "Lainnya", emoji: "😐" },
+  ];
+
   return (
     <div>
       <div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[11px] text-rose-700">
@@ -337,37 +351,76 @@ function TransitionTaskForm({
           <CalendarClock size={12} /> Modul terblokir sementara
         </div>
         <p className="mt-0.5 leading-snug">
-          Akan otomatis terbuka pada <b>{formatDateTimeId(reopenAt)}</b>. Atau, unggah dokumen mood
-          board di bawah untuk membukanya sekarang.
+          Akan otomatis terbuka pada <b>{formatDateTimeId(reopenAt)}</b>. Atau, isi moodboard di bawah untuk membukanya sekarang.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
-        <label className="text-[11px] font-semibold leading-snug text-slate-700">
-          Unggah dokumen mood board (akan ditinjau konselor untuk membantumu).
-        </label>
-        <label
-          className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-5 text-center transition-all ${
-            file
-              ? "border-blue-400 bg-blue-50"
-              : "border-slate-300 bg-slate-50 hover:bg-slate-100"
-          }`}
-        >
-          <UploadCloud size={20} className={file ? "text-blue-500" : "text-slate-400"} />
-          <span className="text-[11.5px] font-semibold text-slate-600">
-            {file ? file.name : "Pilih file (PDF / gambar / dokumen, maks 8 MB)"}
-          </span>
-          <input
-            type="file"
-            accept="image/*,.pdf,.doc,.docx,.ppt,.pptx"
-            className="hidden"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div>
+          <label className="text-[11px] font-bold text-slate-700 block mb-1">
+            1. Bagaimana perasaanmu saat ini? (Ekspresi)
+          </label>
+          <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+            {moods.map((m) => (
+              <button
+                key={m.label}
+                type="button"
+                onClick={() => setLateMood(m.label)}
+                className={`flex flex-col items-center justify-center rounded-lg border p-1.5 text-center transition-all ${
+                  lateMood === m.label
+                    ? "border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500"
+                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <span className="text-lg">{m.emoji}</span>
+                <span className="text-[9.5px] font-semibold mt-0.5">{m.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[11px] font-bold text-slate-700 block mb-1">
+            2. Apa kendala yang kamu hadapi? (Tuliskan alasan keterlambatanmu)
+          </label>
+          <textarea
+            value={lateReason}
+            onChange={(e) => setLateReason(e.target.value)}
+            required
+            placeholder="Tulis alasan atau hambatan yang membuatmu terlambat mengisi jurnal..."
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[11.5px] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            rows={2}
           />
-        </label>
+        </div>
+
+        <div>
+          <label className="text-[11px] font-bold text-slate-700 block mb-1">
+            3. Unggah dokumen mood board pendukung (Moodboard)
+          </label>
+          <label
+            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-4 text-center transition-all ${
+              file
+                ? "border-blue-400 bg-blue-50"
+                : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+            }`}
+          >
+            <UploadCloud size={20} className={file ? "text-blue-500" : "text-slate-400"} />
+            <span className="text-[11px] font-semibold text-slate-600">
+              {file ? file.name : "Pilih file (PDF / gambar / dokumen, maks 8 MB)"}
+            </span>
+            <input
+              type="file"
+              accept="image/*,.pdf,.doc,.docx,.ppt,.pptx"
+              className="hidden"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            />
+          </label>
+        </div>
+
         {error && <p className="text-[11px] font-semibold text-rose-600">{error}</p>}
         <button
           type="submit"
-          disabled={isSubmitting || !file}
+          disabled={isSubmitting || !file || !lateReason.trim()}
           className="rounded-lg bg-[#2563eb] py-2.5 text-[12px] font-bold text-white transition-all hover:bg-[#1d4ed8] disabled:bg-slate-300"
         >
           {isSubmitting ? "Mengunggah..." : "Unggah & Buka Modul"}
@@ -377,8 +430,8 @@ function TransitionTaskForm({
   );
 }
 
-function DeadlineBanner({ journal }: { journal: JournalItem }) {
-  const countdown = formatDeadlineCountdown(journal.deadlineAt);
+function DeadlineBanner({ journal, serverTime }: { journal: JournalItem; serverTime?: string | null }) {
+  const countdown = formatDeadlineCountdown(journal.deadlineAt, serverTime);
   const isLate = (journal.lateCount ?? 0) > 0;
 
   if (!countdown && !isLate) return null;

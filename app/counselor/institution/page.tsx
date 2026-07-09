@@ -10,6 +10,7 @@ import {
   Clock,
   XCircle,
   Send,
+  Save,
 } from "lucide-react";
 import {
   fetchSubscriptionRequestState,
@@ -223,9 +224,175 @@ export default function InstitutionPage() {
               </div>
             </div>
           )}
+
+          <div className="mt-5">
+            <SchoolDeadlinesCard />
+          </div>
         </div>
       )}
     </>
+  );
+}
+
+function SchoolDeadlinesCard() {
+  const [deadlines, setDeadlines] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState<Record<number, boolean>>({});
+  const [error, setError] = useState<string | null>(null);
+
+  const moduleTitles = [
+    "Mengeksplorasi Minat & Bakat",
+    "Menemukan Gaya Belajar",
+    "Merumuskan Target Karier",
+    "Merancang Rencana Belajar",
+    "Mengenal Dunia Kerja",
+    "Analisis Peluang Industri",
+    "Mengenal Pendidikan Lanjut",
+    "Memetakan Pilihan Jurusan",
+    "Menyusun Portofolio Diri",
+    "Latihan Wawancara & CV",
+    "Mengatasi Hambatan Karier",
+    "Finalisasi Peta Jalan Karier"
+  ];
+
+  const loadDeadlines = async () => {
+    try {
+      const res = await fetch("/api/counselor/deadlines", { cache: "no-store" });
+      if (!res.ok) throw new Error("Gagal memuat batas waktu sekolah");
+      const data = await res.json();
+      setDeadlines(data.deadlines || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal memuat batas waktu");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadDeadlines();
+  }, []);
+
+  const handleSave = async (moduleNumber: number, localVal: string) => {
+    setIsSaving((prev) => ({ ...prev, [moduleNumber]: true }));
+    try {
+      const deadlineAt = localVal ? new Date(localVal).toISOString() : null;
+      const res = await fetch("/api/counselor/deadlines", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ moduleNumber, deadlineAt }),
+      });
+      if (!res.ok) throw new Error("Gagal menyimpan");
+      await loadDeadlines();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Gagal menyimpan");
+    } finally {
+      setIsSaving((prev) => ({ ...prev, [moduleNumber]: false }));
+    }
+  };
+
+  const getDeadlineVal = (moduleNumber: number) => {
+    const d = deadlines.find((dl) => dl.moduleNumber === moduleNumber);
+    if (!d || !d.deadlineAt) return "";
+    const dateObj = new Date(d.deadlineAt);
+    if (isNaN(dateObj.getTime())) return "";
+    const pad = (num: number) => String(num).padStart(2, "0");
+    return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs text-slate-500">Memuat batas waktu modul...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div>
+        <h3 className="text-[14px] font-extrabold text-slate-900">Batas Waktu (Deadline) Modul</h3>
+        <p className="text-[11.5px] text-slate-500 mt-0.5 mb-4">
+          Tentukan batas waktu (tanggal & jam) penyelesaian tiap modul khusus untuk siswa di sekolah Anda. Kosongkan jika tidak ada batas waktu.
+        </p>
+      </div>
+
+      {error && <p className="text-xs text-rose-600 mb-3">{error}</p>}
+
+      <div className="space-y-3.5">
+        {Array.from({ length: 12 }, (_, idx) => {
+          const moduleNumber = idx + 1;
+          const initialVal = getDeadlineVal(moduleNumber);
+          return (
+            <ModuleRow
+              key={moduleNumber}
+              moduleNumber={moduleNumber}
+              title={moduleTitles[idx]}
+              initialVal={initialVal}
+              isSaving={!!isSaving[moduleNumber]}
+              onSave={(val) => void handleSave(moduleNumber, val)}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ModuleRow({
+  moduleNumber,
+  title,
+  initialVal,
+  isSaving,
+  onSave,
+}: {
+  moduleNumber: number;
+  title: string;
+  initialVal: string;
+  isSaving: boolean;
+  onSave: (val: string) => void;
+}) {
+  const [val, setVal] = useState(initialVal);
+
+  useEffect(() => {
+    setVal(initialVal);
+  }, [initialVal]);
+
+  const hasChanged = val !== initialVal;
+
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+      <div className="min-w-0">
+        <p className="text-[12px] font-extrabold text-slate-800">
+          Modul {moduleNumber}
+        </p>
+        <p className="text-[11px] text-slate-500 truncate">{title}</p>
+      </div>
+
+      <div className="flex items-center gap-2 shrink-0">
+        <input
+          type="datetime-local"
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
+          className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11.5px] font-semibold text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
+        />
+        <button
+          type="button"
+          onClick={() => onSave(val)}
+          disabled={isSaving || !hasChanged}
+          className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
+            hasChanged
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-slate-100 text-slate-400 cursor-not-allowed"
+          }`}
+        >
+          {isSaving ? (
+            <RefreshCw size={13} className="animate-spin" />
+          ) : (
+            <Save size={13} />
+          )}
+        </button>
+      </div>
+    </div>
   );
 }
 

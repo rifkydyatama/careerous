@@ -79,6 +79,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         avatar: true,
         role: true,
         plan: true,
+        institutionId: true,
         institution: {
           select: { name: true, subscriptionActive: true, subscriptionExpiresAt: true },
         },
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
     const premium = isPremiumEffective(student.plan, student.institution);
     const source = premiumSource(student.plan, student.institution);
 
-    const firstDeadline = premium ? await getModuleDeadline(1) : null;
+    const firstDeadline = premium ? await getModuleDeadline(1, student.institutionId) : null;
     await ensureJournalWeeks(studentId, premium, firstDeadline);
 
     
@@ -132,6 +133,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
       plan: student.plan,
       premium,
       premiumSource: source,
+      serverTime: new Date().toISOString(),
       institutionName: student.institution?.name ?? null,
       freeModuleLimit: FREE_MODULE_LIMIT,
       hasReport: Boolean(reportExists),
@@ -396,13 +398,15 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
 
   const weekNumber = parseWeekNumber(body?.weekNumber);
   const documentUrl = typeof body?.documentUrl === "string" ? body.documentUrl : "";
+  const lateMood = typeof body?.lateMood === "string" ? body.lateMood : "";
+  const lateReason = typeof body?.lateReason === "string" ? body.lateReason : "";
 
   if (!weekNumber || weekNumber < 1 || weekNumber > TOTAL_WEEKS) {
     return NextResponse.json({ error: "Nomor modul harus 1-12" }, { status: 400 });
   }
 
   try {
-    const result = await submitMoodDocument(studentId, weekNumber, documentUrl);
+    const result = await submitMoodDocument(studentId, weekNumber, documentUrl, lateMood, lateReason);
     if (!result.ok) {
       return NextResponse.json(
         { error: result.error ?? "Gagal mengirim dokumen" },

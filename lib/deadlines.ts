@@ -65,6 +65,7 @@ export async function processStudentDeadlines(
       name: true,
       role: true,
       plan: true,
+      institutionId: true,
       institution: {
         select: { subscriptionActive: true, subscriptionExpiresAt: true },
       },
@@ -77,10 +78,25 @@ export async function processStudentDeadlines(
   const journals = await prisma.journalProgress.findMany({ where: { studentId } });
   const contents = await getModuleContents();
 
+  const schoolDeadlines = student.institutionId
+    ? await prisma.institutionModuleDeadline.findMany({
+        where: { institutionId: student.institutionId },
+      })
+    : [];
+  const schoolDeadlinesMap = new Map<number, Date | null>();
+  for (const sd of schoolDeadlines) {
+    schoolDeadlinesMap.set(sd.moduleNumber, sd.deadlineAt);
+  }
+
   let counselors = counselorsCache;
 
   for (const journal of journals) {
-    const moduleDeadline = contents.get(journal.weekNumber)?.deadlineAt ?? null;
+    const schoolDeadline = schoolDeadlinesMap.has(journal.weekNumber)
+      ? schoolDeadlinesMap.get(journal.weekNumber)
+      : undefined;
+    const moduleDeadline = schoolDeadline !== undefined
+      ? schoolDeadline
+      : (contents.get(journal.weekNumber)?.deadlineAt ?? null);
 
     if (journal.status === "UNLOCKED" && journal.lateCount === 0) {
       const cur = journal.deadlineAt ? journal.deadlineAt.getTime() : null;
@@ -159,7 +175,9 @@ export async function processStudentDeadlines(
 export async function submitMoodDocument(
   studentId: string,
   weekNumber: number,
-  documentUrl: string
+  documentUrl: string,
+  lateMood?: string,
+  lateReason?: string
 ): Promise<{ ok: boolean; error?: string; status?: number }> {
   const url = documentUrl.trim();
   if (!url || !/^https?:\/\//i.test(url)) {
@@ -193,8 +211,8 @@ export async function submitMoodDocument(
     where: { id: journal.id },
     data: {
       moodDocumentUrl: url,
-      lateReason: null,
-      lateMood: null,
+      lateReason: lateReason || null,
+      lateMood: lateMood || null,
       status: "UNLOCKED",
       unlockedAt: now,
       deadlineAt: newDeadline,
@@ -211,7 +229,7 @@ export async function submitMoodDocument(
         userId: counselor.id,
         type: "MOOD_DOCUMENT",
         title: `${name} mengunggah dokumen mood board (Modul ${weekNumber})`,
-        body: `${name} mengunggah dokumen untuk membuka Modul ${weekNumber}. Modul dibuka kembali (+1 hari). Silakan tinjau dokumennya.`,
+        body: `${name} mengunggah dokumen untuk membuka Modul ${weekNumber}. Ekspresi: ${lateMood || "-"}. Alasan: ${lateReason || "-"}. Modul dibuka kembali (+1 hari). Silakan tinjau dokumennya.`,
         moduleNumber: weekNumber,
         relatedStudentId: studentId,
       })),
