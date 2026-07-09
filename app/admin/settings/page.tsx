@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, Save, CalendarClock, X, ShieldAlert } from "lucide-react";
+import { RefreshCw, Save, CalendarClock, X, ShieldAlert, Copy, Link2 } from "lucide-react";
 import {
   fetchModuleDeadlines,
   updateModuleDeadline,
@@ -17,19 +17,22 @@ export default function AdminSettingsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [maintenanceActive, setMaintenanceActive] = useState(false);
+  const [maintenanceEndsAt, setMaintenanceEndsAt] = useState("");
   const [isMaintenanceLoading, setIsMaintenanceLoading] = useState(false);
   const [maintenanceError, setMaintenanceError] = useState<string | null>(null);
+  const [bypassLink, setBypassLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage(null);
     try {
       setModules(await fetchModuleDeadlines());
-      
       const mRes = await fetch("/api/admin/maintenance");
       if (mRes.ok) {
         const mData = await mRes.json();
         setMaintenanceActive(mData.maintenanceMode);
+        setMaintenanceEndsAt(isoToLocalInput(mData.maintenanceEndsAt) ?? "");
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Gagal memuat pengaturan");
@@ -45,12 +48,14 @@ export default function AdminSettingsPage() {
   const handleToggleMaintenance = async () => {
     setIsMaintenanceLoading(true);
     setMaintenanceError(null);
+    setBypassLink(null);
     try {
       const targetState = !maintenanceActive;
+      const endsAtIso = maintenanceEndsAt ? new Date(maintenanceEndsAt).toISOString() : null;
       const res = await fetch("/api/admin/maintenance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ active: targetState }),
+        body: JSON.stringify({ active: targetState, endsAt: endsAtIso }),
       });
       if (!res.ok) {
         const payload = await res.json().catch(() => null);
@@ -58,6 +63,9 @@ export default function AdminSettingsPage() {
       }
       const data = await res.json();
       setMaintenanceActive(data.maintenanceMode);
+      if (data.maintenanceMode && data.bypassLink) {
+        setBypassLink(window.location.origin + data.bypassLink);
+      }
     } catch (err) {
       setMaintenanceError(err instanceof Error ? err.message : "Terjadi kesalahan");
     } finally {
@@ -65,9 +73,16 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const handleCopyLink = () => {
+    if (!bypassLink) return;
+    navigator.clipboard.writeText(bypassLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <>
-      {}
       <div className="mb-8">
         <h2 className="text-xl font-extrabold text-slate-900">Pengaturan Sistem Global</h2>
         <p className="mt-1 text-[13px] text-slate-500">
@@ -75,8 +90,8 @@ export default function AdminSettingsPage() {
         </p>
 
         <div className={`mt-4 rounded-2xl border p-6 transition-all duration-300 ${
-          maintenanceActive 
-            ? "border-rose-200 bg-rose-50/50 shadow-sm shadow-rose-100" 
+          maintenanceActive
+            ? "border-rose-200 bg-rose-50/50 shadow-sm shadow-rose-100"
             : "border-slate-200 bg-white"
         }`}>
           <div className="flex flex-wrap items-start justify-between gap-5">
@@ -91,7 +106,8 @@ export default function AdminSettingsPage() {
                   Mode Pemeliharaan (Maintenance Mode)
                 </h3>
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-slate-500">
-                  Ketika aktif, seluruh halaman publik dan dashboard bimbingan karier (siswa &amp; konselor) akan diblokir dengan tampilan countdown modern. **Hanya akun ber-role ADMIN** yang diizinkan masuk dan mengakses sistem.
+                  Ketika aktif, seluruh halaman publik dan dashboard (siswa &amp; konselor) akan diblokir.
+                  Akses admin hanya dapat dilakukan melalui <strong>link khusus</strong> yang muncul setelah mode ini diaktifkan.
                 </p>
                 {maintenanceError && (
                   <p className="mt-2 text-[12px] font-semibold text-rose-600">
@@ -107,7 +123,7 @@ export default function AdminSettingsPage() {
               }`}>
                 {maintenanceActive ? "Aktif (Dibatasi)" : "Tidak Aktif"}
               </span>
-              
+
               <button
                 type="button"
                 onClick={() => void handleToggleMaintenance()}
@@ -124,6 +140,47 @@ export default function AdminSettingsPage() {
               </button>
             </div>
           </div>
+
+          <div className="mt-5 border-t border-slate-100 pt-4">
+            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Perkiraan Selesai Pemeliharaan (opsional)
+            </label>
+            <input
+              type="datetime-local"
+              value={maintenanceEndsAt}
+              onChange={(e) => setMaintenanceEndsAt(e.target.value)}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            />
+            <p className="mt-1 text-[11px] text-slate-400">
+              Jika diisi, tanggal &amp; jam ini akan ditampilkan di halaman pemeliharaan untuk pengguna.
+            </p>
+          </div>
+
+          {bypassLink && (
+            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Link2 size={14} className="text-emerald-700" />
+                <p className="text-[12px] font-extrabold text-emerald-800">Link Akses Khusus Admin</p>
+              </div>
+              <p className="text-[11px] text-emerald-700 mb-3">
+                Simpan link ini. Hanya melalui link ini Anda dapat mengakses sistem selama mode pemeliharaan aktif.
+                Link berlaku selama <strong>8 jam</strong> per sesi browser.
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 break-all rounded-lg border border-emerald-200 bg-white px-3 py-2 text-[10.5px] font-mono text-emerald-800">
+                  {bypassLink}
+                </code>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-300 bg-white text-emerald-700 transition hover:bg-emerald-100"
+                >
+                  <Copy size={13} />
+                </button>
+              </div>
+              {copied && <p className="mt-1.5 text-[11px] font-semibold text-emerald-600">✓ Disalin ke clipboard</p>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -159,6 +216,7 @@ export default function AdminSettingsPage() {
     </>
   );
 }
+
 
 function ModuleDeadlineEditor({ module }: { module: ModuleDeadline }) {
   const [value, setValue] = useState(isoToLocalInput(module.deadlineAt));

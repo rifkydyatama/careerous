@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const EXCLUDED_PATHS = [
   "/maintenance",
+  "/admin-access",
   "/login",
   "/guide",
   "/api/auth/",
@@ -22,9 +23,7 @@ export async function proxy(request: NextRequest) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-pathname", pathname);
     return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
+      request: { headers: requestHeaders },
     });
   }
 
@@ -42,30 +41,14 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isMaintenance) {
-    const sessionToken = request.cookies.get("careerous_session")?.value;
-    let isAdmin = false;
+    const expectedToken = process.env.AUTH_SECRET
+      ? Buffer.from(`admin-bypass:${process.env.AUTH_SECRET}`).toString("base64url").slice(0, 32)
+      : "admin-bypass-token";
 
-    if (sessionToken) {
-      try {
-        const [bodyPart] = sessionToken.split(".");
-        if (bodyPart) {
-          const base64 = bodyPart.replace(/-/g, "+").replace(/_/g, "/");
-          const decodedStr = atob(base64);
-          const session = JSON.parse(decodedStr);
+    const bypassCookie = request.cookies.get("careerous_maintenance_bypass")?.value;
+    const hasValidBypass = bypassCookie === expectedToken;
 
-          if (
-            session &&
-            session.role === "ADMIN" &&
-            session.expiresAt > Date.now()
-          ) {
-            isAdmin = true;
-          }
-        }
-      } catch {
-      }
-    }
-
-    if (!isAdmin) {
+    if (!hasValidBypass) {
       const maintenanceUrl = new URL("/maintenance", request.url);
       return NextResponse.redirect(maintenanceUrl);
     }
@@ -74,9 +57,7 @@ export async function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", pathname);
   return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
+    request: { headers: requestHeaders },
   });
 }
 

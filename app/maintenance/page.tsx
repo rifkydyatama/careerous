@@ -1,56 +1,46 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Hammer, Lock, Cpu, Sparkles, CalendarClock } from "lucide-react";
 import Link from "next/link";
-import { Hammer, Lock, ShieldAlert, Cpu, Sparkles } from "lucide-react";
-
-const TARGET_DATE = new Date("2026-07-16T12:00:00Z").getTime();
 
 export default function MaintenancePage() {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const [endsAt, setEndsAt] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-
-    const updateTimer = () => {
-      const now = Date.now();
-      const difference = TARGET_DATE - now;
-
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-
-    return () => clearInterval(interval);
+    fetch("/api/auth/maintenance-check?t=" + Date.now(), { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.maintenanceEndsAt) setEndsAt(data.maintenanceEndsAt);
+      })
+      .catch(() => {});
   }, []);
+
+  const formatEndsAt = (iso: string) => {
+    try {
+      return new Intl.DateTimeFormat("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Asia/Jakarta",
+        timeZoneName: "short",
+      }).format(new Date(iso));
+    } catch {
+      return iso;
+    }
+  };
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 px-5 text-slate-100 font-sans">
-      {}
       <div className="absolute top-1/4 left-1/4 -z-10 h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[120px] animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 -z-10 h-[300px] w-[300px] rounded-full bg-cyan-500/10 blur-[120px] animate-pulse" />
-
-      {}
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
-      {}
       <div className="flex flex-col items-center text-center max-w-xl">
         <div className="relative mb-6">
           <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-500 opacity-75 blur-md animate-tilt" />
@@ -71,30 +61,36 @@ export default function MaintenancePage() {
         </h1>
 
         <p className="mt-4 text-[13.5px] leading-relaxed text-slate-400">
-          Kami sedang melakukan pemeliharaan rutin dan pembaruan fitur baru untuk memberikan pengalaman terbaik bagimu. Sistem akan segera kembali online dalam:
+          Kami sedang melakukan pemeliharaan rutin dan pembaruan fitur baru untuk memberikan pengalaman terbaik bagimu.
+          Sistem akan segera kembali online.
         </p>
+
+        {isMounted && endsAt && (
+          <div className="mt-8 flex items-center gap-2.5 rounded-2xl border border-slate-700/60 bg-slate-900/60 px-5 py-4 backdrop-blur-md">
+            <CalendarClock size={18} className="shrink-0 text-cyan-400" />
+            <div className="text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Diperkirakan selesai</p>
+              <p className="mt-0.5 text-[14px] font-bold text-white">{formatEndsAt(endsAt)}</p>
+            </div>
+          </div>
+        )}
+
+        {isMounted && !endsAt && (
+          <div className="mt-8 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/40 px-5 py-4">
+            <CalendarClock size={16} className="text-slate-500" />
+            <p className="text-[12px] text-slate-500">Waktu penyelesaian belum ditentukan.</p>
+          </div>
+        )}
+
+        <div className="mt-10 flex flex-col items-center gap-3 text-center text-xs text-slate-500">
+          <div className="flex items-center gap-2 rounded-lg border border-slate-900 bg-slate-900/40 px-4 py-2 text-[11px]">
+            <Lock size={12} className="text-amber-500" />
+            <span>Akses sementara dibatasi untuk siswa dan konselor.</span>
+          </div>
+          <p>© Careerous — Career Curiosity Platform</p>
+        </div>
       </div>
 
-      {}
-      {isMounted && (
-        <div className="mt-10 grid grid-cols-4 gap-3 sm:gap-4 max-w-lg w-full">
-          <CountdownCard value={timeLeft.days} label="Hari" />
-          <CountdownCard value={timeLeft.hours} label="Jam" />
-          <CountdownCard value={timeLeft.minutes} label="Menit" />
-          <CountdownCard value={timeLeft.seconds} label="Detik" />
-        </div>
-      )}
-
-      {}
-      <div className="mt-12 flex flex-col items-center gap-3 text-center text-xs text-slate-500">
-        <div className="flex items-center gap-2 rounded-lg border border-slate-900 bg-slate-900/40 px-4 py-2 text-[11px]">
-          <Lock size={12} className="text-amber-500" />
-          <span>Akses sementara dibatasi untuk siswa dan konselor.</span>
-        </div>
-        <p className="mt-2">© Careerous — Career Curiosity Platform</p>
-      </div>
-
-      {}
       <div className="absolute bottom-5">
         <Link
           href="/login"
@@ -104,22 +100,5 @@ export default function MaintenancePage() {
         </Link>
       </div>
     </main>
-  );
-}
-
-
-function CountdownCard({ value, label }: { value: number; label: string }) {
-  const formattedValue = String(value).padStart(2, "0");
-
-  return (
-    <div className="relative flex flex-col items-center rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-xl backdrop-blur-md">
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-      <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-mono tracking-tight glow-blue">
-        {formattedValue}
-      </span>
-      <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-        {label}
-      </span>
-    </div>
   );
 }

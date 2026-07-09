@@ -13,6 +13,7 @@ export async function getAppSetting() {
           deadlineHours: 48,
           lockHours: 72,
           maintenanceMode: false,
+          maintenanceEndsAt: null,
         },
       });
     }
@@ -24,6 +25,8 @@ export async function getAppSetting() {
       deadlineHours: 48,
       lockHours: 72,
       maintenanceMode: false,
+      maintenanceEndsAt: null as Date | null,
+      updatedAt: new Date(),
     };
   }
 }
@@ -39,6 +42,23 @@ export async function setMaintenanceMode(active: boolean) {
     },
     update: {
       maintenanceMode: active,
+    },
+  });
+}
+
+export async function setMaintenanceSettings(active: boolean, endsAt: Date | null) {
+  return prisma.appSetting.upsert({
+    where: { id: "singleton" },
+    create: {
+      id: "singleton",
+      deadlineHours: 48,
+      lockHours: 72,
+      maintenanceMode: active,
+      maintenanceEndsAt: endsAt,
+    },
+    update: {
+      maintenanceMode: active,
+      maintenanceEndsAt: endsAt,
     },
   });
 }
