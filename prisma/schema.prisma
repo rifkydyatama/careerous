@@ -43,10 +43,11 @@ model ModuleContent {
 // Pengaturan aplikasi global (singleton, id = "singleton").
 // Saat ini: batas waktu (deadline) & durasi kunci modul, yang dapat diatur admin.
 model AppSetting {
-  id            String   @id
-  deadlineHours Int      @default(48) // batas pengerjaan modul (jam)
-  lockHours     Int      @default(72) // durasi kunci setelah telat kedua (jam)
-  updatedAt     DateTime @updatedAt
+  id              String   @id
+  deadlineHours   Int      @default(48) // batas pengerjaan modul (jam)
+  lockHours       Int      @default(72) // durasi kunci setelah telat kedua (jam)
+  maintenanceMode Boolean  @default(false) // status mode pemeliharaan
+  updatedAt       DateTime @updatedAt
 }
 
 // Institusi/sekolah. Langganan institusi memberi akses Premium ke seluruh siswanya.

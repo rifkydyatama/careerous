@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, Save, CalendarClock, X } from "lucide-react";
+import { RefreshCw, Save, CalendarClock, X, ShieldAlert } from "lucide-react";
 import {
   fetchModuleDeadlines,
   updateModuleDeadline,
@@ -16,11 +16,24 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // State untuk Mode Pemeliharaan
+  const [maintenanceActive, setMaintenanceActive] = useState(false);
+  const [isMaintenanceLoading, setIsMaintenanceLoading] = useState(false);
+  const [maintenanceError, setMaintenanceError] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage(null);
     try {
+      // Load deadlines
       setModules(await fetchModuleDeadlines());
+      
+      // Load maintenance mode
+      const mRes = await fetch("/api/admin/maintenance");
+      if (mRes.ok) {
+        const mData = await mRes.json();
+        setMaintenanceActive(mData.maintenanceMode);
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Gagal memuat pengaturan");
     } finally {
@@ -32,9 +45,92 @@ export default function AdminSettingsPage() {
     void load();
   }, [load]);
 
+  const handleToggleMaintenance = async () => {
+    setIsMaintenanceLoading(true);
+    setMaintenanceError(null);
+    try {
+      const targetState = !maintenanceActive;
+      const res = await fetch("/api/admin/maintenance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: targetState }),
+      });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => null);
+        throw new Error(payload?.error || "Gagal mengubah mode pemeliharaan");
+      }
+      const data = await res.json();
+      setMaintenanceActive(data.maintenanceMode);
+    } catch (err) {
+      setMaintenanceError(err instanceof Error ? err.message : "Terjadi kesalahan");
+    } finally {
+      setIsMaintenanceLoading(false);
+    }
+  };
+
   return (
     <>
-      <div className="mb-6">
+      {/* KARTU PENGATURAN MODE PEMELIHARAAN GLOBAL */}
+      <div className="mb-8">
+        <h2 className="text-xl font-extrabold text-slate-900">Pengaturan Sistem Global</h2>
+        <p className="mt-1 text-[13px] text-slate-500">
+          Kelola status operasional platform Careerous secara keseluruhan.
+        </p>
+
+        <div className={`mt-4 rounded-2xl border p-6 transition-all duration-300 ${
+          maintenanceActive 
+            ? "border-rose-200 bg-rose-50/50 shadow-sm shadow-rose-100" 
+            : "border-slate-200 bg-white"
+        }`}>
+          <div className="flex flex-wrap items-start justify-between gap-5">
+            <div className="flex gap-4">
+              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors duration-300 ${
+                maintenanceActive ? "bg-rose-100 text-rose-600" : "bg-blue-50 text-blue-600"
+              }`}>
+                <ShieldAlert size={22} className={maintenanceActive ? "animate-pulse" : ""} />
+              </div>
+              <div className="max-w-xl">
+                <h3 className="text-sm font-extrabold text-slate-900">
+                  Mode Pemeliharaan (Maintenance Mode)
+                </h3>
+                <p className="mt-1.5 text-[12.5px] leading-relaxed text-slate-500">
+                  Ketika aktif, seluruh halaman publik dan dashboard bimbingan karier (siswa &amp; konselor) akan diblokir dengan tampilan countdown modern. **Hanya akun ber-role ADMIN** yang diizinkan masuk dan mengakses sistem.
+                </p>
+                {maintenanceError && (
+                  <p className="mt-2 text-[12px] font-semibold text-rose-600">
+                    ❌ {maintenanceError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className={`text-[12px] font-extrabold uppercase tracking-wider transition-colors duration-300 ${
+                maintenanceActive ? "text-rose-600" : "text-slate-400"
+              }`}>
+                {maintenanceActive ? "Aktif (Dibatasi)" : "Tidak Aktif"}
+              </span>
+              
+              <button
+                type="button"
+                onClick={() => void handleToggleMaintenance()}
+                disabled={isMaintenanceLoading}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  maintenanceActive ? "bg-rose-600" : "bg-slate-200"
+                } ${isMaintenanceLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    maintenanceActive ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-6 border-t border-slate-100 pt-6">
         <h2 className="text-xl font-extrabold text-slate-900">Batas Waktu Modul</h2>
         <p className="mt-1 text-[13px] text-slate-500">
           Tetapkan tanggal &amp; jam batas pengerjaan untuk tiap modul. Saat batas terlewat, siswa
