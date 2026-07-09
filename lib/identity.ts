@@ -7,6 +7,6 @@ export const UNIVERSITY = {
   unit: "Layanan Bimbingan Karier",
   app: "Careerous",
   appTagline: "Career Curiosity Platform",
-  logo: "/logo-um.svg",
+  logo: "/logo.jpg",
   copyright: "© Careerous",
 };

@@ -13,8 +13,8 @@ export default function ForgotPasswordPage() {
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
         <div className="flex items-center justify-between rounded-full border border-slate-200/80 bg-white/70 px-4 py-3 shadow-sm backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-sky-500 text-sm font-black text-white shadow-lg shadow-blue-500/30">
-              C
+            <div className="relative h-10 w-10 overflow-hidden rounded-full border border-slate-200 bg-white shadow-md flex items-center justify-center shrink-0">
+              <img src="/logo.jpg" alt="Logo" className="h-full w-full object-cover" />
             </div>
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-600">

@@ -68,7 +68,7 @@ export default function CounselorLayout({
       {/* ─── SIDEBAR ─── */}
       <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col border-r border-slate-200 bg-white shadow-sm">
         <div className="flex items-center gap-3 border-b border-slate-200 p-5">
-          <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0" />
+          <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover bg-white" />
           <div>
             <h1 className="text-sm font-extrabold leading-tight text-slate-900">{UNIVERSITY.app} BK</h1>
             <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">{schoolName}</p>
