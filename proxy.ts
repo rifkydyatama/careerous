@@ -11,7 +11,7 @@ const EXCLUDED_PATHS = [
   "/static",
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const isExcluded = EXCLUDED_PATHS.some(
