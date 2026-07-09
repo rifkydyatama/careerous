@@ -8,7 +8,6 @@ export async function GET() {
     const setting = await getAppSetting();
     const response = NextResponse.json({ maintenanceMode: setting.maintenanceMode });
     
-    // Cegah cache di tingkat CDN, proxy, dan browser secara agresif
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     response.headers.set("Pragma", "no-cache");
     response.headers.set("Expires", "0");

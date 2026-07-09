@@ -160,7 +160,6 @@ export default function GuidePage() {
     }
   ];
 
-  // Filter berdasarkan pencarian
   const filterSteps = (steps: typeof studentSteps) => {
     if (!searchQuery.trim()) return steps;
     const query = searchQuery.toLowerCase();
