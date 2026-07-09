@@ -140,6 +140,8 @@ export default function InstitutionPage() {
             </div>
           )}
 
+          <SchoolDeadlinesCard />
+
           {errorMessage && (
             <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] text-rose-700">
               {errorMessage}
@@ -225,9 +227,6 @@ export default function InstitutionPage() {
             </div>
           )}
 
-          <div className="mt-5">
-            <SchoolDeadlinesCard />
-          </div>
         </div>
       )}
     </>
