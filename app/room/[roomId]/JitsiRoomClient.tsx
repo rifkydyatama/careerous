@@ -8,10 +8,12 @@ import { Loader2 } from "lucide-react";
 export default function JitsiRoomClient({
   roomId,
   userName,
+  userEmail,
   userRole,
 }: {
   roomId: string;
   userName: string;
+  userEmail: string;
   userRole: string;
 }) {
   const router = useRouter();
@@ -68,6 +70,7 @@ export default function JitsiRoomClient({
         }}
         userInfo={{
           displayName: userName,
+          email: userEmail,
         }}
         onApiReady={handleApiReady}
         getIFrameRef={(iframeRef) => {

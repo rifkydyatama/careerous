@@ -7,9 +7,11 @@ import JitsiRoomClient from "./JitsiRoomClient";
 export default async function RoomPage({
   params,
 }: {
-  params: { roomId: string };
+  params: Promise<{ roomId: string }>;
 }) {
-  const token = cookies().get(getSessionCookieName())?.value;
+  const { roomId } = await params;
+  const cookieStore = await cookies();
+  const token = cookieStore.get(getSessionCookieName())?.value;
   if (!token) {
     redirect("/login");
   }
@@ -21,7 +23,7 @@ export default async function RoomPage({
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { name: true, role: true },
+    select: { name: true, role: true, email: true },
   });
 
   if (!user) {
@@ -33,8 +35,9 @@ export default async function RoomPage({
 
   return (
     <JitsiRoomClient
-      roomId={params.roomId}
+      roomId={roomId}
       userName={user.name || "Peserta"}
+      userEmail={user.email || ""}
       userRole={user.role}
     />
   );
