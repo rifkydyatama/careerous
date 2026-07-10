@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RefreshCw, CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, AlertTriangle, Lock } from "lucide-react";
+import { RefreshCw, CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, AlertTriangle, Lock, Sparkles } from "lucide-react";
 import {
   fetchCounselorOverview,
   submitCounselorFeedback,
@@ -303,59 +303,88 @@ function JournalCard({
   const isPermanentlyLocked = journal.status === "LOCKED" && (journal.lateCount ?? 0) >= 2;
   const isGraceLocked = journal.status === "LOCKED" && (journal.lateCount ?? 0) === 1;
 
+  const cardBorderClass = isLate
+    ? "border-amber-250 bg-amber-50/5"
+    : (isTempLocked || isPermanentlyLocked)
+      ? "border-rose-200 bg-rose-50/5"
+      : journal.reflectionText && isPending
+        ? "border-blue-200 bg-blue-50/5 ring-1 ring-blue-500/5 shadow-sm"
+        : "border-slate-205 bg-white";
+
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5">
-        <span className="text-[11px] font-extrabold uppercase tracking-wide text-blue-700">
-          Modul {journal.weekNumber}{meta ? `: ${meta.title}` : ""}
+    <div className={`overflow-hidden rounded-2xl border transition-all duration-350 ${cardBorderClass} hover:shadow-md`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-4 py-3">
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          Modul {journal.weekNumber}
         </span>
         <div className="flex items-center gap-1.5">
           {isLate && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-amber-700">
-              <AlertTriangle size={10} /> Terlambat
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-100/50 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-700 animate-pulse">
+              <AlertTriangle size={9} /> Terlambat
             </span>
           )}
           {(isTempLocked || isPermanentlyLocked) && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-rose-700">
-              <Lock size={10} /> Terkunci
+            <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-100/50 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-rose-700 animate-pulse">
+              <Lock size={9} /> Terkunci
             </span>
           )}
           {journal.reflectionText && (
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider ${
-              isPending ? "border-amber-200 bg-amber-50 text-amber-700" : "border-green-200 bg-green-50 text-green-700"
+            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${
+              isPending ? "border-amber-200 bg-amber-100/60 text-amber-750" : "border-green-200 bg-green-100/60 text-green-755"
             }`}>
-              {isPending ? <><Clock size={10} /> Menunggu Reviu</> : <><CheckCircle2 size={10} /> Telah Direviu</>}
+              {isPending ? <><Clock size={9} /> Menunggu Reviu</> : <><CheckCircle2 size={9} /> Telah Direviu</>}
             </span>
           )}
         </div>
       </div>
 
+      {/* Sub-header / Title */}
+      {meta && (
+        <div className="border-b border-slate-100/50 bg-white px-4 py-3 flex items-center justify-between gap-3">
+          <span className="truncate text-[13px] font-extrabold text-slate-800 tracking-tight">{meta.title}</span>
+          <span className="shrink-0 rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500 border border-slate-200/50">
+            {meta.phaseLabel}
+          </span>
+        </div>
+      )}
+
+      {/* Grace Lock Banner */}
       {isGraceLocked && (
-        <div className="border-b border-amber-100 bg-amber-50/75 px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-[11.5px] font-medium text-amber-800">
-          <div className="flex-1">
-            <span className="font-bold">Masa Tenggang:</span> Modul ini terkunci sementara hingga <b>{formatDateTimeId(journal.lockedUntil)}</b> karena siswa terlambat. Siswa harus mengunggah dokumen mood board untuk membukanya sendiri, atau Anda dapat membukanya sekarang.
-          </div>
+        <div className="m-4 mb-0 rounded-xl border border-amber-200 bg-amber-50/20 p-4 text-[12px] leading-relaxed text-amber-850">
+          <p className="font-extrabold text-amber-900 mb-1 flex items-center gap-1.5">
+            <AlertTriangle size={14} className="text-amber-500 animate-pulse" />
+            Masa Tenggang Keterlambatan
+          </p>
+          <p className="mb-3 font-semibold">
+            Modul ini terkunci sementara hingga <b>{formatDateTimeId(journal.lockedUntil)}</b> karena siswa terlambat. Siswa harus mengunggah dokumen mood board untuk membukanya sendiri, atau Anda dapat membukanya sekarang.
+          </p>
           <button
             type="button"
             onClick={handleUnlockClick}
             disabled={isUnlocking}
-            className="rounded-lg bg-amber-600 px-3.5 py-1.5 text-[11px] font-bold text-white transition hover:bg-amber-700 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-[11px] font-bold text-white transition hover:bg-amber-700 disabled:opacity-50 shadow-sm"
           >
             {isUnlocking ? "Membuka..." : "Buka Akses Sekarang"}
           </button>
         </div>
       )}
 
+      {/* Permanent Lock Banner */}
       {isPermanentlyLocked && (
-        <div className="border-b border-rose-100 bg-rose-50/75 px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-[11.5px] font-medium text-rose-800">
-          <div className="flex-1">
-            <span className="font-bold">Terblokir Permanen:</span> Siswa tidak mengunggah dokumen mood board tepat waktu hingga batas masa tenggang habis. Modul hanya dapat dibuka oleh Anda sebagai Konselor.
-          </div>
+        <div className="m-4 mb-0 rounded-xl border border-rose-200 bg-rose-50/20 p-4 text-[12px] leading-relaxed text-rose-850">
+          <p className="font-extrabold text-rose-900 mb-1 flex items-center gap-1.5">
+            <Lock size={14} className="text-rose-500 animate-pulse" />
+            Terkunci Permanen
+          </p>
+          <p className="mb-3 font-semibold">
+            Siswa tidak mengunggah dokumen mood board tepat waktu hingga batas masa tenggang habis. Modul hanya dapat dibuka secara manual oleh Anda sebagai Konselor.
+          </p>
           <button
             type="button"
             onClick={handleUnlockClick}
             disabled={isUnlocking}
-            className="rounded-lg bg-rose-600 px-3.5 py-1.5 text-[11px] font-bold text-white transition hover:bg-rose-700 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-[11px] font-bold text-white transition hover:bg-rose-700 disabled:opacity-50 shadow-sm"
           >
             {isUnlocking ? "Membuka..." : "Buka Akses Modul"}
           </button>
@@ -363,85 +392,106 @@ function JournalCard({
       )}
 
       {unlockError && (
-        <div className="border-b border-rose-100 bg-rose-50 px-4 py-2 text-[11px] font-semibold text-rose-600">
+        <div className="mx-4 mt-4 rounded-xl border border-rose-100 bg-rose-55/10 px-4 py-2 text-[11px] font-semibold text-rose-600">
           {unlockError}
         </div>
       )}
 
-      <div className="p-4">
+      {/* Main content body */}
+      <div className="p-4 bg-white/50">
+        {/* Mood Document Link */}
         {journal.moodDocumentUrl && (
           <a
             href={journal.moodDocumentUrl}
             target="_blank"
             rel="noreferrer"
-            className="mb-3 flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 p-3 text-[11.5px] font-bold text-blue-700 transition hover:bg-blue-100"
+            className="mb-4 flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/50 p-3 text-[11.5px] font-extrabold text-blue-700 transition hover:bg-blue-100/50 shadow-sm"
           >
-            <ExternalLink size={12} /> Lihat Dokumen Pendukung
+            <ExternalLink size={13} /> Lihat Lampiran Dokumen Moodboard Pendukung
           </a>
         )}
 
+        {/* Module Intro Callout */}
         {meta?.introduction && (
-          <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-[12px] leading-relaxed text-blue-900">
-            <p className="font-extrabold text-blue-950 mb-1">Pengantar Modul:</p>
-            <p className="whitespace-pre-line">{meta.introduction}</p>
+          <div className="mb-4 rounded-xl border border-indigo-100 bg-indigo-50/20 p-4 text-[12.5px] leading-relaxed text-indigo-950 relative overflow-hidden">
+            <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 opacity-5">
+              <Sparkles size={70} className="text-indigo-600" />
+            </div>
+            <p className="font-extrabold text-indigo-900 mb-1 flex items-center gap-1.5">
+              <Sparkles size={13} className="text-indigo-600" />
+              Pengantar Modul
+            </p>
+            <p className="whitespace-pre-line text-indigo-900/80 leading-relaxed font-semibold">{meta.introduction}</p>
           </div>
         )}
 
+        {/* Questions list */}
         {meta?.prompts && meta.prompts.length > 0 && (
-          <div className="mb-3">
-            <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-blue-500">Pertanyaan Modul</div>
+          <div className="mb-4">
+            <div className="mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Pertanyaan Modul</div>
             <div className="space-y-2">
               {meta.prompts.map((q: string, i: number) => (
-                <div key={i} className="flex gap-2 rounded-lg border border-blue-100 bg-blue-50/50 p-3 text-[12px] leading-relaxed text-blue-800">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-200 text-[9px] font-extrabold text-blue-800">{i + 1}</span>
-                  <span className="italic">{q}</span>
+                <div key={i} className="flex gap-2 rounded-xl border border-slate-100 bg-slate-50/50 p-3 text-[12px] leading-relaxed text-slate-700 font-semibold">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-gradient-to-tr from-slate-600 to-slate-750 text-[10px] font-black text-white shadow-sm mt-0.5">
+                    {i + 1}
+                  </span>
+                  <span>{q}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Hasil Journaling</div>
-        <div className="mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-[12.5px] leading-relaxed text-slate-600">
-          {journal.reflectionText || <em className="text-slate-400">Tidak ada teks.</em>}
+        {/* Journal reflection text */}
+        <div className="mb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Hasil Jurnal Refleksi Siswa</div>
+        <div className="mb-4 rounded-xl border border-slate-200 bg-white p-4 text-[12.5px] leading-relaxed text-slate-650 font-medium whitespace-pre-line max-h-48 overflow-y-auto shadow-inner">
+          {journal.reflectionText || <em className="text-slate-400">Siswa belum mengirim jawaban untuk modul ini.</em>}
         </div>
 
         {journal.evidenceImageUrl && (
-          <a href={journal.evidenceImageUrl} target="_blank" rel="noreferrer" className="mb-3 flex items-center gap-1.5 text-[11.5px] font-semibold text-blue-600 hover:text-blue-800 hover:underline underline-offset-2">
-            <ExternalLink size={12} /> Lihat Lampiran Bukti
+          <a
+            href={journal.evidenceImageUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mb-4 flex items-center gap-1.5 text-[11.5px] font-bold text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            <ExternalLink size={13} /> Lihat Lampiran Bukti
           </a>
         )}
 
+        {/* Feedback section */}
         {journal.counselorFeedback ? (
-          <>
-            <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-green-600">Umpan Balik Konselor</div>
-            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-[12.5px] leading-relaxed text-green-900">
+          <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-4">
+            <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-emerald-700">Umpan Balik Konselor (Telah Dikirim)</div>
+            <div className="rounded-lg border border-emerald-150 bg-white p-3 text-[12.5px] font-semibold leading-relaxed text-emerald-950">
               {journal.counselorFeedback}
             </div>
-          </>
-        ) : (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-            <div className="mb-2 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Tulis Umpan Balik</div>
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              rows={3}
-              placeholder="Masukkan catatan dan arahan untuk siswa..."
-              className="w-full resize-none rounded-lg border border-slate-300 p-3 text-[12.5px] text-slate-700 outline-none transition-all focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
-            />
-            {errorMessage && (
-              <p className="mt-2 text-[11px] font-semibold text-rose-600">{errorMessage}</p>
-            )}
-            <div className="mt-2 flex justify-end">
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="rounded-lg bg-[#2563eb] px-4 py-2 text-[11.5px] font-bold text-white transition-colors hover:bg-[#1d4ed8] disabled:bg-slate-300"
-              >
-                {isSubmitting ? "Menyimpan..." : "Simpan Umpan Balik"}
-              </button>
-            </div>
           </div>
+        ) : (
+          journal.reflectionText && (
+            <div className="rounded-xl border border-slate-150 bg-slate-50/60 p-4">
+              <div className="mb-2 text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">Tulis Umpan Balik / Catatan Pendampingan</div>
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                rows={3}
+                placeholder="Berikan saran, apresiasi, atau arahan tindak lanjut kepada siswa..."
+                className="w-full resize-none rounded-xl border border-slate-200 p-3 text-[12.5px] text-slate-750 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 font-medium"
+              />
+              {errorMessage && (
+                <p className="mt-2 text-[11px] font-semibold text-rose-600">{errorMessage}</p>
+              )}
+              <div className="mt-2 flex justify-end">
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-[11.5px] font-black tracking-wide text-white shadow-md hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-blue-500/10 active:scale-[0.98] disabled:from-slate-250 disabled:to-slate-300 disabled:text-slate-400 disabled:shadow-none"
+                >
+                  {isSubmitting ? "Menyimpan..." : "Kirim Umpan Balik"}
+                </button>
+              </div>
+            </div>
+          )
         )}
       </div>
     </div>

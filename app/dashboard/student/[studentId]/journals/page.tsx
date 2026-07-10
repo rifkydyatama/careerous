@@ -189,65 +189,72 @@ function ModuleCard({
   const config = STATUS_CONFIG[journal.status];
   const Icon = config.icon;
 
-  
   const cardClass = isPremiumGate
-    ? "border-indigo-200 bg-indigo-50/40"
-    : config.colorClass;
+    ? "border-indigo-200 bg-indigo-50/10 shadow-sm"
+    : journal.status === "UNLOCKED"
+      ? "border-blue-200 bg-blue-50/5 shadow-md shadow-blue-500/5 ring-1 ring-blue-500/5"
+      : config.colorClass;
 
   return (
-    <div className={`group relative overflow-hidden rounded-[14px] border transition-all ${cardClass}`}>
-      <div className="border-b border-slate-900/5 bg-slate-900/5 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-extrabold uppercase tracking-wide text-slate-700">
+    <div className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border transition-all duration-300 ${cardClass} hover:-translate-y-1 hover:shadow-lg`}>
+      <div>
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-4 py-3">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Modul {journal.weekNumber}
           </span>
           {isPremiumGate ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-indigo-700">
-              <Crown size={10} /> Premium
+            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-indigo-500 to-violet-600 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
+              <Crown size={9} /> Premium
             </span>
           ) : (
-            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider ${config.badgeClass}`}>
-              <Icon size={10} /> {config.label}
+            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${config.badgeClass} border border-slate-200/20`}>
+              <Icon size={9} /> {config.label}
             </span>
           )}
         </div>
+
+        {/* Phase Info */}
         {meta.title && (
-          <div className="mt-1.5 flex items-center justify-between gap-2">
-            <span className="truncate text-[12.5px] font-bold text-slate-900">{meta.title}</span>
-            <span className="shrink-0 rounded-full bg-white/70 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+          <div className="border-b border-slate-100/50 bg-white px-4 py-3 flex items-center justify-between gap-3">
+            <span className="truncate text-[13px] font-extrabold text-slate-800 tracking-tight">{meta.title}</span>
+            <span className="shrink-0 rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500 border border-slate-200/50">
               {meta.phaseLabel}
             </span>
           </div>
         )}
-      </div>
 
-      <div className="p-4">
-        {isPremiumGate ? (
-          <div className="flex h-32 flex-col items-center justify-center px-3 text-center">
-            <Crown size={22} className="mb-2 text-indigo-400" />
-            <p className="text-[11.5px] font-medium text-slate-600">
-              Modul ini bagian dari paket Premium.
-            </p>
-            <p className="mt-1.5 text-[10.5px] leading-snug text-slate-400">
-              Akses diaktifkan oleh sekolah. Hubungi guru BK-mu.
-            </p>
-          </div>
-        ) : journal.status === "LOCKED" ? (
-          <LockedCard journal={journal} studentId={studentId} onReload={onReload} />
-        ) : journal.status === "UNLOCKED" ? (
-          <>
-            <DeadlineBanner journal={journal} serverTime={serverTime} />
-            <JournalEntryForm
-              studentId={studentId}
-              weekNumber={journal.weekNumber}
-              prompts={meta.prompts}
-              introduction={meta.introduction}
-              onSubmitSuccess={onSubmitSuccess}
-            />
-          </>
-        ) : (
-          <CompletedCard journal={journal} />
-        )}
+        {/* Content Container */}
+        <div className="p-4 bg-white/50">
+          {isPremiumGate ? (
+            <div className="flex h-36 flex-col items-center justify-center px-4 text-center">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+                <Crown size={18} />
+              </div>
+              <p className="text-[12px] font-extrabold text-slate-850">
+                Akses Terkunci (Premium)
+              </p>
+              <p className="mt-1 text-[10px] leading-relaxed text-slate-400 font-medium">
+                Akses diaktifkan oleh sekolah. Silakan hubungi guru BK Anda untuk info selengkapnya.
+              </p>
+            </div>
+          ) : journal.status === "LOCKED" ? (
+            <LockedCard journal={journal} studentId={studentId} onReload={onReload} />
+          ) : journal.status === "UNLOCKED" ? (
+            <>
+              <DeadlineBanner journal={journal} serverTime={serverTime} />
+              <JournalEntryForm
+                studentId={studentId}
+                weekNumber={journal.weekNumber}
+                prompts={meta.prompts}
+                introduction={meta.introduction}
+                onSubmitSuccess={onSubmitSuccess}
+              />
+            </>
+          ) : (
+            <CompletedCard journal={journal} />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -267,7 +274,6 @@ function LockedCard({
   const lateCount = journal.lateCount ?? 0;
 
   if (isTempLocked && lateCount >= 1) {
-    
     return (
       <TransitionTaskForm
         journal={journal}
@@ -278,27 +284,28 @@ function LockedCard({
     );
   }
 
-  
   if (lateCount >= 2) {
     return (
-      <div className="flex h-32 flex-col items-center justify-center text-center">
-        <CalendarClock size={20} className="mb-2 text-amber-400" />
-        <p className="text-[11px] font-semibold text-amber-700">
-          Menunggu konselor membuka modul ini.
+      <div className="flex h-36 flex-col items-center justify-center text-center p-4 rounded-xl bg-amber-50/50 border border-amber-100/60">
+        <CalendarClock size={24} className="mb-2 text-amber-500 animate-bounce" />
+        <p className="text-[11.5px] font-extrabold text-amber-900 leading-snug">
+          Menunggu Pembukaan Akses
         </p>
-        <p className="mt-1 text-[10.5px] font-medium text-slate-500">
-          Kamu belum mengisi moodboard tepat waktu. Konselor sudah diberi tahu.
+        <p className="mt-1 text-[10px] leading-relaxed text-slate-500 font-medium">
+          Kamu belum mengisi tepat waktu. Silakan hubungi konselor BK Anda untuk membuka blokir modul ini.
         </p>
       </div>
     );
   }
 
-  
   return (
-    <div className="flex h-32 flex-col items-center justify-center text-center">
-      <Lock size={20} className="mb-2 text-slate-300" />
-      <p className="text-[11px] font-medium text-slate-500">
-        Selesaikan modul sebelumnya untuk membuka modul ini.
+    <div className="flex h-36 flex-col items-center justify-center text-center p-4 rounded-xl bg-slate-50/40 border border-slate-100">
+      <Lock size={22} className="mb-2 text-slate-350" />
+      <p className="text-[11.5px] font-bold text-slate-500 leading-snug">
+        Belum Terbuka
+      </p>
+      <p className="mt-1 text-[10px] leading-relaxed text-slate-400 font-medium">
+        Selesaikan modul sebelumnya terlebih dahulu untuk mengakses modul ini.
       </p>
     </div>
   );
@@ -347,20 +354,22 @@ function TransitionTaskForm({
   ];
 
   return (
-    <div>
-      <div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[11px] text-rose-700">
-        <div className="flex items-center gap-1.5 font-bold">
-          <CalendarClock size={12} /> Modul terblokir sementara
+    <div className="space-y-4">
+      <div className="rounded-xl border border-rose-100 bg-rose-50/50 p-3.5 text-[11px] text-rose-800 leading-relaxed font-medium">
+        <div className="flex items-center gap-1.5 font-extrabold text-rose-900 mb-1">
+          <CalendarClock size={13} className="animate-pulse" />
+          Modul Terblokir Sementara
         </div>
-        <p className="mt-0.5 leading-snug">
-          Akan otomatis terbuka pada <b>{formatDateTimeId(reopenAt)}</b>. Atau, isi moodboard di bawah untuk membukanya sekarang.
+        <p>
+          Terbuka otomatis pada <b>{formatDateTimeId(reopenAt)}</b>. Untuk membuka sekarang, silakan selesaikan tugas transisi berikut:
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* Mood Selection */}
         <div>
-          <label className="text-[11px] font-bold text-slate-700 block mb-1">
-            1. Bagaimana perasaanmu saat ini? (Ekspresi)
+          <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-2">
+            1. Bagaimana Perasaanmu Saat Ini?
           </label>
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
             {moods.map((m) => (
@@ -368,47 +377,52 @@ function TransitionTaskForm({
                 key={m.label}
                 type="button"
                 onClick={() => setLateMood(m.label)}
-                className={`flex flex-col items-center justify-center rounded-lg border p-1.5 text-center transition-all ${
+                className={`flex flex-col items-center justify-center rounded-xl border p-2 text-center transition-all ${
                   lateMood === m.label
-                    ? "border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500"
+                    ? "border-blue-500 bg-blue-50/80 text-blue-700 shadow-sm ring-2 ring-blue-500/20"
                     : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                 }`}
               >
-                <span className="text-lg">{m.emoji}</span>
-                <span className="text-[9.5px] font-semibold mt-0.5">{m.label}</span>
+                <span className="text-xl">{m.emoji}</span>
+                <span className="text-[9px] font-bold mt-1 tracking-tight">{m.label}</span>
               </button>
             ))}
           </div>
         </div>
 
+        {/* Reason Textarea */}
         <div>
-          <label className="text-[11px] font-bold text-slate-700 block mb-1">
-            2. Apa kendala yang kamu hadapi? (Tuliskan alasan keterlambatanmu)
+          <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-1.5">
+            2. Tuliskan Hambatan / Kendalamu
           </label>
           <textarea
             value={lateReason}
             onChange={(e) => setLateReason(e.target.value)}
             required
-            placeholder="Tulis alasan atau hambatan yang membuatmu terlambat mengisi jurnal..."
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-[11.5px] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            placeholder="Ceritakan mengapa kamu terlambat mengisi refleksi ini..."
+            className="w-full resize-none rounded-xl border border-slate-200 bg-white p-3 text-[12px] text-slate-700 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 font-medium"
             rows={2}
           />
         </div>
 
+        {/* Moodboard File Upload */}
         <div>
-          <label className="text-[11px] font-bold text-slate-700 block mb-1">
-            3. Unggah dokumen mood board pendukung (Moodboard)
+          <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-2">
+            3. Unggah Dokumen Moodboard Pendukung
           </label>
           <label
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-4 text-center transition-all ${
+            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed px-3 py-4 text-center transition-all ${
               file
-                ? "border-blue-400 bg-blue-50"
-                : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+                ? "border-blue-400 bg-blue-50/80 text-blue-700 shadow-sm"
+                : "border-slate-300 bg-white hover:border-blue-400 hover:bg-blue-50/30 text-slate-500"
             }`}
           >
-            <UploadCloud size={20} className={file ? "text-blue-500" : "text-slate-400"} />
-            <span className="text-[11px] font-semibold text-slate-600">
-              {file ? file.name : "Pilih file (PDF / gambar / dokumen, maks 8 MB)"}
+            <UploadCloud size={20} className={file ? "text-blue-500 scale-110 transition-transform" : "text-slate-400"} />
+            <span className="text-[11px] font-bold">
+              {file ? file.name : "Pilih file moodboard"}
+            </span>
+            <span className="text-[9px] text-slate-400">
+              {file ? "File siap diunggah" : "Format: PDF, gambar, atau dokumen (maks 8 MB)"}
             </span>
             <input
               type="file"
@@ -423,7 +437,7 @@ function TransitionTaskForm({
         <button
           type="submit"
           disabled={isSubmitting || !file || !lateReason.trim()}
-          className="rounded-lg bg-[#2563eb] py-2.5 text-[12px] font-bold text-white transition-all hover:bg-[#1d4ed8] disabled:bg-slate-300"
+          className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-[12px] font-black tracking-wide text-white shadow-md transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] disabled:from-slate-200 disabled:to-slate-300 disabled:text-slate-400 disabled:shadow-none"
         >
           {isSubmitting ? "Mengunggah..." : "Unggah & Buka Modul"}
         </button>
@@ -440,26 +454,26 @@ function DeadlineBanner({ journal, serverTime }: { journal: JournalItem; serverT
 
   return (
     <div
-      className={`mb-3 rounded-lg border px-3 py-2 text-[11px] ${
+      className={`mb-4 rounded-xl border px-3.5 py-2.5 text-[11px] font-medium leading-relaxed ${
         isLate
-          ? "border-amber-300 bg-amber-50 text-amber-800"
+          ? "border-amber-200 bg-amber-50/55 text-amber-800"
           : countdown?.overdue
-            ? "border-rose-200 bg-rose-50 text-rose-700"
-            : "border-blue-200 bg-blue-50 text-blue-700"
+            ? "border-rose-200 bg-rose-50/50 text-rose-700"
+            : "border-blue-150 bg-blue-50/20 text-blue-700"
       }`}
     >
-      <div className="flex items-center gap-1.5 font-bold">
-        {isLate ? <AlertTriangle size={12} /> : <Clock size={12} />}
-        {isLate ? "Peringatan keterlambatan" : "Batas waktu"}
+      <div className="flex items-center gap-1.5 font-extrabold">
+        {isLate ? <AlertTriangle size={13} className="text-amber-500" /> : <Clock size={13} className="text-blue-500" />}
+        {isLate ? "Peringatan Keterlambatan" : "Batas Waktu Pengisian"}
       </div>
-      <p className="mt-0.5 leading-snug">
-        {journal.deadlineAt && <>Deadline: {formatDateTimeId(journal.deadlineAt)} · </>}
-        {countdown?.text}
+      <p className="mt-1">
+        {journal.deadlineAt && <>Batas: <b>{formatDateTimeId(journal.deadlineAt)}</b> · </>}
+        <span>{countdown?.text}</span>
         {isLate && (
-          <>
+          <span>
             {" "}
-            — jika kembali terlambat, modul akan <b>terblokir</b>.
-          </>
+            — jika terlambat kembali, akses modul ini akan <b>terkunci permanen</b>.
+          </span>
         )}
       </p>
     </div>
@@ -468,31 +482,33 @@ function DeadlineBanner({ journal, serverTime }: { journal: JournalItem; serverT
 
 function CompletedCard({ journal }: { journal: JournalItem }) {
   return (
-    <div>
-      <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Refleksi Anda</p>
-      <p className="mt-1.5 line-clamp-3 text-[12.5px] leading-relaxed text-slate-600">
-        {journal.reflectionText}
-      </p>
-      {journal.evidenceImageUrl && (
-        <a
-          href={journal.evidenceImageUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline"
-        >
-          <ExternalLink size={12} /> Bukti Terlampir
-        </a>
-      )}
+    <div className="space-y-4">
+      <div>
+        <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Refleksi Anda</p>
+        <div className="mt-1.5 rounded-xl border border-slate-100 bg-slate-50/50 p-3.5 text-[12.5px] leading-relaxed text-slate-600 whitespace-pre-line max-h-48 overflow-y-auto font-medium">
+          {journal.reflectionText}
+        </div>
+        {journal.evidenceImageUrl && (
+          <a
+            href={journal.evidenceImageUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-extrabold text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            <ExternalLink size={12} /> Lihat Lampiran Bukti
+          </a>
+        )}
+      </div>
 
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-        <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Feedback Konselor</p>
+      <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-4">
+        <p className="text-[9.5px] font-extrabold uppercase tracking-wider text-emerald-700">Umpan Balik Konselor</p>
         {journal.counselorFeedback ? (
-          <p className="mt-1.5 text-[12.5px] font-medium leading-relaxed text-emerald-800">
+          <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-emerald-950 bg-white/80 p-3 rounded-lg border border-emerald-100">
             {journal.counselorFeedback}
           </p>
         ) : (
-          <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
-            <Clock size={12} /> Menunggu reviu konselor
+          <div className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
+            <Clock size={12} className="text-slate-450 animate-pulse" /> Menunggu reviu & masukan guru BK
           </div>
         )}
       </div>
@@ -554,7 +570,6 @@ function JournalEntryForm({
     setIsSubmitting(true);
     setError(null);
 
-    
     const combined = answers
       .map((a, i) => `[Pertanyaan ${i + 1}]\n${a.trim()}`)
       .join("\n\n");
@@ -574,47 +589,56 @@ function JournalEntryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {introduction && (
-        <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-[12px] leading-relaxed text-blue-900">
-          <p className="font-extrabold text-blue-950 mb-1">Pengantar Modul:</p>
-          <p className="whitespace-pre-line">{introduction}</p>
+        <div className="mb-1 rounded-xl border border-indigo-100 bg-indigo-50/20 p-4 text-[12.5px] leading-relaxed text-indigo-950 relative overflow-hidden">
+          <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 opacity-5">
+            <Sparkles size={70} className="text-indigo-600" />
+          </div>
+          <p className="font-extrabold text-indigo-900 mb-1 flex items-center gap-1.5">
+            <Sparkles size={13} className="text-indigo-600 animate-pulse" />
+            Pengantar Modul
+          </p>
+          <p className="whitespace-pre-line text-indigo-900/80 leading-relaxed font-semibold">{introduction}</p>
         </div>
       )}
+
       {prompts.map((prompt, index) => (
-        <div key={index}>
-          <label className="mb-1 block text-[11px] font-semibold leading-snug text-slate-700">
-            <span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-100 text-[9px] font-extrabold text-blue-700">
+        <div key={index} className="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5 transition-all focus-within:border-blue-200 focus-within:bg-white focus-within:shadow-sm">
+          <label className="mb-2 flex items-start gap-2 text-[12px] font-bold leading-relaxed text-slate-700">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-[10px] font-black text-white shadow-sm mt-0.5">
               {index + 1}
             </span>
-            {prompt}
+            <span>{prompt}</span>
           </label>
           <textarea
             required
             rows={3}
             value={answers[index] ?? ""}
             onChange={(e) => updateAnswer(index, e.target.value)}
-            placeholder={`Jawaban pertanyaan ${index + 1}...`}
-            className="w-full resize-none rounded-lg border border-slate-300 bg-white p-3 text-[12.5px] text-slate-700 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            placeholder={`Tulis jawaban refleksi Anda secara lengkap di sini...`}
+            className="w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-[12px] text-slate-750 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 font-medium"
           />
         </div>
       ))}
 
-      <div>
-        <label className="mb-1 block text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Lampiran Bukti (Opsional)</label>
+      {/* Upload Bukti */}
+      <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5">
+        <label className="mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Lampiran Bukti (Opsional)</label>
         <label
-          className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[11.5px] font-semibold transition-colors ${
+          className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-4 text-center transition-all ${
             file
-              ? "border-blue-400 bg-blue-50 text-blue-700"
-              : "border-slate-300 bg-slate-50 text-slate-500 hover:bg-slate-100"
+              ? "border-blue-400 bg-blue-50/80 text-blue-700 shadow-sm"
+              : "border-slate-300 bg-white hover:border-blue-400 hover:bg-blue-50/30 text-slate-500"
           }`}
         >
-          <UploadCloud size={14} />
-          {isUploading
-            ? "Mengunggah..."
-            : file
-              ? file.name
-              : "Unggah Foto / Dokumen"}
+          <UploadCloud size={20} className={file ? "text-blue-550 scale-110 transition-transform" : "text-slate-400"} />
+          <span className="text-[11px] font-bold">
+            {isUploading ? "Mengunggah..." : file ? file.name : "Unggah Foto / Dokumen Bukti"}
+          </span>
+          <span className="text-[9px] text-slate-400">
+            {file ? "File siap dikirim" : "Format: PDF, JPG, PNG, DOC (maks 8 MB)"}
+          </span>
           <input
             type="file"
             accept="image/*,.pdf,.doc,.docx,.ppt,.pptx"
@@ -623,7 +647,7 @@ function JournalEntryForm({
           />
         </label>
         {uploadedUrl && (
-          <p className="mt-1 text-[10px] font-semibold text-emerald-600">✓ File berhasil diunggah</p>
+          <p className="mt-2 text-[10px] font-semibold text-emerald-600 flex items-center gap-1">✓ Dokumen berhasil diunggah dan disimpan</p>
         )}
       </div>
 
@@ -632,9 +656,9 @@ function JournalEntryForm({
       <button
         type="submit"
         disabled={isSubmitting || isUploading || !allFilled}
-        className="mt-1 rounded-lg bg-blue-600 py-2.5 text-[12px] font-bold text-white shadow-sm transition-all hover:bg-blue-700 disabled:bg-slate-300"
+        className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-[12px] font-black tracking-wide text-white shadow-md transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-blue-500/10 active:scale-[0.98] disabled:from-slate-200 disabled:to-slate-300 disabled:text-slate-400 disabled:shadow-none"
       >
-        {isSubmitting ? "Mengirim..." : "Kirim Jawaban Modul"}
+        {isSubmitting ? "Menyimpan Jawaban..." : "Kirim Jawaban Refleksi"}
       </button>
     </form>
   );
