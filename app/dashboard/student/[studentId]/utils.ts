@@ -592,9 +592,11 @@ export type CareerReportResult = {
 };
 
 export async function fetchCareerReport(
-  studentId: string
+  studentId: string,
+  refresh = false
 ): Promise<CareerReportResult | null> {
-  const response = await fetch(`/api/reports/career-exploration/${studentId}`, {
+  const url = `/api/reports/career-exploration/${studentId}${refresh ? "?refresh=true" : ""}`;
+  const response = await fetch(url, {
     cache: "no-store",
   });
 

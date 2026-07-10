@@ -8,7 +8,7 @@ type RouteContext = {
   params: Promise<{ studentId: string }>;
 };
 
-export async function GET(_request: NextRequest, { params }: RouteContext) {
+export async function GET(request: NextRequest, { params }: RouteContext) {
   const { studentId } = await params;
   if (!studentId) {
     return NextResponse.json({ error: "Missing student id" }, { status: 400 });
@@ -24,7 +24,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 });
     }
 
-    const session = getSession(_request);
+    const session = getSession(request);
     if (!session) {
       return NextResponse.json({ error: "Akses ditolak: Sesi tidak valid" }, { status: 401 });
     }
@@ -62,16 +62,13 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       where: { studentId },
     });
 
-    const hasApiKey = Boolean(process.env.GEMINI_API_KEY?.trim());
-    // Log ke Vercel Function Logs untuk debugging
-    console.log(
-      `[career-report] studentId=${studentId} hasApiKey=${hasApiKey} ` +
-      `keyPrefix=${process.env.GEMINI_API_KEY?.slice(0, 10) ?? "unset"} ` +
-      `existingReport=${report ? `id=${report.id} isAI=${report.isAiGenerated}` : "null"}`
-    );
+    // Explicit refresh requested (e.g. user clicked "Minta Ulang AI")
+    const wantsRefresh = request.nextUrl.searchParams.get("refresh") === "true";
 
-    // Regenerate if: no report exists, or existing report is rule-based while AI key is now active
-    if (!report || (!report.isAiGenerated && hasApiKey)) {
+    // Only generate/regenerate in two cases:
+    // 1. No report exists yet
+    // 2. User explicitly requested a refresh (prevents Gemini quota exhaustion on every page load)
+    if (!report || wantsRefresh) {
       report = await generateCareerReport(studentId);
     }
 

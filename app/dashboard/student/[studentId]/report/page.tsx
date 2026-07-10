@@ -283,6 +283,7 @@ export default function CareerReportPage() {
   const [assessment, setAssessment] = useState<AssessmentData | null>(null);
   const [studentData, setStudentData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [notReady, setNotReady] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -311,6 +312,27 @@ export default function CareerReportPage() {
     return () => { mounted = false; };
   }, [studentId]);
 
+  const handleRefresh = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    setErrorMessage(null);
+    try {
+      const result = await fetchCareerReport(studentId, true);
+      if (result) {
+        setReport(result.report);
+        setAssessment(result.assessment);
+      } else {
+        setNotReady(true);
+      }
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Gagal memperbarui laporan dengan AI"
+      );
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const sentiment = report ? SENTIMENT_UI[report.sentimentLabel] ?? SENTIMENT_UI.NETRAL : null;
   const SentimentIcon = sentiment?.icon ?? Meh;
   const learnStyle = assessment ? LEARNING_STYLE_LABELS[assessment.learningStyle] : null;
@@ -333,7 +355,17 @@ export default function CareerReportPage() {
           <h2 className="text-xl font-extrabold text-slate-900">Career Exploration Report</h2>
           <p className="mt-1 text-[13px] text-slate-500">Laporan holistik eksplorasi karier — modul, RIASEC, dan gaya belajar.</p>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          {report && (
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-[11.5px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 flex-1 sm:flex-initial"
+            >
+              <RefreshCw size={14} className={isRefreshing ? "animate-spin text-blue-600" : ""} />
+              {isRefreshing ? "Memproses AI..." : "Regenerasi AI"}
+            </button>
+          )}
           <button
             onClick={() => window.print()}
             className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-[11.5px] font-bold text-white transition hover:from-blue-700 hover:to-indigo-700 flex-1 sm:flex-initial shadow-md shadow-blue-500/10"
@@ -472,13 +504,37 @@ export default function CareerReportPage() {
             </div>
 
             {/* Notice */}
-            <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-[12px] text-amber-800">
-              <Info size={15} className="mt-0.5 shrink-0" />
-              <p>
-                {report.isAiGenerated
-                  ? "Laporan ini dihasilkan oleh AI (Gemini) berdasarkan jawaban journaling, RIASEC, dan gaya belajar Anda."
-                  : "Laporan ini dihasilkan menggunakan analisis berbasis aturan karena AI belum aktif. Hasil sudah mencakup data RIASEC dan gaya belajar Anda."}
-              </p>
+            <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-[12px] text-amber-800">
+              <div className="flex items-start gap-2">
+                <Info size={15} className="mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold">
+                    {report.isAiGenerated
+                      ? "Laporan Resmi Terverifikasi AI (Gemini)"
+                      : "Laporan Hasil Analisis Aturan (AI Tidak Aktif)"}
+                  </p>
+                  <p className="mt-0.5 opacity-90">
+                    {report.isAiGenerated
+                      ? "Laporan ini dihasilkan oleh AI (Gemini) secara holistik berdasarkan jawaban journaling, RIASEC, dan gaya belajar Anda. Gunakan sebagai bahan diskusi bersama guru BK."
+                      : "Laporan ini dihasilkan menggunakan analisis otomatis berbasis aturan (rule-based) karena AI belum diaktifkan saat pembuatan laporan pertama kali."}
+                  </p>
+                </div>
+              </div>
+              {!report.isAiGenerated && (
+                <div className="mt-1 flex items-center gap-3">
+                  <button
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-amber-700 disabled:opacity-50"
+                  >
+                    <RefreshCw size={12} className={isRefreshing ? "animate-spin" : ""} />
+                    {isRefreshing ? "Mengaktifkan AI..." : "Aktifkan Analisis AI Sekarang"}
+                  </button>
+                  {errorMessage && (
+                    <span className="text-red-600 font-medium">Gagal: {errorMessage}</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </>
