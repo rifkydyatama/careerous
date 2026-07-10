@@ -380,6 +380,13 @@ function JournalCard({
           </a>
         )}
 
+        {meta?.introduction && (
+          <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-[12px] leading-relaxed text-blue-900">
+            <p className="font-extrabold text-blue-950 mb-1">Pengantar Modul:</p>
+            <p className="whitespace-pre-line">{meta.introduction}</p>
+          </div>
+        )}
+
         {meta?.prompts && meta.prompts.length > 0 && (
           <div className="mb-3">
             <div className="mb-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-blue-500">Pertanyaan Modul</div>

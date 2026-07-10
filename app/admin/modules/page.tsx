@@ -122,14 +122,22 @@ function ModuleEditor({ module }: { module: AdminModule }) {
         Pertanyaan Reflektif (Prompt)
       </label>
       <textarea
-        rows={2}
+        rows={8}
         value={prompt}
         onChange={(e) => {
           setPrompt(e.target.value);
           setSavedAt(false);
         }}
-        className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        placeholder={`Pengantar: Deskripsi modul...
+---
+Pertanyaan 1
+---
+Pertanyaan 2`}
       />
+      <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">
+        Gunakan pemisah <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[10px]">---</code> di baris baru untuk memisahkan antara <b>Pengantar Modul</b> dan <b>tiap pertanyaan</b>. Siswa akan mendapatkan kotak jawaban terpisah untuk setiap pertanyaan.
+      </p>
 
       {error && <p className="mt-2 text-[11px] font-semibold text-rose-600">{error}</p>}
     </div>

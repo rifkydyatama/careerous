@@ -158,6 +158,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         premiumLocked: !premium && isPremiumModule(journal.weekNumber),
         title: meta?.title ?? null,
         prompt: meta?.prompt ?? null,
+        introduction: meta?.introduction ?? null,
         prompts: meta?.prompts ?? [],
         phaseLabel: meta?.phaseLabel ?? null,
       };

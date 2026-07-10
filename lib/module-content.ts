@@ -1,29 +1,15 @@
-
-
-
 import { prisma } from "./prisma";
-import { MODULES, getModule } from "./modules";
+import { MODULES, getModule, parseModulePrompt } from "./modules";
 
 export type ModuleContentItem = {
   number: number;
   title: string;
+  introduction: string | null;
   prompt: string;
   prompts: string[];
   phaseLabel: string;
   deadlineAt: Date | null; 
 };
-
-export function parsePrompts(promptStr: string): string[] {
-  if (!promptStr) return [];
-  if (promptStr.includes("|||")) {
-    return promptStr.split("|||").map((p) => p.trim()).filter(Boolean);
-  }
-  if (promptStr.includes("\n\n")) {
-    return promptStr.split("\n\n").map((p) => p.trim()).filter(Boolean);
-  }
-  return [promptStr.trim()];
-}
-
 
 export async function ensureModuleContents(): Promise<void> {
   const existing = await prisma.moduleContent.findMany({ select: { number: true } });
@@ -39,7 +25,6 @@ export async function ensureModuleContents(): Promise<void> {
   }
 }
 
-
 export async function getModuleContents(): Promise<Map<number, ModuleContentItem>> {
   const rows = await prisma.moduleContent.findMany();
   const map = new Map<number, ModuleContentItem>();
@@ -47,6 +32,7 @@ export async function getModuleContents(): Promise<Map<number, ModuleContentItem
     map.set(m.number, {
       number: m.number,
       title: m.title,
+      introduction: m.introduction,
       prompt: m.prompt,
       prompts: m.prompts,
       phaseLabel: m.phaseLabel,
@@ -54,18 +40,19 @@ export async function getModuleContents(): Promise<Map<number, ModuleContentItem
     });
   }
   for (const row of rows) {
+    const { introduction, prompts } = parseModulePrompt(row.prompt);
     map.set(row.number, {
       number: row.number,
       title: row.title,
+      introduction,
       prompt: row.prompt,
-      prompts: parsePrompts(row.prompt),
+      prompts,
       phaseLabel: row.phaseLabel,
       deadlineAt: row.deadlineAt ?? null,
     });
   }
   return map;
 }
-
 
 export function resolveModule(
   n: number,
@@ -77,13 +64,13 @@ export function resolveModule(
   return {
     number: def.number,
     title: def.title,
+    introduction: def.introduction,
     prompt: def.prompt,
     prompts: def.prompts,
     phaseLabel: def.phaseLabel,
     deadlineAt: null,
   };
 }
-
 
 export async function getModuleDeadline(n: number, institutionId?: string | null): Promise<Date | null> {
   if (institutionId) {

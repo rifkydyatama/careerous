@@ -181,6 +181,7 @@ function ModuleCard({
   const meta = {
     title: journal.title ?? fallback?.title ?? "",
     prompt: journal.prompt ?? fallback?.prompt ?? "",
+    introduction: journal.introduction ?? fallback?.introduction ?? null,
     prompts: fallback?.prompts ?? [journal.prompt ?? fallback?.prompt ?? ""],
     phaseLabel: journal.phaseLabel ?? fallback?.phaseLabel ?? "",
   };
@@ -240,6 +241,7 @@ function ModuleCard({
               studentId={studentId}
               weekNumber={journal.weekNumber}
               prompts={meta.prompts}
+              introduction={meta.introduction}
               onSubmitSuccess={onSubmitSuccess}
             />
           </>
@@ -502,11 +504,13 @@ function JournalEntryForm({
   studentId,
   weekNumber,
   prompts,
+  introduction,
   onSubmitSuccess,
 }: {
   studentId: string;
   weekNumber: number;
   prompts: string[];
+  introduction?: string | null;
   onSubmitSuccess: (journal: JournalItem) => Promise<JournalItem> | void;
 }) {
   const [answers, setAnswers] = useState<string[]>(() => prompts.map(() => ""));
@@ -571,6 +575,12 @@ function JournalEntryForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      {introduction && (
+        <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-[12px] leading-relaxed text-blue-900">
+          <p className="font-extrabold text-blue-950 mb-1">Pengantar Modul:</p>
+          <p className="whitespace-pre-line">{introduction}</p>
+        </div>
+      )}
       {prompts.map((prompt, index) => (
         <div key={index}>
           <label className="mb-1 block text-[11px] font-semibold leading-snug text-slate-700">
