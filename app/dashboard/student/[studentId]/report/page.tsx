@@ -124,7 +124,7 @@ function PrintDocument({
         </div>
         {/* Kanan: Logo UM + Institusi */}
         <div style={{ textAlign: "right", display: "flex", alignItems: "center", gap: 10, flexDirection: "row-reverse" }}>
-          <img src="/logo-um.svg" alt="Logo UM" style={{ height: 48, width: 48 }} />
+          <img src="/logo-um.png" alt="Logo Universitas Negeri Malang" style={{ height: 56, width: 56, objectFit: "contain" }} />
           <div>
             <div style={{ fontSize: "9pt", fontWeight: 700, color: "#1E3A5F" }}>Universitas Negeri Malang</div>
             <div style={{ fontSize: "7.5pt", color: "#9CA3AF", fontWeight: 600, letterSpacing: "0.5px" }}>Mitra Institusi Resmi</div>
