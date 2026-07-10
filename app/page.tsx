@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -19,6 +21,7 @@ import {
 } from "lucide-react";
 import AuroraBackground from "./components/AuroraBackground";
 import Reveal from "./components/Reveal";
+import { motion } from "motion/react";
 
 type StatItem = {
   icon: LucideIcon;
@@ -185,67 +188,123 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          {}
+          {/* Right column: animated mascot and login/quick entry card */}
           <Reveal delay={0.15}>
-            <div className="relative">
-              <div className="absolute -inset-4 -z-10 rounded-[40px] bg-gradient-to-br from-blue-400/25 via-sky-400/15 to-cyan-300/15 blur-2xl glow-pulse" />
-              <div className="glass animate-float-slow rounded-[32px] p-6 shadow-xl shadow-blue-500/10 sm:p-7">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400">
-                      Akses cepat
-                    </p>
-                    <h3 className="mt-1 text-xl font-bold text-slate-900">
-                      Mulai perjalananmu
-                    </h3>
-                  </div>
-                  <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-600">
-                    <ShieldCheck size={12} /> Gratis
-                  </span>
+            <div className="flex flex-col items-center">
+              {/* Mascot container with float and glow */}
+              <div className="relative mb-6 flex flex-col items-center justify-center">
+                <div className="absolute -inset-8 -z-10 rounded-full bg-blue-500/10 opacity-70 blur-3xl" />
+                <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/15 opacity-60 blur-3xl" />
+                
+                {/* Waving/Spinning Sparkles decoration */}
+                <div className="absolute -left-6 top-10 text-yellow-450 animate-bounce duration-[4000ms]">
+                  <Sparkles size={22} className="text-amber-400 drop-shadow-[0_2px_10px_rgba(251,191,36,0.5)]" />
+                </div>
+                <div className="absolute -right-8 top-20 text-blue-400 animate-pulse">
+                  <Sparkles size={18} className="text-sky-400 drop-shadow-[0_2px_10px_rgba(56,189,248,0.5)]" />
+                </div>
+                <div className="absolute left-10 -bottom-3 text-indigo-400 animate-bounce duration-[3000ms]">
+                  <Sparkles size={14} className="text-indigo-400" />
                 </div>
 
-                <div className="mt-6 grid gap-3">
-                  <Link
-                    href="/register"
-                    className="card-hover group flex items-center justify-between rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 px-4 py-4"
-                  >
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
-                        Daftar
-                      </p>
-                      <p className="mt-1 text-sm font-semibold text-slate-900">
-                        Buat akun siswa
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Pilih sekolahmu dan mulai eksplorasi.
-                      </p>
-                    </div>
-                    <ArrowRight
-                      size={18}
-                      className="text-blue-500 transition-transform group-hover:translate-x-1"
-                    />
-                  </Link>
+                <motion.div
+                  className="relative z-10 cursor-pointer transition-all"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1,
+                    y: [0, -12, 0],
+                    rotate: [0, 1, -1, 0]
+                  }}
+                  whileHover={{ 
+                    scale: 1.08,
+                    rotateY: 12,
+                    filter: "drop-shadow(0 20px 40px rgba(59, 130, 246, 0.35))"
+                  }}
+                  transition={{
+                    y: {
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    },
+                    rotate: {
+                      duration: 6,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    },
+                    scale: { type: "spring", stiffness: 300, damping: 15 }
+                  }}
+                  style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                >
+                  <img
+                    src="/robot.png"
+                    alt="Mascot Robot"
+                    className="h-72 w-auto object-contain select-none pointer-events-none drop-shadow-[0_15px_25px_rgba(59,130,246,0.2)]"
+                  />
+                </motion.div>
+              </div>
 
-                  <Link
-                    href="/login"
-                    className="card-hover group flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-4"
-                  >
+              {/* Quick Entry Box */}
+              <div className="relative w-full max-w-sm">
+                <div className="absolute -inset-4 -z-10 rounded-[40px] bg-gradient-to-br from-blue-400/15 via-sky-400/10 to-cyan-300/10 blur-2xl glow-pulse" />
+                <div className="glass rounded-[28px] p-5 shadow-xl shadow-blue-500/5">
+                  <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-                        Masuk
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.3em] text-slate-400">
+                        Akses cepat
                       </p>
-                      <p className="mt-1 text-sm font-semibold text-slate-900">
-                        Masuk sesuai peran
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Siswa, konselor, atau admin.
-                      </p>
+                      <h3 className="mt-0.5 text-lg font-bold text-slate-900">
+                        Mulai perjalananmu
+                      </h3>
                     </div>
-                    <ArrowRight
-                      size={18}
-                      className="text-slate-400 transition-transform group-hover:translate-x-1"
-                    />
-                  </Link>
+                    <span className="flex items-center gap-1 rounded-full border border-emerald-250 bg-emerald-50 px-2.5 py-0.5 text-[9.5px] font-bold text-emerald-600 shadow-sm">
+                      <ShieldCheck size={11} /> Gratis
+                    </span>
+                  </div>
+
+                  <div className="mt-4 grid gap-2.5">
+                    <Link
+                      href="/register"
+                      className="card-hover group flex items-center justify-between rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 px-4 py-3.5"
+                    >
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600">
+                          Daftar
+                        </p>
+                        <p className="mt-0.5 text-sm font-semibold text-slate-900">
+                          Buat akun siswa
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-500 leading-normal">
+                          Pilih sekolahmu dan mulai eksplorasi.
+                        </p>
+                      </div>
+                      <ArrowRight
+                        size={17}
+                        className="text-blue-500 transition-transform group-hover:translate-x-1"
+                      />
+                    </Link>
+
+                    <Link
+                      href="/login"
+                      className="card-hover group flex items-center justify-between rounded-2xl border border-slate-250 bg-white px-4 py-3.5"
+                    >
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                          Masuk
+                        </p>
+                        <p className="mt-0.5 text-sm font-semibold text-slate-900">
+                          Masuk sesuai peran
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-500 leading-normal">
+                          Siswa, konselor, atau admin.
+                        </p>
+                      </div>
+                      <ArrowRight
+                        size={17}
+                        className="text-slate-400 transition-transform group-hover:translate-x-1"
+                      />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
