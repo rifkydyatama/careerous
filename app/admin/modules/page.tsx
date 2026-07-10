@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, Save, BookOpen } from "lucide-react";
+import { useCallback, useEffect, useState, useMemo } from "react";
+import { RefreshCw, Save, BookOpen, Trash2 } from "lucide-react";
 import { fetchAdminModules, updateAdminModule, AdminModule } from "../utils";
 
 export default function AdminModulesPage() {
@@ -58,25 +58,98 @@ export default function AdminModulesPage() {
   );
 }
 
+function parseModulePromptClient(promptStr: string) {
+  if (!promptStr) return { introduction: "", questions: [""] };
+  
+  if (promptStr.includes("---")) {
+    const parts = promptStr.split("---").map((p) => p.trim()).filter(Boolean);
+    if (parts.length > 0) {
+      const firstIsIntro = parts[0].toLowerCase().startsWith("pengantar:") || parts[0].toLowerCase().startsWith("[pengantar]");
+      const introduction = firstIsIntro 
+        ? parts[0].replace(/^(pengantar:|\[pengantar\])\s*/i, "").trim()
+        : "";
+      
+      const questions = firstIsIntro ? parts.slice(1) : parts;
+      return { introduction, questions: questions.length > 0 ? questions : [""] };
+    }
+  }
+
+  // Fallback split by ||| or \n\n
+  let questions: string[] = [];
+  if (promptStr.includes("|||")) {
+    questions = promptStr.split("|||").map((p) => p.trim()).filter(Boolean);
+  } else if (promptStr.includes("\n\n")) {
+    questions = promptStr.split("\n\n").map((p) => p.trim()).filter(Boolean);
+  } else {
+    questions = [promptStr.trim()];
+  }
+
+  return {
+    introduction: "",
+    questions: questions.length > 0 ? questions : [""],
+  };
+}
+
 function ModuleEditor({ module }: { module: AdminModule }) {
   const [title, setTitle] = useState(module.title);
-  const [prompt, setPrompt] = useState(module.prompt);
+  
+  const initialData = useMemo(() => parseModulePromptClient(module.prompt), [module.prompt]);
+  const [introduction, setIntroduction] = useState(initialData.introduction);
+  const [questions, setQuestions] = useState<string[]>(initialData.questions);
+  
   const [isSaving, setIsSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const dirty = title !== module.title || prompt !== module.prompt;
+  // Sync state if module prop changes
+  useEffect(() => {
+    setTitle(module.title);
+    setIntroduction(initialData.introduction);
+    setQuestions(initialData.questions);
+    setSavedAt(false);
+  }, [module, initialData]);
+
+  const currentSerialized = introduction.trim() 
+    ? `Pengantar: ${introduction.trim()}\n---\n` + questions.map((q) => q.trim()).filter(Boolean).join("\n---\n")
+    : questions.map((q) => q.trim()).filter(Boolean).join("\n---\n");
+    
+  const dirty = title !== module.title || currentSerialized !== module.prompt;
+
+  const handleAddQuestion = () => {
+    setQuestions((prev) => [...prev, ""]);
+    setSavedAt(false);
+  };
+
+  const handleRemoveQuestion = (index: number) => {
+    if (questions.length <= 1) return;
+    setQuestions((prev) => prev.filter((_, i) => i !== index));
+    setSavedAt(false);
+  };
+
+  const handleQuestionChange = (index: number, value: string) => {
+    setQuestions((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+    setSavedAt(false);
+  };
 
   const handleSave = async () => {
-    if (!title.trim() || !prompt.trim()) {
-      setError("Judul dan prompt wajib diisi.");
+    const validQuestions = questions.map(q => q.trim()).filter(Boolean);
+    if (!title.trim() || validQuestions.length === 0) {
+      setError("Judul dan minimal satu pertanyaan wajib diisi.");
       return;
     }
     setIsSaving(true);
     setError(null);
     setSavedAt(false);
     try {
-      await updateAdminModule(module.number, title.trim(), prompt.trim());
+      const promptToSave = introduction.trim()
+        ? `Pengantar: ${introduction.trim()}\n---\n` + validQuestions.join("\n---\n")
+        : validQuestions.join("\n---\n");
+        
+      await updateAdminModule(module.number, title.trim(), promptToSave);
       setSavedAt(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal menyimpan");
@@ -87,7 +160,7 @@ function ModuleEditor({ module }: { module: AdminModule }) {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
             <BookOpen size={15} />
@@ -108,38 +181,80 @@ function ModuleEditor({ module }: { module: AdminModule }) {
         </button>
       </div>
 
-      <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-500">Judul</label>
-      <input
-        value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-          setSavedAt(false);
-        }}
-        className="mb-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-      />
+      <div className="grid gap-4">
+        {/* Judul Modul */}
+        <div>
+          <label className="mb-1 block text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+            Judul Modul
+          </label>
+          <input
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setSavedAt(false);
+            }}
+            placeholder="Judul modul..."
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 font-medium text-slate-800"
+          />
+        </div>
 
-      <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-        Pertanyaan Reflektif (Prompt)
-      </label>
-      <textarea
-        rows={8}
-        value={prompt}
-        onChange={(e) => {
-          setPrompt(e.target.value);
-          setSavedAt(false);
-        }}
-        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-        placeholder={`Pengantar: Deskripsi modul...
----
-Pertanyaan 1
----
-Pertanyaan 2`}
-      />
-      <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">
-        Gunakan pemisah <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[10px]">---</code> di baris baru untuk memisahkan antara <b>Pengantar Modul</b> dan <b>tiap pertanyaan</b>. Siswa akan mendapatkan kotak jawaban terpisah untuk setiap pertanyaan.
-      </p>
+        {/* Pengantar Modul */}
+        <div>
+          <label className="mb-1 block text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+            Pengantar Modul (Opsional)
+          </label>
+          <textarea
+            rows={3}
+            value={introduction}
+            onChange={(e) => {
+              setIntroduction(e.target.value);
+              setSavedAt(false);
+            }}
+            placeholder="Teks pengantar yang menjelaskan instruksi atau tujuan modul kepada siswa..."
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] leading-relaxed outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-600"
+          />
+        </div>
 
-      {error && <p className="mt-2 text-[11px] font-semibold text-rose-600">{error}</p>}
+        {/* Butir Pertanyaan */}
+        <div>
+          <label className="mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+            Daftar Pertanyaan Reflektif
+          </label>
+          <div className="flex flex-col gap-2.5">
+            {questions.map((q, index) => (
+              <div key={index} className="flex gap-2">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-[11px] font-bold text-slate-600 border border-slate-200">
+                  {index + 1}
+                </div>
+                <input
+                  value={q}
+                  onChange={(e) => handleQuestionChange(index, e.target.value)}
+                  placeholder={`Masukkan pertanyaan reflektif ke-${index + 1}...`}
+                  className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-[12.5px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-700"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveQuestion(index)}
+                  disabled={questions.length <= 1}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 disabled:opacity-30 disabled:hover:bg-slate-50 disabled:hover:text-slate-400"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAddQuestion}
+            className="mt-3 inline-flex items-center gap-1 text-[11.5px] font-extrabold text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            + Tambah Pertanyaan
+          </button>
+        </div>
+      </div>
+
+      {error && <p className="mt-3 text-[11px] font-semibold text-rose-600">{error}</p>}
     </div>
   );
 }
