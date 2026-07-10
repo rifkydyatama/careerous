@@ -149,9 +149,9 @@ export default function StudentDashboardPage() {
               </div>
 
               {/* Progress Ring and Stats */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-5 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur-sm w-full sm:w-auto justify-center sm:justify-start">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur-sm w-full sm:w-auto justify-center sm:justify-start">
                 <ProgressRing percent={stats.progress} />
-                <div className="grid grid-cols-3 sm:flex sm:flex-col gap-3 sm:gap-2.5">
+                <div className="grid grid-cols-3 sm:flex sm:flex-col gap-4 sm:gap-2.5 w-full sm:w-auto">
                   <MiniStat label="Modul Tuntas" value={`${stats.completed}/${stats.total}`} />
                   <MiniStat label="Sudah Direviu" value={`${stats.reviewed}`} accent />
                   <MiniStat label="Poin" value={`${game.points}`} />
@@ -337,7 +337,7 @@ function ProgressRing({ percent }: { percent: number }) {
 
 function MiniStat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div>
+    <div className="text-center sm:text-left">
       <p className="text-[9px] font-bold uppercase tracking-wider text-white/40">{label}</p>
       <p className={`text-[15px] font-extrabold leading-none ${accent ? "text-sky-200" : "text-white"}`}>{value}</p>
     </div>

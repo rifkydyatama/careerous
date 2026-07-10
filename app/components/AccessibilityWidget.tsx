@@ -164,7 +164,7 @@ export default function AccessibilityWidget() {
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-5 right-5 z-[100] flex flex-col items-end"
+      className="fixed bottom-20 lg:bottom-5 right-5 z-[100] flex flex-col items-end"
       style={{
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}

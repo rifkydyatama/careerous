@@ -161,24 +161,24 @@ export default function HomePage() {
                 dalam satu portal yang mudah digunakan.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/register"
-                  className="btn-glow inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-white"
+                  className="btn-glow inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-white w-full sm:w-auto"
                 >
                   <Rocket size={17} />
                   Mulai sekarang
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 w-full sm:w-auto"
                 >
                   <LayoutDashboard size={16} />
                   Sudah punya akun
                 </Link>
               </div>
 
-              <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              <div className="mt-10 grid gap-2 grid-cols-3 sm:gap-3">
                 {HERO_STATS.map((item, i) => (
                   <Reveal key={item.label} delay={0.1 + i * 0.08}>
                     <StatPill item={item} />
@@ -197,10 +197,10 @@ export default function HomePage() {
                 <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/15 opacity-60 blur-3xl" />
                 
                 {/* Waving/Spinning Sparkles decoration */}
-                <div className="absolute -left-6 top-10 text-yellow-450 animate-bounce duration-[4000ms]">
+                <div className="absolute -left-2 sm:-left-6 top-10 text-yellow-450 animate-bounce duration-[4000ms]">
                   <Sparkles size={22} className="text-amber-400 drop-shadow-[0_2px_10px_rgba(251,191,36,0.5)]" />
                 </div>
-                <div className="absolute -right-8 top-20 text-blue-400 animate-pulse">
+                <div className="absolute -right-2 sm:-right-8 top-20 text-blue-400 animate-pulse">
                   <Sparkles size={18} className="text-sky-400 drop-shadow-[0_2px_10px_rgba(56,189,248,0.5)]" />
                 </div>
                 <div className="absolute left-10 -bottom-3 text-indigo-400 animate-bounce duration-[3000ms]">
@@ -239,7 +239,7 @@ export default function HomePage() {
                   <img
                     src="/robot.png"
                     alt="Mascot Robot"
-                    className="h-72 w-auto object-contain select-none pointer-events-none drop-shadow-[0_15px_25px_rgba(59,130,246,0.2)]"
+                    className="h-48 sm:h-64 lg:h-72 w-auto object-contain select-none pointer-events-none drop-shadow-[0_15px_25px_rgba(59,130,246,0.2)]"
                   />
                 </motion.div>
               </div>
@@ -421,17 +421,17 @@ export default function HomePage() {
 function StatPill({ item }: { item: StatItem }) {
   const Icon = item.icon;
   return (
-    <div className="card-hover rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex rounded-xl bg-blue-50 p-2 text-blue-600">
-          <Icon size={18} />
+    <div className="card-hover rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-2.5 sm:p-4 shadow-sm flex flex-col justify-between h-full">
+      <div className="flex items-center justify-between gap-1.5 sm:gap-3">
+        <span className="inline-flex rounded-lg sm:rounded-xl bg-blue-50 p-1.5 sm:p-2 text-blue-600 shrink-0">
+          <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
         </span>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+        <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-400 truncate">
           {item.label}
         </p>
       </div>
-      <div className="mt-2 text-xl font-black text-slate-900">{item.value}</div>
-      <p className="mt-1 text-xs leading-5 text-slate-500">{item.helper}</p>
+      <div className="mt-1.5 sm:mt-2 text-sm sm:text-xl font-black text-slate-900">{item.value}</div>
+      <p className="mt-0.5 sm:mt-1 text-[9px] sm:text-xs leading-snug sm:leading-5 text-slate-500 font-medium line-clamp-2 sm:line-clamp-none">{item.helper}</p>
     </div>
   );
 }
