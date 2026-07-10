@@ -122,8 +122,8 @@ export default function StudentDashboardPage() {
         </div>
       ) : (
         <>
-          {}
-          <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1d4ed8] via-[#2563eb] to-[#0ea5e9] p-7 shadow-md shadow-blue-500/20">
+          {/* Welcome Banner */}
+          <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#1d4ed8] via-[#2563eb] to-[#0ea5e9] p-5 sm:p-7 shadow-md shadow-blue-500/20">
             <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-white/10 blur-2xl"></div>
             <div className="absolute -bottom-16 -left-16 h-[200px] w-[200px] rounded-full bg-white/10 blur-2xl"></div>
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-6">
@@ -147,10 +147,10 @@ export default function StudentDashboardPage() {
                 )}
               </div>
 
-              {}
-              <div className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+              {/* Progress Ring and Stats */}
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-5 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5 backdrop-blur-sm w-full sm:w-auto justify-center sm:justify-start">
                 <ProgressRing percent={stats.progress} />
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-3 sm:flex sm:flex-col gap-3 sm:gap-2.5">
                   <MiniStat label="Modul Tuntas" value={`${stats.completed}/${stats.total}`} />
                   <MiniStat label="Sudah Direviu" value={`${stats.reviewed}`} accent />
                   <MiniStat label="Poin" value={`${game.points}`} />

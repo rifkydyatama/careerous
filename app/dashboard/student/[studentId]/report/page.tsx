@@ -62,7 +62,7 @@ export default function CareerReportPage() {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900">Career Exploration Report</h2>
           <p className="mt-1 text-[13px] text-slate-500">
@@ -71,7 +71,7 @@ export default function CareerReportPage() {
         </div>
         <Link
           href={`/dashboard/student/${studentId}/journals`}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11.5px] font-bold text-slate-600 transition hover:bg-slate-50"
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11.5px] font-bold text-slate-600 transition hover:bg-slate-50 w-full sm:w-auto text-center"
         >
           <ArrowLeft size={14} /> Kembali ke Modul
         </Link>

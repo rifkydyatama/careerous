@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +14,8 @@ import {
   FileText,
   CheckCheck,
   HelpCircle,
+  Menu,
+  X,
 } from "lucide-react";
 import {
   fetchNotifications,
@@ -42,6 +42,7 @@ export default function StudentLayout({
   const studentId = params.studentId;
 
   const [me, setMe] = useState<MeUser | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     void fetch("/api/auth/me")
@@ -49,6 +50,10 @@ export default function StudentLayout({
       .then((d) => { if (d?.user) setMe(d.user); })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   const schoolName = me?.institution?.name ?? UNIVERSITY.name;
 
@@ -63,15 +68,44 @@ export default function StudentLayout({
 
   return (
     <div className="flex min-h-screen bg-[#f0f5ff] font-sans text-slate-900">
-      
+      {/* Backdrop overlay for mobile screen when sidebar is open */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 lg:hidden"
+        />
+      )}
 
-      <aside className="fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col border-r border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center gap-3 border-b border-slate-200 p-5">
-          <Image src={UNIVERSITY.logo} alt={UNIVERSITY.name} width={40} height={40} className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover bg-white" />
-          <div>
-            <h1 className="text-sm font-extrabold leading-tight text-slate-900">{UNIVERSITY.app}</h1>
-            <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">{schoolName}</p>
+      {/* Sidebar Navigation */}
+      <aside
+        className={`fixed left-0 top-0 z-50 flex h-screen w-[260px] flex-col border-r border-slate-200 bg-white shadow-sm transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-slate-200 p-5">
+          <div className="flex items-center gap-3">
+            <Image
+              src={UNIVERSITY.logo}
+              alt={UNIVERSITY.name}
+              width={40}
+              height={40}
+              className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover bg-white"
+            />
+            <div>
+              <h1 className="text-sm font-extrabold leading-tight text-slate-900">{UNIVERSITY.app}</h1>
+              <p className="mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-slate-400 truncate max-w-[130px]" title={schoolName}>
+                {schoolName}
+              </p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden transition"
+            aria-label="Tutup menu"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-5 scrollbar-hide">
@@ -99,26 +133,38 @@ export default function StudentLayout({
         </div>
       </aside>
 
-
-      <div className="ml-[260px] flex flex-1 flex-col">
-        {}
-        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-7">
-          <div className="flex items-center gap-2 text-[13px] text-slate-400">
-            <span>{UNIVERSITY.app}</span> <span>›</span> <b className="font-bold text-slate-900">Ruang Siswa</b>
+      {/* Main Content Area */}
+      <div className="ml-0 lg:ml-[260px] flex flex-1 flex-col min-w-0 transition-all duration-300">
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 lg:px-7 backdrop-blur-md">
+          <div className="flex items-center">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="mr-3 flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 lg:hidden transition"
+              aria-label="Buka menu"
+            >
+              <Menu size={18} />
+            </button>
+            <div className="flex items-center gap-1.5 text-[13px] text-slate-400">
+              <span>{UNIVERSITY.app}</span>
+              <span className="hidden sm:inline">›</span>
+              <b className="hidden sm:inline font-bold text-slate-900">Ruang Siswa</b>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 lg:gap-3">
             <Link
               href="/guide"
-              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
             >
-              <HelpCircle size={13} /> Panduan
+              <HelpCircle size={13} />
+              <span className="hidden sm:inline">Panduan</span>
             </Link>
             <NotificationBell userId={studentId} />
             <div className="h-8 w-px bg-slate-200"></div>
             <div className="flex items-center gap-2.5">
-              <div className="text-right">
+              <div className="text-right hidden sm:block">
                 <p className="text-[11.5px] font-bold text-slate-900">{me?.name?.split(" ")[0] || "Siswa Aktif"}</p>
-                <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">{schoolName}</p>
+                <p className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400 truncate max-w-[100px]">{schoolName}</p>
               </div>
               <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#2563eb] text-xs font-extrabold text-white shadow-sm">
                 {me?.avatar ? (
@@ -131,12 +177,11 @@ export default function StudentLayout({
           </div>
         </header>
 
-        {}
-        <main className="p-7">
+        <main className="p-4 lg:p-7">
           {children}
         </main>
 
-        <footer className="mt-auto border-t border-slate-200 bg-white px-7 py-4 text-[11px] text-slate-400">
+        <footer className="mt-auto border-t border-slate-200 bg-white px-4 lg:px-7 py-4 text-[11px] text-slate-400 leading-normal">
           {UNIVERSITY.copyright} · {UNIVERSITY.unit} · {UNIVERSITY.app} — {UNIVERSITY.appTagline}
         </footer>
       </div>

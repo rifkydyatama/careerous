@@ -142,14 +142,14 @@ export default function RiasecPage() {
 
     return (
       <>
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900">Hasil Tes RIASEC & Gaya Belajar</h2>
             <p className="mt-1 text-[13px] text-slate-500">Profil minat karier dan preferensi belajar Anda.</p>
           </div>
           <button
             onClick={startTest}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50"
+            className="w-full sm:w-auto rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 text-center"
           >
             Ulangi Tes
           </button>
@@ -157,12 +157,12 @@ export default function RiasecPage() {
 
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-[#2563eb]">Dimensi Minat</p>
                 <h3 className="mt-1 text-lg font-extrabold text-slate-900">Profil Holland Anda</h3>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {assessmentTop3.map((item) => (
                   <span key={item} className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-700">
                     {item}
@@ -222,7 +222,7 @@ export default function RiasecPage() {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900">Tes RIASEC dan Tes Gaya Belajar</h2>
           <p className="mt-1 text-[13px] text-slate-500">Isi dengan jujur sesuai diri Anda.</p>
@@ -230,7 +230,7 @@ export default function RiasecPage() {
         {isTestStarted && assessment && (
           <button
             onClick={() => setIsTestStarted(false)}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50"
+            className="w-full sm:w-auto rounded-lg border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 text-center"
           >
             Batal
           </button>
