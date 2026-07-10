@@ -13,8 +13,6 @@ import {
   ArrowLeft,
   Search,
   CheckCircle,
-  Clock,
-  Sparkles,
   HelpCircle,
   ShieldAlert,
   Crown,
@@ -204,54 +202,54 @@ export default function GuidePage() {
   const activeSteps = activeTab === "siswa" ? filterSteps(studentSteps) : filterSteps(counselorSteps);
 
   return (
-    <main className="relative min-h-screen font-sans text-slate-900 pb-16">
+    <main className="relative min-h-screen bg-slate-50 font-sans text-slate-900 pb-16">
 
-      <div className="absolute inset-0 bg-slate-50 -z-20" />
-      <div className="absolute top-0 left-0 right-0 h-[260px] bg-gradient-to-b from-blue-600 to-indigo-700 -z-10 shadow-inner" />
-      <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-white/5 blur-3xl -z-10" />
+      <header className="relative overflow-hidden bg-gradient-to-b from-blue-600 to-indigo-700 pb-16 shadow-inner">
+        <div className="pointer-events-none absolute top-10 left-10 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
 
+        <div className="relative mx-auto max-w-5xl px-5 pt-8 text-white">
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md transition hover:bg-white/20"
+          >
+            <ArrowLeft size={14} /> Kembali
+          </button>
 
-      <div className="mx-auto max-w-5xl px-5 pt-8 text-white">
-        <button
-          onClick={handleBack}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md transition hover:bg-white/20"
-        >
-          <ArrowLeft size={14} /> Kembali
-        </button>
-
-        <div className="mt-8 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-200">
-                <HelpCircle size={11} /> Pusat Bantuan
-              </span>
+          <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-200">
+                  <HelpCircle size={11} /> Pusat Bantuan
+                </span>
+              </div>
+              <h1 className="mt-2 text-2xl font-black tracking-tight sm:text-4xl">
+                Panduan Penggunaan <span className="text-blue-200">Careerous</span>
+              </h1>
+              <p className="mt-2 text-[13px] leading-relaxed text-blue-100 sm:text-sm max-w-xl">
+                Temukan tata cara lengkap untuk memaksimalkan seluruh fitur di platform Careerous. Pilih panduan yang sesuai dengan peran Anda di bawah ini.
+              </p>
             </div>
-            <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
-              Panduan Penggunaan <span className="text-blue-200">Careerous</span>
-            </h1>
-            <p className="mt-2 text-sm text-blue-100 max-w-xl">
-              Temukan tata cara lengkap untuk memaksimalkan seluruh fitur di platform Careerous. Pilih panduan yang sesuai dengan peran Anda di bawah ini.
-            </p>
-          </div>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-3.5 text-blue-200" size={16} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari topik panduan..."
-              className="w-full rounded-full border-none bg-white/15 px-10 py-3 text-sm text-white placeholder-blue-200 outline-none ring-2 ring-white/10 focus:bg-white/25 focus:ring-white/30 backdrop-blur-md transition"
-            />
+            <div className="relative w-full md:w-80 md:shrink-0">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200" size={16} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari topik panduan..."
+                className="w-full rounded-full border-none bg-white/15 px-10 py-3 text-sm text-white placeholder-blue-200 outline-none ring-2 ring-white/10 focus:bg-white/25 focus:ring-white/30 backdrop-blur-md transition"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
 
-      <div className="mx-auto max-w-5xl px-5 mt-10">
+      <div className="relative mx-auto max-w-5xl px-5 -mt-8">
         <div className="grid gap-6 md:grid-cols-[240px_1fr]">
           
 
-          <aside className="flex flex-col gap-2">
+          <aside className="flex flex-col gap-2 md:sticky md:top-5 md:self-start">
+            <div className="grid grid-cols-2 gap-2 md:flex md:flex-col">
             <button
               onClick={() => {
                 setActiveTab("siswa");
@@ -287,8 +285,9 @@ export default function GuidePage() {
                 <p className="text-[10px] font-normal text-slate-400">Untuk Guru BK / Konselor</p>
               </div>
             </button>
+            </div>
 
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:mt-5">
               <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Punya Kendala?</h4>
               <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
                 Jika Anda memiliki kendala teknis atau pertanyaan lebih lanjut mengenai Careerous, silakan hubungi bagian Administrator melalui tim IT sekolah Anda.
@@ -305,9 +304,9 @@ export default function GuidePage() {
                   <div
                     key={step.id}
                     id={step.id}
-                    className="group rounded-3xl border border-slate-200/60 bg-white p-6 shadow-sm transition hover:shadow-md"
+                    className="group rounded-3xl border border-slate-200/60 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6"
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                         <Icon size={20} />
                       </div>
