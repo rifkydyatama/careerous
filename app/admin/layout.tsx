@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Users, Building2, BookOpen, Clock, LogOut, Inbox, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Building2, BookOpen, Clock, LogOut, Inbox, Menu, X, UserCheck } from "lucide-react";
 import { UNIVERSITY } from "@/lib/identity";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -74,6 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <MenuSection title="Manajemen" />
           <NavItem href="/admin" icon={<LayoutDashboard size={17} />} label="Dasbor Sistem" active={pathname === "/admin"} />
           <NavItem href="/admin/users" icon={<Users size={17} />} label="Kelola Pengguna" active={pathname === "/admin/users"} />
+          <NavItem href="/admin/counselor-plotting" icon={<UserCheck size={17} />} label="Plotting Konselor" active={pathname === "/admin/counselor-plotting"} />
           <NavItem href="/admin/institutions" icon={<Building2 size={17} />} label="Kelola Institusi" active={pathname === "/admin/institutions"} />
           <NavItem href="/admin/subscriptions" icon={<Inbox size={17} />} label="Pengajuan Langganan" active={pathname === "/admin/subscriptions"} />
           <NavItem href="/admin/modules" icon={<BookOpen size={17} />} label="Konten Modul" active={pathname === "/admin/modules"} />
@@ -137,8 +138,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 border-t border-slate-200 bg-white/95 backdrop-blur-md px-2 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] lg:hidden pb-safe">
         <BottomNavItem href="/admin" icon={<LayoutDashboard size={18} />} label="Dasbor" active={pathname === "/admin"} />
         <BottomNavItem href="/admin/users" icon={<Users size={18} />} label="Pengguna" active={pathname === "/admin/users"} />
+        <BottomNavItem href="/admin/counselor-plotting" icon={<UserCheck size={18} />} label="Plotting" active={pathname === "/admin/counselor-plotting"} />
         <BottomNavItem href="/admin/institutions" icon={<Building2 size={18} />} label="Institusi" active={pathname === "/admin/institutions"} />
-        <BottomNavItem href="/admin/subscriptions" icon={<Inbox size={18} />} label="Langganan" active={pathname === "/admin/subscriptions"} />
         <BottomNavItem icon={<Menu size={18} />} label="Lainnya" onClick={() => setSidebarOpen(true)} />
       </nav>
     </div>
