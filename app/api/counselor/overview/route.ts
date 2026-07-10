@@ -52,15 +52,10 @@ export async function GET(request: NextRequest) {
   try {
     await processAllDeadlines();
 
-    const counselor = await prisma.user.findUnique({
-      where: { id: session.userId },
-      select: { institutionId: true },
-    });
-
     const students = await prisma.user.findMany({
       where: { 
         role: "STUDENT",
-        ...(counselor?.institutionId ? { institutionId: counselor.institutionId } : {})
+        counselorId: session.userId,
       },
       orderBy: { createdAt: "asc" },
       select: {

@@ -2,13 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
 import { generateCareerReport } from "../../../../../lib/career-report";
 import { TOTAL_MODULES } from "../../../../../lib/modules";
+import { getSession } from "@/lib/auth-guard";
 
 type RouteContext = {
   params: Promise<{ studentId: string }>;
 };
-
-
-
 
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   const { studentId } = await params;
@@ -19,11 +17,24 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
   try {
     const student = await prisma.user.findUnique({
       where: { id: studentId },
-      select: { id: true, name: true, role: true },
+      select: { id: true, name: true, role: true, counselorId: true },
     });
 
     if (!student || student.role !== "STUDENT") {
       return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 });
+    }
+
+    const session = getSession(_request);
+    if (!session) {
+      return NextResponse.json({ error: "Akses ditolak: Sesi tidak valid" }, { status: 401 });
+    }
+
+    const isSelf = session.userId === studentId;
+    const isAdmin = session.role === "ADMIN";
+    const isAssignedCounselor = session.role === "COUNSELOR" && student.counselorId === session.userId;
+
+    if (!isSelf && !isAdmin && !isAssignedCounselor) {
+      return NextResponse.json({ error: "Akses ditolak: Anda bukan konselor pendamping siswa ini" }, { status: 403 });
     }
 
     let report = await prisma.careerExplorationReport.findUnique({

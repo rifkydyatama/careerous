@@ -5,7 +5,7 @@ import { processStudentDeadlines, submitMoodDocument, counselorUnlockModule } fr
 import { generateCareerReport } from "../../../../lib/career-report";
 import { isPremiumEffective, premiumSource } from "../../../../lib/subscription";
 import { getModuleContents, resolveModule, getModuleDeadline } from "../../../../lib/module-content";
-import { requireRole } from "../../../../lib/auth-guard";
+import { requireRole, getSession } from "@/lib/auth-guard";
 
 const TOTAL_WEEKS = TOTAL_MODULES;
 
@@ -103,6 +103,19 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 
     if (student.role !== "STUDENT") {
       return NextResponse.json({ error: "User bukan siswa" }, { status: 400 });
+    }
+
+    const session = getSession(request);
+    if (!session) {
+      return NextResponse.json({ error: "Akses ditolak: Sesi tidak valid" }, { status: 401 });
+    }
+
+    const isSelf = session.userId === studentId;
+    const isAdmin = session.role === "ADMIN";
+    const isAssignedCounselor = session.role === "COUNSELOR" && student.counselorId === session.userId;
+
+    if (!isSelf && !isAdmin && !isAssignedCounselor) {
+      return NextResponse.json({ error: "Akses ditolak: Anda bukan konselor pendamping siswa ini" }, { status: 403 });
     }
 
     const premium = isPremiumEffective(student.plan, student.institution);
@@ -341,10 +354,39 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   }
 
   
+  const session = getSession(request);
+  if (!session) {
+    return NextResponse.json({ error: "Akses ditolak: Sesi tidak valid" }, { status: 401 });
+  }
+
+  const student = await prisma.user.findUnique({
+    where: { id: studentId },
+    select: {
+      role: true,
+      plan: true,
+      counselorId: true,
+      institution: {
+        select: { subscriptionActive: true, subscriptionExpiresAt: true },
+      },
+    },
+  });
+
+  if (!student) {
+    return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
+  }
+
+  if (student.role !== "STUDENT") {
+    return NextResponse.json({ error: "User bukan siswa" }, { status: 400 });
+  }
+
+  const isAdmin = session.role === "ADMIN";
+  const isAssignedCounselor = session.role === "COUNSELOR" && student.counselorId === session.userId;
+
+  if (!isAdmin && !isAssignedCounselor) {
+    return NextResponse.json({ error: "Akses ditolak: Anda bukan konselor pendamping siswa ini" }, { status: 403 });
+  }
+
   if (body?.unlock === true) {
-    if (!requireRole(request, "COUNSELOR")) {
-      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
-    }
     try {
       const result = await counselorUnlockModule(studentId, weekNumber);
       if (!result.ok) {
@@ -367,24 +409,6 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   }
 
   try {
-    const student = await prisma.user.findUnique({
-      where: { id: studentId },
-      select: {
-        role: true,
-        plan: true,
-        institution: {
-          select: { subscriptionActive: true, subscriptionExpiresAt: true },
-        },
-      },
-    });
-
-    if (!student) {
-      return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
-    }
-
-    if (student.role !== "STUDENT") {
-      return NextResponse.json({ error: "User bukan siswa" }, { status: 400 });
-    }
 
     
     if (!isPremiumEffective(student.plan, student.institution) && weekNumber > FREE_MODULE_LIMIT) {
