@@ -1,11 +1,69 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Universitas Negeri Malang">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Universitas Negeri Malang">
+  <!-- Outer double ring -->
+  <circle cx="100" cy="100" r="97" fill="white" stroke="#1a1a1a" stroke-width="3.5"/>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Curved text: UNIVERSITAS (bottom-left arc) -->
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#C9920A"/>
-      <stop offset="1" stop-color="#F5C842"/>
-    </linearGradient>
+    <path id="arcTop" d="M 17,100 A 83,83 0 1,1 183,100"/>
+    <path id="arcBottom" d="M 22,110 A 78,78 0 0,0 178,110"/>
   </defs>
-  <circle cx="32" cy="32" r="30" fill="#0B1D3A" stroke="url(#g)" stroke-width="3"/>
-  <path d="M20 22h5v13a7 7 0 0 0 14 0V22h5v13a12 12 0 0 1-24 0z" fill="url(#g)"/>
-  <text x="32" y="54" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="700" fill="#F5C842" letter-spacing="1">UM</text>
+
+  <!-- Text UNIVERSITAS NEGERI MALANG around the ring -->
+  <text font-family="'Times New Roman', serif" font-size="13.5" font-weight="700" fill="#1a1a1a" letter-spacing="2.8">
+    <textPath href="#arcTop" startOffset="4%">UNIVERSITAS  NEGERI  MALANG</textPath>
+  </text>
+
+  <!-- Central emblem group -->
+  <g transform="translate(100,100)">
+
+    <!-- Lotus top center -->
+    <!-- Main lotus petals -->
+    <g transform="translate(0,-40)">
+      <!-- Center petal -->
+      <ellipse cx="0" cy="-8" rx="5" ry="9" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+      <!-- Left inner petal -->
+      <ellipse cx="-7" cy="-4" rx="4" ry="7" fill="none" stroke="#1a1a1a" stroke-width="1.3" transform="rotate(-18,-7,-4)"/>
+      <!-- Right inner petal -->
+      <ellipse cx="7" cy="-4" rx="4" ry="7" fill="none" stroke="#1a1a1a" stroke-width="1.3" transform="rotate(18,7,-4)"/>
+      <!-- Left outer arc -->
+      <path d="M -7,0 Q -18,-8 -14,-16 Q -10,-22 -2,-17" fill="none" stroke="#1a1a1a" stroke-width="1.3"/>
+      <!-- Right outer arc -->
+      <path d="M 7,0 Q 18,-8 14,-16 Q 10,-22 2,-17" fill="none" stroke="#1a1a1a" stroke-width="1.3"/>
+      <!-- Stem -->
+      <line x1="0" y1="4" x2="0" y2="12" stroke="#1a1a1a" stroke-width="1.5"/>
+    </g>
+
+    <!-- Large wing-like curves (the main body) -->
+    <!-- Top arch / mantle -->
+    <path d="M -32,-10 C -28,-32 28,-32 32,-10" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <!-- Second inner arch -->
+    <path d="M -24,-8 C -20,-25 20,-25 24,-8" fill="none" stroke="#1a1a1a" stroke-width="1.3"/>
+
+    <!-- Left wing -->
+    <path d="M -28,-8 C -45,0 -50,18 -38,28 C -30,34 -22,28 -18,20" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+    <!-- Left inner wing curve -->
+    <path d="M -20,-6 C -34,2 -38,16 -28,24 C -22,28 -16,22 -14,16" fill="none" stroke="#1a1a1a" stroke-width="1.3"/>
+    <!-- Left lower curl -->
+    <path d="M -18,20 C -14,28 -10,30 -8,26 C -6,22 -8,18 -12,18" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+
+    <!-- Right wing -->
+    <path d="M 28,-8 C 45,0 50,18 38,28 C 30,34 22,28 18,20" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+    <!-- Right inner wing curve -->
+    <path d="M 20,-6 C 34,2 38,16 28,24 C 22,28 16,22 14,16" fill="none" stroke="#1a1a1a" stroke-width="1.3"/>
+    <!-- Right lower curl -->
+    <path d="M 18,20 C 14,28 10,30 8,26 C 6,22 8,18 12,18" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+
+    <!-- Center divider line -->
+    <line x1="0" y1="-8" x2="0" y2="16" stroke="#1a1a1a" stroke-width="1.3"/>
+
+    <!-- Star (6-pointed) -->
+    <g transform="translate(0,22)">
+      <polygon points="0,-7 2,-2 7,-2 3,2 5,7 0,4 -5,7 -3,2 -7,-2 -2,-2" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+    </g>
+
+    <!-- UM text monogram -->
+    <text x="0" y="50" text-anchor="middle" font-family="'Times New Roman', serif" font-size="18" font-weight="900" fill="#1a1a1a" letter-spacing="1">UM</text>
+
+  </g>
 </svg>
