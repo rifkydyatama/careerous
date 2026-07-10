@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import AccessibilityWidget from "./components/AccessibilityWidget";
+import FloatingMascot from "./components/FloatingMascot";
 
 
 const A11Y_BOOTSTRAP = `(function(){try{var k={"a11y-theme-dark":"theme-dark","a11y-dyslexia":"a11y-dyslexia","a11y-contrast":"a11y-contrast","a11y-large":"a11y-large"};for(var s in k){if(localStorage.getItem(s)==="1"){document.documentElement.classList.add(k[s]);}}}catch(e){}})();`;
@@ -80,6 +81,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         {children}
+        <FloatingMascot />
         <AccessibilityWidget />
       </body>
     </html>
