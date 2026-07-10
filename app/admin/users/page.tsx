@@ -80,6 +80,7 @@ export default function AdminUsersPage() {
     );
     try {
       await updateAdminUser(id, data);
+      await load();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Gagal memperbarui");
       await load();

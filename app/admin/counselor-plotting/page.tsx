@@ -81,6 +81,7 @@ export default function CounselorPlottingPage() {
 
     try {
       await updateAdminUser(studentId, { counselorId });
+      await load();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Gagal memperbarui plotting konselor");
       await load();

@@ -75,9 +75,8 @@ export async function PATCH(request: NextRequest) {
   }
   if (body?.institutionId !== undefined) {
     data.institutionId = body.institutionId || null;
-  }
-  if (body?.counselorId !== undefined) {
-    // TypeScript/Prisma representation for counselorId field
+    (data as any).counselorId = null; // Auto reset plotting jika sekolah berubah
+  } else if (body?.counselorId !== undefined) {
     (data as any).counselorId = body.counselorId || null;
   }
 
