@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import AuroraBackground from "./components/AuroraBackground";
 import Reveal from "./components/Reveal";
+import LandingShowcase from "./components/LandingShowcase";
 import { motion } from "motion/react";
 
 type StatItem = {
@@ -371,6 +372,9 @@ export default function HomePage() {
             </div>
           </Reveal>
         </section>
+
+
+        <LandingShowcase />
 
 
         <Reveal>
