@@ -248,9 +248,9 @@ async function generateReportWithAI(
       `  "sentimentScore": <angka 0-100>\n` +
       `}`;
 
-    // Gemini REST API — gemini-1.5-flash (free tier, fast & widely available)
+    // Gemini REST API — gemini-flash-latest (active free quota, resolves to gemini-3.5-flash)
     const geminiUrl =
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
     const response = await fetch(geminiUrl, {
       method: "POST",
