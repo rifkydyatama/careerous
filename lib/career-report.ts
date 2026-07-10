@@ -1,13 +1,10 @@
-
-
-
-
-
-
 import { prisma } from "./prisma";
 import { TOTAL_MODULES } from "./modules";
 import { getModuleContents, resolveModule } from "./module-content";
 
+// ---------------------------------------------------------------------------
+// Sentiment helpers
+// ---------------------------------------------------------------------------
 
 const POSITIVE_WORDS = [
   "senang", "suka", "tertarik", "semangat", "bangga", "yakin", "mampu", "berhasil",
@@ -20,7 +17,6 @@ const NEGATIVE_WORDS = [
   "tidak yakin", "kesulitan", "putus asa", "malas",
 ];
 
-
 const THEME_KEYWORDS: Array<{ theme: string; keywords: string[] }> = [
   { theme: "Teknologi & Komputer", keywords: ["komputer", "teknologi", "coding", "program", "software", "aplikasi", "digital", "data"] },
   { theme: "Seni & Kreativitas", keywords: ["seni", "desain", "gambar", "kreatif", "menulis", "musik", "lukis", "estetika"] },
@@ -32,6 +28,24 @@ const THEME_KEYWORDS: Array<{ theme: string; keywords: string[] }> = [
   { theme: "Pendidikan", keywords: ["belajar", "sekolah", "guru", "pendidikan", "kuliah", "jurusan", "ilmu"] },
 ];
 
+// Mapping RIASEC type → human-readable label (Indonesian)
+const RIASEC_LABELS: Record<string, string> = {
+  riasecRealistic:     "Realistic (Praktis / Teknik)",
+  riasecInvestigative: "Investigative (Analitis / Penelitian)",
+  riasecArtistic:      "Artistic (Kreatif / Seni)",
+  riasecSocial:        "Social (Sosial / Membantu)",
+  riasecEnterprising:  "Enterprising (Kepemimpinan / Bisnis)",
+  riasecConventional:  "Conventional (Administratif / Terstruktur)",
+};
+
+const LEARNING_STYLE_LABELS: Record<string, string> = {
+  VISUAL:       "Visual (belajar melalui gambar, diagram, dan tampilan)",
+  AUDITORY:     "Auditori (belajar melalui mendengar dan diskusi)",
+  KINESTHETIC:  "Kinestetik (belajar melalui praktik dan pengalaman langsung)",
+  READ_WRITE:   "Baca/Tulis (belajar melalui membaca dan mencatat)",
+  MULTIMODAL:   "Multimodal (fleksibel dengan berbagai gaya belajar)",
+};
+
 function countMatches(text: string, words: string[]): number {
   return words.reduce((acc, word) => {
     const re = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "gi");
@@ -40,21 +54,43 @@ function countMatches(text: string, words: string[]): number {
   }, 0);
 }
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
 export type CareerReportData = {
   summary: string;
-  dominantThemes: string; 
-  sentimentLabel: string; 
-  sentimentScore: number; 
+  dominantThemes: string;   // CSV
+  sentimentLabel: string;   // POSITIF | NETRAL | CAMPURAN
+  sentimentScore: number;   // 0-100
   topInterest: string | null;
   isAiGenerated: boolean;
 };
 
+type AssessmentSnapshot = {
+  riasecRealistic: number;
+  riasecInvestigative: number;
+  riasecArtistic: number;
+  riasecSocial: number;
+  riasecEnterprising: number;
+  riasecConventional: number;
+  riasecTop3: string | null;
+  learningStyle: string;
+};
+
+type QAPair = { question: string; answer: string };
+
+// ---------------------------------------------------------------------------
+// Rule-based fallback (no OpenAI)
+// ---------------------------------------------------------------------------
+
 export function buildReportFromText(
-  reflections: string[]
+  reflections: string[],
+  assessment: AssessmentSnapshot | null,
 ): CareerReportData {
   const corpus = reflections.join(" \n ").toLowerCase();
 
-  
+  // Sentiment
   const pos = countMatches(corpus, POSITIVE_WORDS);
   const neg = countMatches(corpus, NEGATIVE_WORDS);
   const totalSentiment = pos + neg;
@@ -71,7 +107,7 @@ export function buildReportFromText(
     sentimentLabel = "NETRAL";
   }
 
-  
+  // Dominant themes from journal text
   const themeScores = THEME_KEYWORDS.map((entry) => ({
     theme: entry.theme,
     score: countMatches(corpus, entry.keywords),
@@ -82,28 +118,61 @@ export function buildReportFromText(
     .map((entry) => entry.theme);
 
   const dominantThemes = themeScores.join(", ");
-  
-  const topInterest = null;
 
-  
+  // topInterest from RIASEC data (most reliable source)
+  let topInterest: string | null = null;
+  if (assessment) {
+    if (assessment.riasecTop3?.trim()) {
+      topInterest = assessment.riasecTop3.trim();
+    } else {
+      // Derive from scores
+      const riasecScores: Record<string, number> = {
+        riasecRealistic:     assessment.riasecRealistic,
+        riasecInvestigative: assessment.riasecInvestigative,
+        riasecArtistic:      assessment.riasecArtistic,
+        riasecSocial:        assessment.riasecSocial,
+        riasecEnterprising:  assessment.riasecEnterprising,
+        riasecConventional:  assessment.riasecConventional,
+      };
+      const sorted = Object.entries(riasecScores).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      topInterest = sorted
+        .filter(([, score]) => score > 0)
+        .map(([key]) => RIASEC_LABELS[key] ?? key)
+        .join(", ") || null;
+    }
+  }
+
+  // Build summary narrative
   const sentimentSentence =
     sentimentLabel === "POSITIF"
-      ? "Secara umum, refleksimu menunjukkan sikap yang positif dan antusias terhadap perjalanan kariermu."
+      ? "Secara umum, refleksi perjalananmu menunjukkan sikap yang positif dan antusias terhadap eksplorasi karier."
       : sentimentLabel === "CAMPURAN"
-        ? "Refleksimu menunjukkan perasaan yang beragam — ada antusiasme sekaligus keraguan yang wajar dalam proses eksplorasi."
-        : "Refleksimu menunjukkan sikap yang cukup seimbang dan reflektif terhadap pilihan kariermu.";
+      ? "Refleksimu menunjukkan perasaan yang beragam — ada antusiasme sekaligus keraguan yang wajar dalam proses ini."
+      : "Refleksimu menunjukkan sikap yang seimbang dan reflektif terhadap pilihan kariermu.";
 
   const themeSentence =
     themeScores.length > 0
-      ? `Tema karier yang paling sering muncul dalam tulisanmu adalah ${dominantThemes}.`
-      : "Belum ada tema karier dominan yang menonjol secara jelas — ini kesempatan untuk menjelajah lebih jauh.";
+      ? `Berdasarkan seluruh jawaban journaling, tema karier yang paling menonjol adalah ${dominantThemes}.`
+      : "Belum ada tema karier yang dominan — jadikan ini kesempatan untuk menjelajah lebih jauh.";
+
+  const riasecSentence = topInterest
+    ? `Hasil Tes RIASEC menunjukkan bahwa tipe minat dominanmu adalah ${topInterest}.`
+    : "";
+
+  const learnSentence = assessment
+    ? `Gaya belajarmu teridentifikasi sebagai ${LEARNING_STYLE_LABELS[assessment.learningStyle] ?? assessment.learningStyle}, yang dapat kamu manfaatkan dalam memilih jurusan atau lingkungan kerja yang sesuai.`
+    : "";
 
   const summary = [
-    `Kamu telah menyelesaikan seluruh ${TOTAL_MODULES} modul eksplorasi karier. Berikut ringkasan perjalananmu.`,
+    `Kamu telah menyelesaikan seluruh ${TOTAL_MODULES} modul eksplorasi karier dan Tes Asesmen. Berikut ringkasan perjalananmu.`,
     sentimentSentence,
     themeSentence,
-    "Gunakan laporan ini sebagai bahan diskusi bersama guru BK untuk menyusun langkah selanjutnya.",
-  ].join(" ");
+    riasecSentence,
+    learnSentence,
+    "Gunakan laporan ini sebagai bahan diskusi bersama guru BK untuk menyusun langkah kariermu selanjutnya.",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return {
     summary,
@@ -115,61 +184,71 @@ export function buildReportFromText(
   };
 }
 
-
-
-
-
-type QAPair = { question: string; answer: string };
-
-const REPORT_SCHEMA = {
-  type: "object",
-  properties: {
-    summary: {
-      type: "string",
-      description: "Ringkasan naratif 3-5 kalimat perjalanan eksplorasi karier siswa, dalam Bahasa Indonesia, hangat dan suportif.",
-    },
-    dominantThemes: {
-      type: "array",
-      items: { type: "string" },
-      description: "2-4 tema karier dominan (mis. 'Teknologi', 'Seni & Kreativitas').",
-    },
-    sentimentLabel: {
-      type: "string",
-      enum: ["POSITIF", "NETRAL", "CAMPURAN"],
-    },
-    sentimentScore: {
-      type: "integer",
-      description: "Skor sentimen positif 0-100.",
-    },
-  },
-  required: ["summary", "dominantThemes", "sentimentLabel", "sentimentScore"],
-  additionalProperties: false,
-} as const;
+// ---------------------------------------------------------------------------
+// AI-powered generation (OpenAI GPT)
+// ---------------------------------------------------------------------------
 
 async function generateReportWithAI(
-  qaPairs: QAPair[]
+  qaPairs: QAPair[],
+  assessment: AssessmentSnapshot | null,
 ): Promise<CareerReportData | null> {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
-  if (!apiKey) {
-    return null;
-  }
+  if (!apiKey) return null;
 
   try {
-    const journalText = qaPairs
+    // Build RIASEC section
+    let riasecSection = "";
+    if (assessment) {
+      const riasecScores: Record<string, number> = {
+        riasecRealistic:     assessment.riasecRealistic,
+        riasecInvestigative: assessment.riasecInvestigative,
+        riasecArtistic:      assessment.riasecArtistic,
+        riasecSocial:        assessment.riasecSocial,
+        riasecEnterprising:  assessment.riasecEnterprising,
+        riasecConventional:  assessment.riasecConventional,
+      };
+      const riasecLines = Object.entries(riasecScores)
+        .sort((a, b) => b[1] - a[1])
+        .map(([key, score]) => `  - ${RIASEC_LABELS[key] ?? key}: ${score}`)
+        .join("\n");
+      const top3 = assessment.riasecTop3?.trim() ||
+        Object.entries(riasecScores)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .filter(([, s]) => s > 0)
+          .map(([k]) => RIASEC_LABELS[k])
+          .join(", ");
+      riasecSection = `\n\n=== HASIL TES RIASEC ===\nSkor lengkap:\n${riasecLines}\nTiga tipe minat teratas: ${top3 || "–"}`;
+    }
+
+    const learnSection = assessment
+      ? `\n\n=== GAYA BELAJAR ===\n${LEARNING_STYLE_LABELS[assessment.learningStyle] ?? assessment.learningStyle}`
+      : "";
+
+    const journalSection = qaPairs
       .map((qa, i) => `Modul ${i + 1} — ${qa.question}\nJawaban siswa: ${qa.answer}`)
       .join("\n\n");
 
     const systemPrompt =
-      "Anda adalah asisten konselor karier untuk siswa SMA di Indonesia. " +
-      "Analisis jawaban journaling eksplorasi karier siswa dan hasilkan laporan ringkas " +
-      "yang reflektif, akurat, dan suportif. Gunakan Bahasa Indonesia yang baik. " +
-      "Jangan mengarang fakta yang tidak ada dalam jawaban siswa.";
+      "Anda adalah konselor karier profesional untuk siswa SMA di Indonesia. " +
+      "Tugas Anda adalah menganalisis SELURUH data eksplorasi karier siswa secara HOLISTIK dan KONSISTEN: " +
+      "gabungkan jawaban journaling 12 modul, skor RIASEC, dan gaya belajar menjadi satu narasi yang akurat dan suportif. " +
+      "PENTING: Jangan membuat kesimpulan yang tidak didukung data. " +
+      "Jika jawaban modul siswa menyebut bidang tertentu, pastikan tema yang Anda hasilkan konsisten dengan bidang tersebut DAN skor RIASEC. " +
+      "Jika ada ketidaksesuaian antara jawaban dan RIASEC, sebutkan hal itu secara bijak. " +
+      "Tulis dalam Bahasa Indonesia yang hangat, reflektif, dan profesional.";
 
     const userPrompt =
-      `Berikut seluruh jawaban journaling eksplorasi karier seorang siswa selama 12 modul.\n\n` +
-      `${journalText}\n\n` +
-      `Hasilkan Career Exploration Report sesuai skema HANYA berdasarkan jawaban modul di atas. ` +
-      `Jangan menyertakan hasil tes RIASEC atau gaya belajar.`;
+      `Berikut seluruh data eksplorasi karier seorang siswa.\n\n` +
+      `=== JAWABAN JOURNALING 12 MODUL ===\n${journalSection}` +
+      riasecSection +
+      learnSection +
+      `\n\n` +
+      `Hasilkan Career Exploration Report sesuai skema JSON. ` +
+      `Summary harus merangkum perjalanan siswa secara holistik, ` +
+      `menghubungkan pola jawaban jurnal dengan tipe RIASEC dominan dan gaya belajarnya. ` +
+      `dominantThemes harus KONSISTEN dengan isi jawaban siswa (2–4 tema). ` +
+      `sentimentLabel dan sentimentScore harus mencerminkan nada emosional nyata dari jawaban siswa.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -189,36 +268,39 @@ async function generateReportWithAI(
               properties: {
                 summary: {
                   type: "string",
-                  description: "Ringkasan naratif 3-5 kalimat perjalanan eksplorasi karier siswa, dalam Bahasa Indonesia, hangat dan suportif."
+                  description:
+                    "Ringkasan naratif 4–6 kalimat perjalanan eksplorasi karier siswa, menghubungkan jurnal + RIASEC + gaya belajar. Bahasa Indonesia, hangat, reflektif, dan suportif.",
                 },
                 dominantThemes: {
                   type: "array",
                   items: { type: "string" },
-                  description: "2-4 tema karier dominan (mis. 'Teknologi', 'Seni & Kreativitas')."
+                  description:
+                    "2–4 tema karier yang BENAR-BENAR muncul dari jawaban siswa (bukan generik). Contoh: 'Teknologi & Komputer', 'Sosial & Membantu Orang'.",
                 },
                 sentimentLabel: {
                   type: "string",
-                  enum: ["POSITIF", "NETRAL", "CAMPURAN"]
+                  enum: ["POSITIF", "NETRAL", "CAMPURAN"],
                 },
                 sentimentScore: {
                   type: "integer",
-                  description: "Skor sentimen positif 0-100."
-                }
+                  description: "Skor sentimen positif 0–100, didasarkan pada nada emosional jawaban jurnal.",
+                },
               },
               required: ["summary", "dominantThemes", "sentimentLabel", "sentimentScore"],
-              additionalProperties: false
-            }
-          }
+              additionalProperties: false,
+            },
+          },
         },
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        temperature: 0.7,
+        temperature: 0.5,
       }),
     });
 
     if (!response.ok) {
+      console.error("OpenAI API error:", response.status, await response.text());
       return null;
     }
 
@@ -233,6 +315,30 @@ async function generateReportWithAI(
       sentimentScore: number;
     };
 
+    // Derive topInterest from RIASEC (authoritative source — not inferred by AI)
+    let topInterest: string | null = null;
+    if (assessment) {
+      if (assessment.riasecTop3?.trim()) {
+        topInterest = assessment.riasecTop3.trim();
+      } else {
+        const riasecScores: Record<string, number> = {
+          riasecRealistic:     assessment.riasecRealistic,
+          riasecInvestigative: assessment.riasecInvestigative,
+          riasecArtistic:      assessment.riasecArtistic,
+          riasecSocial:        assessment.riasecSocial,
+          riasecEnterprising:  assessment.riasecEnterprising,
+          riasecConventional:  assessment.riasecConventional,
+        };
+        topInterest =
+          Object.entries(riasecScores)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .filter(([, score]) => score > 0)
+            .map(([key]) => RIASEC_LABELS[key] ?? key)
+            .join(", ") || null;
+      }
+    }
+
     return {
       summary: parsed.summary,
       dominantThemes: Array.isArray(parsed.dominantThemes)
@@ -242,17 +348,30 @@ async function generateReportWithAI(
         ? parsed.sentimentLabel
         : "NETRAL",
       sentimentScore: Math.max(0, Math.min(100, Math.round(parsed.sentimentScore ?? 50))),
-      topInterest: null,
+      topInterest,
       isAiGenerated: true,
     };
-  } catch {
-    
+  } catch (err) {
+    console.error("generateReportWithAI error:", err);
     return null;
   }
 }
 
+// ---------------------------------------------------------------------------
+// Main entry point
+// ---------------------------------------------------------------------------
 
+/**
+ * Generates (or regenerates) the Career Exploration Report for a student.
+ *
+ * Requirements before generating:
+ *  - All TOTAL_MODULES journal entries must have status COMPLETED
+ *  - The student must have completed the Assessment (RIASEC + Learning Style)
+ *
+ * Returns null if requirements are not met.
+ */
 export async function generateCareerReport(studentId: string) {
+  // 1. Check all 12 modules are completed
   const journals = await prisma.journalProgress.findMany({
     where: { studentId },
     orderBy: { weekNumber: "asc" },
@@ -263,10 +382,28 @@ export async function generateCareerReport(studentId: string) {
     return null;
   }
 
-  const reflections = completed
-    .map((j) => j.reflectionText?.trim() || "")
-    .filter(Boolean);
+  // 2. Fetch assessment (RIASEC + learning style) — required for holistic report
+  const assessment = await prisma.assessment.findFirst({
+    where: { studentId },
+    orderBy: { createdAt: "desc" },
+    select: {
+      riasecRealistic: true,
+      riasecInvestigative: true,
+      riasecArtistic: true,
+      riasecSocial: true,
+      riasecEnterprising: true,
+      riasecConventional: true,
+      riasecTop3: true,
+      learningStyle: true,
+    },
+  });
 
+  // Assessment is required to generate a holistic report
+  if (!assessment) {
+    return null;
+  }
+
+  // 3. Build Q&A pairs from journals (for AI prompt)
   const contents = await getModuleContents();
   const qaPairs: QAPair[] = completed
     .filter((j) => j.reflectionText?.trim())
@@ -276,12 +413,16 @@ export async function generateCareerReport(studentId: string) {
       answer: j.reflectionText!.trim(),
     }));
 
-  
-  
-  const data =
-    (await generateReportWithAI(qaPairs)) ??
-    buildReportFromText(reflections);
+  const reflections = completed
+    .map((j) => j.reflectionText?.trim() || "")
+    .filter(Boolean);
 
+  // 4. Generate report (AI preferred, rule-based fallback)
+  const data =
+    (await generateReportWithAI(qaPairs, assessment)) ??
+    buildReportFromText(reflections, assessment);
+
+  // 5. Upsert into database
   return prisma.careerExplorationReport.upsert({
     where: { studentId },
     create: { studentId, ...data },

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
+import { generateCareerReport } from "@/lib/career-report";
 
 const LEARNING_STYLES = new Set([
   "VISUAL",
@@ -170,6 +171,22 @@ export async function POST(request: Request) {
         learningStyle: learningStyle,
       },
     });
+
+    try {
+      const report = await generateCareerReport(studentId);
+      if (report) {
+        await prisma.notification.create({
+          data: {
+            userId: studentId,
+            type: "REPORT_READY",
+            title: "Career Exploration Report siap",
+            body: "Selamat! Kamu menyelesaikan seluruh 12 modul dan Tes Asesmen. Laporan eksplorasi kariermu sudah tersedia.",
+          },
+        });
+      }
+    } catch (e) {
+      console.error("Auto-generate report on assessment failed:", e);
+    }
 
     return NextResponse.json(assessment, { status: 201 });
   } catch (error) {

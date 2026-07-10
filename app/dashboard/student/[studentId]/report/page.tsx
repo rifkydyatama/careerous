@@ -14,8 +14,16 @@ import {
   Info,
   ArrowLeft,
   Printer,
+  Brain,
+  BookOpen,
+  BarChart2,
 } from "lucide-react";
-import { fetchCareerReport, formatDateTimeId, CareerReport } from "../utils";
+import {
+  fetchCareerReport,
+  formatDateTimeId,
+  CareerReport,
+  AssessmentData,
+} from "../utils";
 
 const SENTIMENT_UI: Record<string, { label: string; icon: any; colorClass: string }> = {
   POSITIF: { label: "Positif", icon: Smile, colorClass: "bg-emerald-100 text-emerald-700" },
@@ -23,13 +31,73 @@ const SENTIMENT_UI: Record<string, { label: string; icon: any; colorClass: strin
   CAMPURAN: { label: "Campuran", icon: CloudSun, colorClass: "bg-amber-100 text-amber-700" },
 };
 
+const RIASEC_LABELS: Record<string, string> = {
+  riasecRealistic: "Realistic",
+  riasecInvestigative: "Investigative",
+  riasecArtistic: "Artistic",
+  riasecSocial: "Social",
+  riasecEnterprising: "Enterprising",
+  riasecConventional: "Conventional",
+};
+
+const RIASEC_COLORS: Record<string, string> = {
+  riasecRealistic: "bg-orange-500",
+  riasecInvestigative: "bg-blue-500",
+  riasecArtistic: "bg-purple-500",
+  riasecSocial: "bg-emerald-500",
+  riasecEnterprising: "bg-amber-500",
+  riasecConventional: "bg-slate-500",
+};
+
+const LEARNING_STYLE_LABELS: Record<string, { label: string; desc: string }> = {
+  VISUAL: { label: "Visual", desc: "Belajar terbaik melalui gambar, diagram, dan tampilan visual." },
+  AUDITORY: { label: "Auditori", desc: "Belajar terbaik melalui mendengar, diskusi, dan penjelasan lisan." },
+  KINESTHETIC: { label: "Kinestetik", desc: "Belajar terbaik melalui praktik langsung dan pengalaman nyata." },
+  READ_WRITE: { label: "Baca/Tulis", desc: "Belajar terbaik melalui membaca dan membuat catatan." },
+  MULTIMODAL: { label: "Multimodal", desc: "Fleksibel — dapat belajar efektif dengan berbagai gaya belajar." },
+};
+
+function RiasecChart({ assessment }: { assessment: AssessmentData }) {
+  const scores: Array<{ key: string; score: number }> = [
+    { key: "riasecRealistic",     score: assessment.riasecRealistic },
+    { key: "riasecInvestigative", score: assessment.riasecInvestigative },
+    { key: "riasecArtistic",      score: assessment.riasecArtistic },
+    { key: "riasecSocial",        score: assessment.riasecSocial },
+    { key: "riasecEnterprising",  score: assessment.riasecEnterprising },
+    { key: "riasecConventional",  score: assessment.riasecConventional },
+  ].sort((a, b) => b.score - a.score);
+
+  const maxScore = Math.max(...scores.map((s) => s.score), 1);
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      {scores.map(({ key, score }) => (
+        <div key={key} className="flex items-center gap-2 text-[12px]">
+          <span className="w-28 shrink-0 font-semibold text-slate-600 text-right">
+            {RIASEC_LABELS[key]}
+          </span>
+          <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+            <div
+              className={`h-full rounded-full ${RIASEC_COLORS[key]} transition-all duration-500`}
+              style={{ width: `${(score / maxScore) * 100}%` }}
+            />
+          </div>
+          <span className="w-6 text-right font-bold text-slate-700">{score}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function CareerReportPage() {
   const params = useParams<{ studentId: string }>();
   const studentId = params.studentId;
   const [report, setReport] = useState<CareerReport | null>(null);
+  const [assessment, setAssessment] = useState<AssessmentData | null>(null);
   const [studentData, setStudentData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notReady, setNotReady] = useState(false);
+  const [notReadyReason, setNotReadyReason] = useState<{ modulesLeft: boolean; noAssessment: boolean }>({ modulesLeft: false, noAssessment: false });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,9 +110,12 @@ export default function CareerReportPage() {
         const result = await fetchCareerReport(studentId);
         if (!mounted) return;
         if (result) {
-          setReport(result);
+          setReport(result.report);
+          setAssessment(result.assessment);
           // Fetch student details & school
-          const dbData = await fetch(`/api/journals/${studentId}`).then((r) => r.json()).catch(() => null);
+          const dbData = await fetch(`/api/journals/${studentId}`)
+            .then((r) => r.json())
+            .catch(() => null);
           if (mounted && dbData) {
             setStudentData(dbData);
           }
@@ -71,6 +142,7 @@ export default function CareerReportPage() {
 
   const sentiment = report ? SENTIMENT_UI[report.sentimentLabel] ?? SENTIMENT_UI.NETRAL : null;
   const SentimentIcon = sentiment?.icon ?? Meh;
+  const learnStyle = assessment ? LEARNING_STYLE_LABELS[assessment.learningStyle] : null;
 
   return (
     <>
@@ -80,7 +152,6 @@ export default function CareerReportPage() {
             background-color: white !important;
             color: black !important;
           }
-          /* Hide sidebar layouts, top headers, floating widgets, and navigation bars */
           aside, header, footer, nav, .print\\:hidden, #accessibility-widget {
             display: none !important;
           }
@@ -88,23 +159,18 @@ export default function CareerReportPage() {
             padding: 0 !important;
             margin: 0 !important;
           }
-          .print\\:shadow-none {
-            box-shadow: none !important;
-          }
-          .print\\:border-none {
-            border: none !important;
-          }
-          .print\\:bg-white {
-            background-color: white !important;
-          }
+          .print\\:shadow-none { box-shadow: none !important; }
+          .print\\:border-none { border: none !important; }
+          .print\\:bg-white { background-color: white !important; }
         }
       `}</style>
 
+      {/* Top toolbar */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900">Career Exploration Report</h2>
           <p className="mt-1 text-[13px] text-slate-500">
-            Ringkasan perjalanan eksplorasi karier Anda dari seluruh 12 modul.
+            Laporan holistik eksplorasi karier — modul, RIASEC, dan gaya belajar.
           </p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -129,7 +195,9 @@ export default function CareerReportPage() {
             <RefreshCw size={18} className="animate-spin text-[#2563eb]" />
             <div>
               <p className="text-sm font-bold text-slate-900">Menyiapkan laporan</p>
-              <p className="text-[13px] text-slate-500">Menganalisis jawaban journaling Anda.</p>
+              <p className="text-[13px] text-slate-500">
+                Menganalisis jawaban journaling, RIASEC, dan gaya belajar Anda…
+              </p>
             </div>
           </div>
         </div>
@@ -143,18 +211,30 @@ export default function CareerReportPage() {
           <Sparkles size={24} className="mx-auto text-slate-400" />
           <h4 className="mt-3 text-sm font-bold text-slate-900">Laporan belum tersedia</h4>
           <p className="mt-1 text-[13px] text-slate-500">
-            Selesaikan seluruh 12 modul eksplorasi karier untuk membuka laporan ini.
+            Laporan dibuat secara otomatis setelah kamu menyelesaikan:
           </p>
-          <Link
-            href={`/dashboard/student/${studentId}/journals`}
-            className="mt-4 inline-flex rounded-lg bg-[#2563eb] px-4 py-2 text-[12px] font-bold text-white transition hover:bg-[#1d4ed8]"
-          >
-            Lanjutkan Modul
-          </Link>
+          <ul className="mt-3 inline-flex flex-col gap-1 text-left text-[12.5px] text-slate-600">
+            <li>✅ Seluruh 12 modul eksplorasi karier (refleksi lengkap)</li>
+            <li>✅ Tes RIASEC &amp; Gaya Belajar</li>
+          </ul>
+          <div className="mt-5 flex justify-center gap-3">
+            <Link
+              href={`/dashboard/student/${studentId}/journals`}
+              className="inline-flex rounded-lg bg-[#2563eb] px-4 py-2 text-[12px] font-bold text-white transition hover:bg-[#1d4ed8]"
+            >
+              Lanjutkan Modul
+            </Link>
+            <Link
+              href={`/dashboard/student/${studentId}/riasec`}
+              className="inline-flex rounded-lg border border-slate-200 bg-white px-4 py-2 text-[12px] font-bold text-slate-700 transition hover:bg-slate-50"
+            >
+              Ikuti Tes Asesmen
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-5 print:gap-4 print:p-0">
-          {/* Print-Only Official Header */}
+          {/* ── Print-Only Official Header ── */}
           <div className="hidden print:block border-b-2 border-slate-800 pb-5 mb-4">
             <div className="flex items-center justify-between">
               <div>
@@ -162,7 +242,7 @@ export default function CareerReportPage() {
                   Laporan Eksplorasi Karier Siswa
                 </h1>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                  Hasil Analisis Minat & Bakat Berbasis AI Insight
+                  Hasil Analisis Holistik: Jurnal + RIASEC + Gaya Belajar
                 </p>
               </div>
               {studentData?.institutionName && (
@@ -172,8 +252,6 @@ export default function CareerReportPage() {
                 </div>
               )}
             </div>
-            
-            {/* Student metadata box */}
             <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-[11.5px] text-slate-700">
               <div>
                 <p className="font-bold text-slate-400 uppercase tracking-wider text-[9px]">Nama Lengkap</p>
@@ -190,18 +268,19 @@ export default function CareerReportPage() {
                 </p>
               </div>
               <div>
-                <p className="font-bold text-slate-400 uppercase tracking-wider text-[9px]">Status Kelulusan</p>
-                <p className="font-extrabold text-emerald-700 text-[12.5px] mt-0.5">Lulus (12 Modul Eksplorasi)</p>
+                <p className="font-bold text-slate-400 uppercase tracking-wider text-[9px]">Status</p>
+                <p className="font-extrabold text-emerald-700 text-[12.5px] mt-0.5">Lulus (12 Modul + Asesmen)</p>
               </div>
             </div>
           </div>
 
-          {/* Dashboard Welcome Banner (System-Only) */}
-          <div className="relative overflow-hidden rounded-2xl bg-[#2563eb] p-7 shadow-md print:hidden">
-            <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-[#3b82f6]/10 blur-2xl"></div>
+          {/* ── Dashboard Welcome Banner ── */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#4f46e5] p-7 shadow-md print:hidden">
+            <div className="absolute -right-16 -top-16 h-[250px] w-[250px] rounded-full bg-white/5 blur-2xl" />
             <div className="relative z-10">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3b82f6]/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#0ea5e9]">
-                <Sparkles size={11} /> {report.isAiGenerated ? "AI Insight (GPT)" : "AI Insight (Pratinjau)"}
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-sky-200">
+                <Sparkles size={11} />
+                {report.isAiGenerated ? "AI Insight (GPT)" : "Analisis Rule-Based"}
               </span>
               <h3 className="mt-3 text-xl font-extrabold text-white">Ringkasan Eksplorasi Karier</h3>
               <p className="mt-1 text-[12px] text-white/50">
@@ -210,8 +289,9 @@ export default function CareerReportPage() {
             </div>
           </div>
 
-          {/* 3-Column Analytics Grid */}
+          {/* ── 3-Column Analytics Grid ── */}
           <div className="grid gap-4 sm:grid-cols-3 print:grid-cols-3 print:gap-4">
+            {/* Sentiment */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print:shadow-none print:border-slate-300">
               <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Sentimen Umum</p>
               <div className="mt-3 flex items-center gap-2">
@@ -219,12 +299,13 @@ export default function CareerReportPage() {
                   <SentimentIcon size={14} /> {sentiment?.label}
                 </span>
               </div>
-              <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 print:bg-slate-100">
-                <div className="h-full rounded-full bg-emerald-500" style={{ width: `${report.sentimentScore}%` }}></div>
+              <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                <div className="h-full rounded-full bg-emerald-500" style={{ width: `${report.sentimentScore}%` }} />
               </div>
               <p className="mt-1.5 text-[11px] text-slate-500">Skor positif {report.sentimentScore}/100</p>
             </div>
 
+            {/* Dominant Themes */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print:shadow-none print:border-slate-300">
               <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Tema Karier Dominan</p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -240,42 +321,84 @@ export default function CareerReportPage() {
               </div>
             </div>
 
+            {/* Top RIASEC Interest */}
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print:shadow-none print:border-slate-300">
               <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Minat RIASEC Teratas</p>
-              <div className="mt-3 flex items-center gap-2 text-[13px] font-bold text-indigo-700 print:text-slate-800">
-                <Compass size={16} />
-                {report.topInterest || "Belum ada data RIASEC"}
+              <div className="mt-3 flex items-start gap-2 text-[12.5px] font-semibold text-indigo-700 print:text-slate-800">
+                <Compass size={15} className="mt-0.5 shrink-0" />
+                <span>{report.topInterest || "Belum ada data RIASEC"}</span>
               </div>
             </div>
           </div>
 
-          {/* Complete Summary Details Card */}
+          {/* ── Complete Summary Narrative ── */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm print:shadow-none print:border-slate-300">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 print:text-slate-500">Ulasan & Catatan Narasi Eksplorasi</p>
-            <p className="mt-3 text-[13px] leading-relaxed text-slate-700 print:text-slate-800 print:text-justify whitespace-pre-line">{report.summary}</p>
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 print:text-slate-500">
+              Ulasan &amp; Catatan Narasi Eksplorasi
+            </p>
+            <p className="mt-3 text-[13px] leading-relaxed text-slate-700 print:text-slate-800 print:text-justify whitespace-pre-line">
+              {report.summary}
+            </p>
           </div>
 
-          {/* Official Signatures Box (Visible only when printed) */}
+          {/* ── RIASEC Detail Chart ── */}
+          {assessment && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm print:shadow-none print:border-slate-300">
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart2 size={16} className="text-indigo-500" />
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  Skor RIASEC Lengkap
+                </p>
+              </div>
+              <RiasecChart assessment={assessment} />
+              {assessment.riasecTop3 && (
+                <p className="mt-4 text-[11.5px] text-slate-500">
+                  <span className="font-bold text-slate-700">Tiga tipe teratas:</span>{" "}
+                  {assessment.riasecTop3}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* ── Learning Style Card ── */}
+          {assessment && learnStyle && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm print:shadow-none print:border-slate-300">
+              <div className="flex items-center gap-2 mb-3">
+                <Brain size={16} className="text-purple-500" />
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  Gaya Belajar
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="rounded-xl bg-purple-50 px-3 py-2 text-[13px] font-extrabold text-purple-700 print:bg-slate-100 print:text-slate-800">
+                  {learnStyle.label}
+                </span>
+                <p className="mt-1 text-[12.5px] text-slate-600 leading-relaxed">{learnStyle.desc}</p>
+              </div>
+            </div>
+          )}
+
+          {/* ── Official Signatures (Print Only) ── */}
           <div className="hidden print:grid grid-cols-2 gap-10 mt-12 text-center text-[11px] text-slate-800">
             <div>
               <p className="text-slate-400 uppercase tracking-wider text-[9px] font-bold mb-16">Siswa Bersangkutan</p>
-              <div className="border-b border-slate-300 mx-auto w-44 mb-1"></div>
+              <div className="border-b border-slate-300 mx-auto w-44 mb-1" />
               <p className="font-extrabold text-slate-900">{studentData?.student?.name || "—"}</p>
             </div>
             <div>
               <p className="text-slate-400 uppercase tracking-wider text-[9px] font-bold mb-16">Konselor Bimbingan Konseling (BK)</p>
-              <div className="border-b border-slate-300 mx-auto w-44 mb-1"></div>
+              <div className="border-b border-slate-300 mx-auto w-44 mb-1" />
               <p className="font-extrabold text-slate-900">{studentData?.counselor?.name || "Guru Pendamping"}</p>
             </div>
           </div>
 
-          {/* Notice Banner (System-Only) */}
+          {/* ── Notice Banner ── */}
           <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-[12px] text-amber-800 print:hidden">
             <Info size={15} className="mt-0.5 shrink-0" />
             <p>
               {report.isAiGenerated
-                ? "Laporan ini dihasilkan otomatis oleh AI (GPT) dari seluruh jawaban journaling Anda. Gunakan sebagai bahan diskusi bersama guru BK Anda."
-                : "Laporan ini dihasilkan otomatis sebagai pratinjau (analisis rule-based) karena AI belum aktif. Gunakan sebagai bahan diskusi bersama guru BK Anda."}
+                ? "Laporan ini dihasilkan oleh AI (GPT) berdasarkan jawaban journaling, hasil RIASEC, dan gaya belajar Anda. Gunakan sebagai bahan diskusi bersama guru BK."
+                : "Laporan ini dihasilkan secara otomatis menggunakan analisis berbasis aturan karena AI belum aktif. Hasil sudah mencakup data RIASEC dan gaya belajar Anda."}
             </p>
           </div>
         </div>

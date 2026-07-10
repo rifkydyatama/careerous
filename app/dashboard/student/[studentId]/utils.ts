@@ -83,6 +83,18 @@ export type CareerReport = {
   generatedAt: string;
 };
 
+export type AssessmentData = {
+  riasecRealistic: number;
+  riasecInvestigative: number;
+  riasecArtistic: number;
+  riasecSocial: number;
+  riasecEnterprising: number;
+  riasecConventional: number;
+  riasecTop3: string | null;
+  learningStyle: string;
+  createdAt: string;
+};
+
 export type NotificationItem = {
   id: string;
   type: string;
@@ -574,7 +586,14 @@ export async function submitMoodDocument(
   }
 }
 
-export async function fetchCareerReport(studentId: string): Promise<CareerReport | null> {
+export type CareerReportResult = {
+  report: CareerReport;
+  assessment: AssessmentData | null;
+};
+
+export async function fetchCareerReport(
+  studentId: string
+): Promise<CareerReportResult | null> {
   const response = await fetch(`/api/reports/career-exploration/${studentId}`, {
     cache: "no-store",
   });
@@ -587,8 +606,11 @@ export async function fetchCareerReport(studentId: string): Promise<CareerReport
     throw new Error(await readApiError(response, "Gagal memuat laporan"));
   }
 
-  const payload = (await response.json()) as { report: CareerReport };
-  return payload.report;
+  const payload = (await response.json()) as {
+    report: CareerReport;
+    assessment: AssessmentData | null;
+  };
+  return { report: payload.report, assessment: payload.assessment ?? null };
 }
 
 export async function fetchNotifications(
