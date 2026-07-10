@@ -256,8 +256,9 @@ export const MODULES: ModuleInfo[] = RAW_MODULES.map((mod) => {
   };
 });
 
-export function getModule(n: number): ModuleInfo | null {
-  return MODULES.find((mod) => mod.number === n) ?? null;
+export function getModule(n: number | string): ModuleInfo | null {
+  const num = typeof n === "number" ? n : parseInt(n as string, 10);
+  return MODULES.find((mod) => mod.number === num) ?? null;
 }
 
 export function isPremiumModule(moduleNumber: number): boolean {

@@ -178,11 +178,16 @@ function ModuleCard({
   onReload: () => Promise<void> | void;
 }) {
   const fallback = getModule(journal.weekNumber);
+  const serverPrompts = Array.isArray(journal.prompts) ? journal.prompts.filter(Boolean) : [];
   const meta = {
     title: journal.title ?? fallback?.title ?? "",
     prompt: journal.prompt ?? fallback?.prompt ?? "",
-    introduction: journal.introduction ?? fallback?.introduction ?? null,
-    prompts: fallback?.prompts ?? [journal.prompt ?? fallback?.prompt ?? ""],
+    introduction: journal.introduction !== undefined && journal.introduction !== null
+      ? journal.introduction
+      : (fallback?.introduction ?? null),
+    prompts: serverPrompts.length > 0
+      ? serverPrompts
+      : (fallback?.prompts ?? [journal.prompt ?? fallback?.prompt ?? ""]),
     phaseLabel: journal.phaseLabel ?? fallback?.phaseLabel ?? "",
   };
   const isPremiumGate = journal.premiumLocked && journal.status !== "COMPLETED";
