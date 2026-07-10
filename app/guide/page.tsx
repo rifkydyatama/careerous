@@ -17,6 +17,8 @@ import {
   Sparkles,
   HelpCircle,
   ShieldAlert,
+  Crown,
+  Building2,
   HelpCircle as QuestionIcon
 } from "lucide-react";
 
@@ -52,9 +54,9 @@ export default function GuidePage() {
       icon: Compass,
       desc: "Menemukan kepribadian RIASEC dominan dan gaya belajar terbaik Anda.",
       points: [
-        "Klik menu <b>Tes RIASEC & Gaya Belajar</b> pada baris menu sebelah kiri.",
+        "Buka menu <b>Tes RIASEC</b> dari dasbor atau baris menu sebelah kiri.",
         "Isi kuesioner RIASEC yang berisi daftar aktivitas yang mungkin Anda sukai.",
-        "Lanjutkan dengan mengisi kuesioner pilihan ganda tentang Gaya Belajar.",
+        "Lanjutkan dengan mengisi kuesioner pilihan ganda tentang Gaya Belajar pada halaman yang sama.",
         "Klik <b>Simpan Jawaban</b> untuk langsung melihat diagram kepribadian Anda dan cara belajar yang paling pas (Visual, Auditorial, atau Kinestetik)."
       ]
     },
@@ -65,35 +67,49 @@ export default function GuidePage() {
       desc: "Tahapan terpenting untuk mengeksplorasi pemikiran dan pemahaman karier.",
       points: [
         "Masuk ke menu <b>Modul Eksplorasi</b>.",
-        "Anda harus menyelesaikan 12 modul secara berurutan. Setiap modul berisi pertanyaan untuk membantu Anda merenungkan rencana masa depan.",
-        "Ketikkan jawaban Anda pada kolom teks yang disediakan.",
-        "Anda juga dapat melampirkan berkas tambahan (seperti foto atau dokumen) jika diperlukan.",
-        "<b>Catatan Waktu</b>: Tiap modul memiliki batas waktu pengerjaan. Jika terlambat, modul akan terkunci secara otomatis. Anda harus meminta bantuan Guru BK untuk membukanya kembali."
+        "Anda harus menyelesaikan 12 modul secara berurutan. Pertanyaan di setiap modul bersumber secara dinamis dari database admin.",
+        "Ketikkan jawaban Anda pada masing-masing kolom teks pertanyaan yang disediakan secara terpisah.",
+        "Anda dapat melampirkan berkas tambahan (seperti foto atau dokumen) sebagai bukti pendukung.",
+        "<b>Akses Premium</b>: Sebagian modul lanjutan ditandai dengan lencana <i>Premium</i> dan baru terbuka jika sekolah/institusi Anda sudah mengaktifkan langganan Premium. Lihat langkah <b>Akses Premium</b> di bawah bila modul terkunci Premium.",
+        "<b>Buka Kunci Mandiri (Self-Unlock)</b>: Jika Anda terlambat mengerjakan modul hingga melewati batas waktu (deadline), modul akan terkunci sementara. Anda dapat membukanya sendiri secara instan dengan mengisi <b>Tugas Transisi</b> (memilih mood, menjelaskan kendala, dan mengunggah dokumen moodboard) atau meminta bantuan Guru BK untuk membukanya."
       ]
     },
     {
       id: "std-4",
       title: "Konseling & Jadwal Pertemuan",
       icon: Calendar,
-      desc: "Berkonsultasi secara tatap muka atau panggilan video dengan Guru BK.",
+      desc: "Berkonsultasi secara tatap muka atau video call langsung di platform.",
       points: [
         "Pilih menu <b>Jadwal Konseling</b> di dasbor Anda.",
-        "Lihat daftar jadwal konseling yang sudah disiapkan oleh Guru BK di sekolah Anda.",
-        "Klik <b>Booking Jadwal</b> pada waktu yang cocok, lalu tuliskan topik permasalahan yang ingin didiskusikan.",
-        "Setelah disetujui, Anda akan mendapatkan tautan untuk pertemuan online (video call) atau informasi lokasi tatap muka.",
-        "Anda dapat mengecek status janji temu yang telah diajukan."
+        "Lihat daftar jadwal konseling yang sudah disediakan oleh Guru BK.",
+        "Klik <b>Booking Jadwal</b> pada waktu yang cocok, lalu tuliskan topik permasalahan bimbingan Anda.",
+        "Setelah disetujui, Anda dapat bergabung ke <b>Ruang Konseling Video Jitsi</b> terintegrasi langsung di dalam aplikasi pada waktu pertemuan.",
+        "Anda juga dapat memantau status persetujuan janji temu yang diajukan."
       ]
     },
     {
       id: "std-5",
-      title: "Mengunduh Laporan Karier",
+      title: "Career Report (Laporan Karier)",
       icon: FileText,
       desc: "Melihat hasil ringkasan mengenai kecenderungan karier masa depan Anda.",
       points: [
-        "Setelah Anda menyelesaikan <b>seluruh 12 modul</b>, menu <b>Laporan Karier</b> akan otomatis terbuka.",
-        "Sistem akan merangkum seluruh jawaban jurnal yang sudah Anda tulis untuk dijadikan satu laporan utuh.",
-        "Laporan tersebut akan memuat <b>Sentimen Jurnal</b> Anda, <b>Tema Karier Utama</b> yang sering muncul, dan <b>Saran Langkah Selanjutnya</b>.",
+        "Setelah Anda menyelesaikan <b>seluruh 12 modul</b>, menu <b>Career Report</b> akan otomatis terbuka.",
+        "Sistem akan merangkum seluruh jawaban jurnal yang sudah Anda tulis untuk dijadikan satu laporan eksplorasi utuh.",
+        "Laporan memuat <b>Indeks Sentimen Jurnal</b>, <b>Tema Karier Teridentifikasi</b>, diagram <b>RIASEC</b>, dan <b>AI Insight</b> yang bisa Anda perbarui kapan saja dengan sekali klik.",
+        "Klik ikon <b>Cetak</b> untuk mengunduh atau mencetak laporan sebagai dokumen resmi (PDF).",
         "Gunakan laporan ini sebagai panduan berdiskusi dengan Guru BK untuk mematangkan rencana studi lanjut."
+      ]
+    },
+    {
+      id: "std-6",
+      title: "Akses Premium",
+      icon: Crown,
+      desc: "Membuka seluruh 12 modul, AI Insight, dan konseling online secara penuh.",
+      points: [
+        "Akses Premium <b>diaktifkan oleh sekolah/institusi</b> Anda, bukan dibeli per siswa.",
+        "Jika modul atau fitur ditandai <i>Premium</i> dan masih terkunci, artinya langganan institusi Anda belum aktif.",
+        "Hubungi <b>Guru BK</b> Anda untuk mengajukan langganan Premium sekolah ke Admin Careerous.",
+        "Bila sudah aktif, dasbor Anda akan menampilkan badge <b>Akses Premium aktif</b> dan seluruh modul, AI Insight, serta konseling online langsung terbuka."
       ]
     }
   ];
@@ -113,26 +129,27 @@ export default function GuidePage() {
     },
     {
       id: "cns-2",
-      title: "Reviu & Umpan Balik Jurnal",
+      title: "Reviu & Umpan Balik Modul",
       icon: BookOpen,
       desc: "Membaca catatan refleksi siswa dan memberikan arahan bimbingan.",
       points: [
-        "Pilih menu <b>Reviu Jurnal</b>.",
-        "Anda dapat menyaring tampilan jurnal berdasarkan status pengerjaannya.",
-        "Klik pada jurnal siswa untuk membaca jawaban lengkap yang mereka tulis, serta mengunduh lampiran file jika ada.",
-        "Berikan tanggapan atau masukan di kolom komentar pada bagian bawah jurnal untuk membimbing arah pemikiran karier siswa."
+        "Pilih menu <b>Reviu Modul</b> pada baris menu sebelah kiri.",
+        "Anda dapat menyaring tampilan berdasarkan status pengerjaan modul siswa.",
+        "Klik pada modul siswa untuk membaca jawaban lengkap per pertanyaan yang mereka tulis, serta melihat lampiran file pendukung.",
+        "Berikan tanggapan atau masukan di kolom komentar pada bagian bawah untuk membimbing arah pemikiran karier siswa."
       ]
     },
     {
       id: "cns-3",
-      title: "Mengelola Jadwal Konseling",
+      title: "Mengelola Jadwal & Ruang Konseling",
       icon: Calendar,
       desc: "Menyediakan jadwal bimbingan tatap muka maupun online.",
       points: [
         "Buka menu <b>Jadwal Program</b>.",
-        "Klik tombol <b>Buat Slot Baru</b>, tentukan tanggal, jam mulai, jam selesai, batas maksimal siswa, dan tautan pertemuan online (jika ada).",
-        "Anda akan mendapatkan pemberitahuan jika ada siswa yang mendaftar di jadwal tersebut.",
-        "Anda bisa menyetujui (<i>Approve</i>) atau menolak (<i>Reject</i>) pengajuan dari siswa, disertai dengan pesan singkat jika diperlukan."
+        "Klik tombol <b>Buat Slot Baru</b>, tentukan tanggal, jam, batas maksimal siswa, dan tipe ruangan virtual.",
+        "Anda akan mendapatkan pemberitahuan jika ada siswa yang memesan slot tersebut.",
+        "Anda bisa menyetujui (<i>Approve</i>) atau menolak (<i>Reject</i>) pengajuan dari siswa.",
+        "Untuk konseling online, Guru BK dan Siswa dapat langsung masuk ke <b>Ruang Konseling Virtual Jitsi</b> terintegrasi dalam platform."
       ]
     },
     {
@@ -143,7 +160,7 @@ export default function GuidePage() {
       points: [
         "Buka profil siswa melalui Panel Samping di halaman <b>Daftar Siswa</b> atau halaman <b>Reviu Jurnal</b>.",
         "Cari daftar modul siswa yang berstatus <b>Terblokir</b> (karena batas waktu pengerjaan sudah habis).",
-        "Klik tombol <b>Buka Akses</b> di sebelah modul tersebut agar siswa bisa kembali melanjutkan tugas jurnalnya."
+        "Klik tombol <b>Buka Akses</b> di sebelah modul tersebut agar siswa bisa kembali melanjutkan tugas jurnalnya secara manual (Siswa juga dapat membuka secara mandiri lewat Tugas Transisi)."
       ]
     },
     {
@@ -156,6 +173,19 @@ export default function GuidePage() {
         "Klik ikon <b>Kunci (Reset Sandi)</b> pada kolom aksi, atau buka profil mereka lewat Panel Samping.",
         "Masukkan kata sandi yang baru (minimal 8 karakter), kemudian klik simpan.",
         "Serahkan kata sandi baru tersebut ke siswa yang bersangkutan agar mereka bisa masuk kembali ke aplikasi."
+      ]
+    },
+    {
+      id: "cns-6",
+      title: "Mengajukan Langganan Institusi (Premium)",
+      icon: Building2,
+      desc: "Membuka akses Premium untuk seluruh siswa di sekolah Anda.",
+      points: [
+        "Buka menu <b>Langganan Institusi</b> pada baris menu sebelah kiri.",
+        "Halaman ini menampilkan status langganan sekolah Anda: <b>Berlangganan Aktif</b> atau <b>Belum Berlangganan</b>, beserta tanggal berakhirnya.",
+        "Jika belum aktif, isi catatan pengajuan (misalnya jumlah siswa aktif atau kebutuhan program) lalu klik <b>Ajukan Langganan ke Admin</b>.",
+        "Pengajuan akan ditinjau Admin Careerous. Setelah disetujui, <b>seluruh siswa institusi</b> otomatis mendapat akses penuh ke 12 modul, AI Insight, dan konseling online.",
+        "Jika akun Anda belum tertaut ke sebuah institusi, hubungi Admin untuk menautkannya terlebih dahulu."
       ]
     }
   ];
