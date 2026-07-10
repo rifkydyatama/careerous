@@ -7,7 +7,7 @@
 export const TOTAL_MODULES = 12;
 
 
-export const FREE_MODULE_LIMIT = 3;
+export const FREE_MODULE_LIMIT = 4;
 
 export type ModulePhase = "EKSPLORASI_DIRI" | "EKSPLORASI_LINGKUNGAN" | "SINTESIS_REFLEKSI";
 

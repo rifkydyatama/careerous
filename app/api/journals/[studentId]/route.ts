@@ -413,7 +413,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     
     if (!isPremiumEffective(student.plan, student.institution) && weekNumber > FREE_MODULE_LIMIT) {
       return NextResponse.json(
-        { error: "Feedback modul 4-12 hanya tersedia pada akun Premium" },
+        { error: "Feedback modul 5-12 hanya tersedia pada akun Premium" },
         { status: 402 }
       );
     }
