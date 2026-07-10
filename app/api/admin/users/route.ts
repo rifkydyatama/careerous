@@ -20,7 +20,13 @@ export async function GET(request: NextRequest) {
         createdAt: true,
         institution: { select: { id: true, name: true } },
         counselor: { select: { id: true, name: true } },
-        _count: { select: { journalProgress: true } },
+        _count: {
+          select: {
+            journalProgress: {
+              where: { status: "COMPLETED" },
+            },
+          },
+        },
       },
     });
 
