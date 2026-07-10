@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
         plan: true,
         createdAt: true,
         institution: { select: { id: true, name: true } },
+        counselor: { select: { id: true, name: true } },
         _count: { select: { journalProgress: true } },
       },
     });
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
         plan: u.plan,
         createdAt: u.createdAt.toISOString(),
         institution: u.institution,
+        counselor: u.counselor,
       })),
       institutions,
     });
@@ -74,6 +76,10 @@ export async function PATCH(request: NextRequest) {
   if (body?.institutionId !== undefined) {
     data.institutionId = body.institutionId || null;
   }
+  if (body?.counselorId !== undefined) {
+    // TypeScript/Prisma representation for counselorId field
+    (data as any).counselorId = body.counselorId || null;
+  }
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: "Tidak ada perubahan" }, { status: 400 });
@@ -88,6 +94,7 @@ export async function PATCH(request: NextRequest) {
         role: true,
         plan: true,
         institution: { select: { id: true, name: true } },
+        counselor: { select: { id: true, name: true } },
       },
     });
     return NextResponse.json({ user: updated });

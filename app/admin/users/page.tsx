@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
 
   const patch = async (
     id: string,
-    data: { role?: string; plan?: string; institutionId?: string | null }
+    data: { role?: string; plan?: string; institutionId?: string | null; counselorId?: string | null }
   ) => {
     setSavingId(id);
     setErrorMessage(null);
@@ -66,6 +66,14 @@ export default function AdminUsersPage() {
                 data.institutionId === undefined
                   ? u.institution
                   : institutions.find((i) => i.id === data.institutionId) ?? null,
+              counselor:
+                data.counselorId === undefined
+                  ? u.counselor
+                  : (() => {
+                      if (!data.counselorId) return null;
+                      const matched = users.find((x) => x.id === data.counselorId);
+                      return matched ? { id: matched.id, name: matched.name || "Konselor" } : null;
+                    })(),
             }
           : u
       )
@@ -171,6 +179,7 @@ export default function AdminUsersPage() {
                 <th className="px-4 py-3">Peran</th>
                 <th className="px-4 py-3">Paket</th>
                 <th className="px-4 py-3">Institusi</th>
+                <th className="px-4 py-3">Konselor (Plotting)</th>
                 <th className="px-4 py-3">Terdaftar</th>
                 <th className="px-4 py-3"></th>
               </tr>
@@ -219,6 +228,29 @@ export default function AdminUsersPage() {
                       ))}
                     </select>
                   </td>
+                  <td className="px-4 py-3">
+                    {u.role === "STUDENT" && u.institution ? (
+                      <select
+                        value={u.counselor?.id ?? ""}
+                        onChange={(e) => void patch(u.id, { counselorId: e.target.value || null })}
+                        disabled={savingId === u.id}
+                        className="max-w-[170px] rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-[11.5px] outline-none focus:border-blue-500 disabled:opacity-50"
+                      >
+                        <option value="">— Belum Di-plot —</option>
+                        {users
+                          .filter((c) => c.role === "COUNSELOR" && c.institution?.id === u.institution?.id)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.name || c.email}
+                            </option>
+                          ))}
+                      </select>
+                    ) : u.role === "STUDENT" ? (
+                      <span className="text-[11.5px] text-slate-400 italic">Pilih institusi dulu</span>
+                    ) : (
+                      <span className="text-slate-400">—</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-slate-500">{formatDateId(u.createdAt)}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
@@ -242,7 +274,7 @@ export default function AdminUsersPage() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
                     Tidak ada pengguna.
                   </td>
                 </tr>

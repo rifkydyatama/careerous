@@ -19,6 +19,7 @@ export type AdminUser = {
   plan: "FREE" | "PREMIUM";
   createdAt: string;
   institution: { id: string; name: string } | null;
+  counselor?: { id: string; name: string } | null;
 };
 
 export type AdminInstitutionOption = { id: string; name: string };
@@ -92,7 +93,7 @@ export async function fetchAdminUsers(): Promise<{
 
 export async function updateAdminUser(
   id: string,
-  data: { role?: string; plan?: string; institutionId?: string | null }
+  data: { role?: string; plan?: string; institutionId?: string | null; counselorId?: string | null }
 ): Promise<void> {
   const res = await fetch("/api/admin/users", {
     method: "PATCH",
