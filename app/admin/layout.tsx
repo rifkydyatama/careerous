@@ -126,12 +126,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main className="p-4 lg:p-7">{children}</main>
+        <main className="p-4 pb-24 lg:p-7">{children}</main>
 
-        <footer className="mt-auto border-t border-slate-200 bg-white px-4 lg:px-7 py-4 text-[11px] text-slate-400 leading-normal">
+        <footer className="mt-auto border-t border-slate-200 bg-white px-4 lg:px-7 py-4 pb-24 lg:pb-4 text-[11px] text-slate-400 leading-normal">
           {UNIVERSITY.copyright} · {UNIVERSITY.unit} · {UNIVERSITY.app}
         </footer>
       </div>
+
+      {/* Bottom Navigation for Mobile Devices */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 border-t border-slate-200 bg-white/95 backdrop-blur-md px-2 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] lg:hidden pb-safe">
+        <BottomNavItem href="/admin" icon={<LayoutDashboard size={18} />} label="Dasbor" active={pathname === "/admin"} />
+        <BottomNavItem href="/admin/users" icon={<Users size={18} />} label="Pengguna" active={pathname === "/admin/users"} />
+        <BottomNavItem href="/admin/institutions" icon={<Building2 size={18} />} label="Institusi" active={pathname === "/admin/institutions"} />
+        <BottomNavItem href="/admin/subscriptions" icon={<Inbox size={18} />} label="Langganan" active={pathname === "/admin/subscriptions"} />
+        <BottomNavItem icon={<Menu size={18} />} label="Lainnya" onClick={() => setSidebarOpen(true)} />
+      </nav>
     </div>
   );
 }
@@ -153,3 +162,28 @@ const NavItem = ({ href, icon, label, active }: any) => (
     {label}
   </Link>
 );
+
+const BottomNavItem = ({ href, icon, label, active, onClick }: any) => {
+  const content = (
+    <div className={`flex flex-col items-center justify-center gap-1.5 py-2 transition-colors ${
+      active ? "text-blue-600 font-extrabold" : "text-slate-500"
+    }`}>
+      <span className={active ? "text-blue-600 scale-105 transition-transform" : "text-slate-400"}>{icon}</span>
+      <span className="text-[10px] font-bold leading-none tracking-wide">{label}</span>
+    </div>
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className="flex-1 focus:outline-none">
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={href} className="flex-1">
+      {content}
+    </Link>
+  );
+};
