@@ -62,11 +62,11 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       where: { studentId },
     });
 
-    const hasApiKey = Boolean(process.env.OPENAI_API_KEY?.trim());
+    const hasApiKey = Boolean(process.env.GEMINI_API_KEY?.trim());
     // Log ke Vercel Function Logs untuk debugging
     console.log(
       `[career-report] studentId=${studentId} hasApiKey=${hasApiKey} ` +
-      `keyPrefix=${process.env.OPENAI_API_KEY?.slice(0, 7) ?? "unset"} ` +
+      `keyPrefix=${process.env.GEMINI_API_KEY?.slice(0, 10) ?? "unset"} ` +
       `existingReport=${report ? `id=${report.id} isAI=${report.isAiGenerated}` : "null"}`
     );
 

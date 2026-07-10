@@ -185,14 +185,14 @@ export function buildReportFromText(
 }
 
 // ---------------------------------------------------------------------------
-// AI-powered generation (OpenAI GPT)
+// AI-powered generation (Google Gemini)
 // ---------------------------------------------------------------------------
 
 async function generateReportWithAI(
   qaPairs: QAPair[],
   assessment: AssessmentSnapshot | null,
 ): Promise<CareerReportData | null> {
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) return null;
 
   try {
@@ -229,65 +229,61 @@ async function generateReportWithAI(
       .map((qa, i) => `Modul ${i + 1} — ${qa.question}\nJawaban siswa: ${qa.answer}`)
       .join("\n\n");
 
-    const systemPrompt =
-      "Anda adalah konselor karier profesional untuk siswa SMA di Indonesia. " +
-      "Tugas Anda adalah menganalisis SELURUH data eksplorasi karier siswa secara HOLISTIK dan KONSISTEN: " +
-      "gabungkan jawaban journaling 12 modul, skor RIASEC, dan gaya belajar menjadi satu narasi yang akurat dan suportif. " +
-      "PENTING: Jangan membuat kesimpulan yang tidak didukung data. " +
-      "Jika jawaban modul siswa menyebut bidang tertentu, pastikan tema yang Anda hasilkan konsisten dengan bidang tersebut DAN skor RIASEC. " +
-      "Jika ada ketidaksesuaian antara jawaban dan RIASEC, sebutkan hal itu secara bijak. " +
-      "Tulis dalam Bahasa Indonesia yang hangat, reflektif, dan profesional.";
-
-    const userPrompt =
-      `Berikut seluruh data eksplorasi karier seorang siswa.\n\n` +
+    const fullPrompt =
+      `Anda adalah konselor karier profesional untuk siswa SMA di Indonesia. ` +
+      `Analisis SELURUH data eksplorasi karier siswa secara HOLISTIK dan KONSISTEN. ` +
+      `Gabungkan jawaban journaling 12 modul, skor RIASEC, dan gaya belajar menjadi satu narasi yang akurat dan suportif. ` +
+      `PENTING: Jangan membuat kesimpulan yang tidak didukung data. ` +
+      `Jika jawaban siswa menyebut bidang tertentu, pastikan tema yang dihasilkan konsisten dengan RIASEC. ` +
+      `Tulis dalam Bahasa Indonesia yang hangat, reflektif, dan profesional.\n\n` +
       `=== JAWABAN JOURNALING 12 MODUL ===\n${journalSection}` +
       riasecSection +
       learnSection +
       `\n\n` +
-      `Hasilkan Career Exploration Report sesuai skema JSON. ` +
-      `Summary harus merangkum perjalanan siswa secara holistik, ` +
-      `menghubungkan pola jawaban jurnal dengan tipe RIASEC dominan dan gaya belajarnya. ` +
-      `dominantThemes harus KONSISTEN dengan isi jawaban siswa (2–4 tema). ` +
-      `sentimentLabel dan sentimentScore harus mencerminkan nada emosional nyata dari jawaban siswa.`;
+      `Hasilkan Career Exploration Report dalam format JSON berikut (tanpa markdown, tanpa teks lain):\n` +
+      `{\n` +
+      `  "summary": "<ringkasan naratif 4-6 kalimat dalam Bahasa Indonesia, menghubungkan jurnal + RIASEC + gaya belajar>",\n` +
+      `  "dominantThemes": ["<tema1>", "<tema2>"],\n` +
+      `  "sentimentLabel": "<POSITIF | NETRAL | CAMPURAN>",\n` +
+      `  "sentimentScore": <angka 0-100>\n` +
+      `}`;
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Gemini REST API — gemini-2.0-flash (free tier, fast)
+    const geminiUrl =
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(geminiUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: systemPrompt },
-          {
-            role: "user",
-            content:
-              userPrompt +
-              `\n\nBALAS HANYA dengan JSON valid berikut ini (tanpa markdown, tanpa teks lain):\n` +
-              `{\n` +
-              `  "summary": "<ringkasan naratif 4-6 kalimat dalam Bahasa Indonesia>",\n` +
-              `  "dominantThemes": ["<tema1>", "<tema2>"],\n` +
-              `  "sentimentLabel": "<POSITIF | NETRAL | CAMPURAN>",\n` +
-              `  "sentimentScore": <angka 0-100>\n` +
-              `}`,
-          },
-        ],
-        temperature: 0.5,
+        contents: [{ parts: [{ text: fullPrompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.5,
+        },
       }),
     });
 
     if (!response.ok) {
-      console.error("OpenAI API error:", response.status, await response.text());
+      const errBody = await response.text();
+      console.error("Gemini API error:", response.status, errBody);
       return null;
     }
 
     const responseData = await response.json();
-    const content = responseData?.choices?.[0]?.message?.content;
-    if (!content) return null;
+    // Gemini response: candidates[0].content.parts[0].text
+    const rawText: string =
+      responseData?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
-    const parsed = JSON.parse(content) as {
+    if (!rawText) {
+      console.error("Gemini returned empty text");
+      return null;
+    }
+
+    // Strip markdown fences if present (safety)
+    const jsonText = rawText.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+
+    const parsed = JSON.parse(jsonText) as {
       summary: string;
       dominantThemes: string[];
       sentimentLabel: string;
@@ -331,7 +327,7 @@ async function generateReportWithAI(
       isAiGenerated: true,
     };
   } catch (err) {
-    console.error("generateReportWithAI error:", err);
+    console.error("generateReportWithAI (Gemini) error:", err);
     return null;
   }
 }
