@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 /**
- * Temporary debug endpoint to check Gemini API status and available models.
+ * Temporary debug endpoint to check Gemini API status and find a model that has quota.
  * Hit: GET /api/debug/ai-status
  */
 export async function GET() {
@@ -21,35 +21,46 @@ export async function GET() {
     });
   }
 
-  try {
-    // Let's call ModelService.ListModels to see what models are actually available for this key
-    const listModelsUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
-    const listRes = await fetch(listModelsUrl);
-    const listBody = await listRes.json();
+  // Models to test
+  const candidateModels = [
+    "gemini-flash-latest",
+    "gemini-2.5-flash",
+    "gemini-2.0-flash-lite",
+    "gemini-3.1-flash-lite",
+  ];
 
-    // Let's also try calling v1 endpoint for gemini-1.5-flash just in case
-    const v1Url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
-    const v1Res = await fetch(v1Url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: "Hello" }] }],
-      }),
-    });
-    const v1Body = await v1Res.json().catch(() => null);
+  const results: any[] = [];
 
-    return NextResponse.json({
-      ok: false,
-      keyInfo,
-      listModelsResponse: listBody,
-      v1TestStatus: v1Res.status,
-      v1TestResponse: v1Body,
-    });
-  } catch (err: unknown) {
-    return NextResponse.json({
-      ok: false,
-      keyInfo,
-      error: err instanceof Error ? err.message : String(err),
-    });
+  for (const model of candidateModels) {
+    try {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+      const res = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: "Hi, reply with exactly the word OK" }] }],
+        }),
+      });
+
+      const body = await res.json();
+      results.push({
+        model,
+        ok: res.ok,
+        status: res.status,
+        response: body,
+      });
+    } catch (err: any) {
+      results.push({
+        model,
+        ok: false,
+        error: err.message,
+      });
+    }
   }
+
+  return NextResponse.json({
+    ok: results.some((r) => r.ok),
+    keyInfo,
+    testResults: results,
+  });
 }
