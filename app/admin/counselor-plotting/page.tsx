@@ -402,7 +402,7 @@ export default function CounselorPlottingPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredStudents.map((u) => {
-                    const journalCount = (u as any)._count?.journalProgress ?? 0;
+                    const journalCount = u._count?.journalProgress ?? 0;
                     const progressPct = Math.round((journalCount / 12) * 100);
 
                     return (

@@ -20,6 +20,7 @@ export type AdminUser = {
   createdAt: string;
   institution: { id: string; name: string } | null;
   counselor?: { id: string; name: string } | null;
+  _count?: { journalProgress: number };
 };
 
 export type AdminInstitutionOption = { id: string; name: string };

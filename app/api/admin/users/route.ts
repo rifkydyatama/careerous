@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
         createdAt: u.createdAt.toISOString(),
         institution: u.institution,
         counselor: u.counselor,
+        _count: u._count,
       })),
       institutions,
     });
