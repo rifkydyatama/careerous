@@ -41,7 +41,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       where: { studentId },
     });
 
-    if (!report) {
+    const hasApiKey = Boolean(process.env.OPENAI_API_KEY?.trim());
+
+    if (!report || (!report.isAiGenerated && hasApiKey)) {
       report = await generateCareerReport(studentId);
     }
 
