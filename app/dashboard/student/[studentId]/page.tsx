@@ -15,6 +15,7 @@ import {
   Target,
   MessageSquareText,
   FileText,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -209,7 +210,6 @@ export default function StudentDashboardPage() {
             </div>
           </div>
 
-          {}
           <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
             <div className="grid gap-4 sm:grid-cols-2">
               <QuickCard
@@ -247,29 +247,104 @@ export default function StudentDashboardPage() {
               />
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="mb-3 flex items-center gap-2">
-                <MessageSquareText size={16} className="text-emerald-600" />
-                <h3 className="text-[14px] font-extrabold text-slate-900">Umpan Balik Terbaru</h3>
-              </div>
-              {recentFeedback.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-[12px] text-slate-400">
-                  Belum ada umpan balik dari konselor.
-                </p>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {recentFeedback.map((j) => (
-                    <div key={j.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
-                        Modul {j.weekNumber}{j.title ? ` · ${j.title}` : ""}
-                      </p>
-                      <p className="mt-1 line-clamp-3 text-[12px] leading-relaxed text-slate-600">
-                        {j.counselorFeedback}
-                      </p>
-                    </div>
-                  ))}
+            <div className="flex flex-col gap-4">
+              {/* Counselor Contact Card */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
+                  <User size={16} className="text-[#2563eb]" />
+                  <h3 className="text-[14px] font-extrabold text-slate-900">Konselor Bimbingan Konseling (BK)</h3>
                 </div>
-              )}
+
+                {data.counselor ? (
+                  <div className="flex flex-col items-center text-center">
+                    <div className="relative h-16 w-16 overflow-hidden rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center text-lg font-extrabold shadow-inner mb-3">
+                      {data.counselor.avatar ? (
+                        <img src={data.counselor.avatar} alt={data.counselor.name || ""} className="h-full w-full object-cover" />
+                      ) : (
+                        (data.counselor.name?.[0] || "K").toUpperCase()
+                      )}
+                    </div>
+                    <h4 className="text-[13.5px] font-bold text-slate-900">{data.counselor.name || "Konselor Sekolah"}</h4>
+                    <p className="text-[11.5px] text-slate-400">Guru Pembimbing Anda</p>
+
+                    <div className="mt-4 w-full space-y-2.5 text-[12px] text-slate-600 text-left bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                      <div className="flex items-center gap-2.5 truncate">
+                        <span className="text-slate-400 shrink-0">📧</span>
+                        <span className="truncate" title={data.counselor.email || ""}>
+                          {data.counselor.email || "Tidak ada email"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-slate-400 shrink-0">📞</span>
+                        <span>
+                          {data.counselor.phone || "Belum mendaftarkan nomor telepon"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2 w-full">
+                      {data.counselor.email ? (
+                        <a
+                          href={`mailto:${data.counselor.email}`}
+                          className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white py-2 text-[11.5px] font-bold text-slate-700 hover:bg-slate-50 transition"
+                        >
+                          Kirim Email
+                        </a>
+                      ) : (
+                        <button disabled className="rounded-lg border border-slate-200 bg-slate-50 py-2 text-[11.5px] font-bold text-slate-400 cursor-not-allowed">
+                          Email
+                        </button>
+                      )}
+                      {data.counselor.phone ? (
+                        <a
+                          href={`https://wa.me/${data.counselor.phone.replace(/[^0-9]/g, "").replace(/^0/, "62")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 py-2 text-[11.5px] font-bold text-white hover:bg-emerald-700 transition"
+                        >
+                          WhatsApp
+                        </a>
+                      ) : (
+                        <button disabled className="rounded-lg bg-slate-100 py-2 text-[11.5px] font-bold text-slate-400 cursor-not-allowed">
+                          WhatsApp
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-[12px] text-slate-500 leading-relaxed">
+                      Konselor sekolah belum dialokasikan untuk Anda. Hubungi pihak sekolah untuk plotting.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Umpan Balik Terbaru */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <MessageSquareText size={16} className="text-emerald-600" />
+                  <h3 className="text-[14px] font-extrabold text-slate-900">Umpan Balik Terbaru</h3>
+                </div>
+                {recentFeedback.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-[12px] text-slate-400">
+                    Belum ada umpan balik dari konselor.
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {recentFeedback.map((j) => (
+                      <div key={j.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                          Modul {j.weekNumber}{j.title ? ` · ${j.title}` : ""}
+                        </p>
+                        <p className="mt-1 line-clamp-3 text-[12px] leading-relaxed text-slate-600">
+                          {j.counselorFeedback}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </>

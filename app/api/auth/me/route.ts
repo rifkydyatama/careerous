@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         id: true,
         name: true,
         email: true,
+        phone: true,
         avatar: true,
         role: true,
         plan: true,
@@ -31,6 +32,15 @@ export async function GET(request: NextRequest) {
             name: true,
             subscriptionActive: true,
             subscriptionExpiresAt: true,
+          },
+        },
+        counselor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            avatar: true,
           },
         },
       },
@@ -70,6 +80,7 @@ export async function PATCH(request: NextRequest) {
 
   const name = typeof body?.name === "string" ? body.name.trim() : undefined;
   const email = typeof body?.email === "string" ? body.email.trim() : undefined;
+  const phone = typeof body?.phone === "string" ? body.phone.trim() : undefined;
   const avatar = typeof body?.avatar === "string" ? body.avatar : undefined;
   const password = typeof body?.password === "string" ? body.password : undefined;
 
@@ -81,6 +92,7 @@ export async function PATCH(request: NextRequest) {
     const updateData: any = {
       ...(name !== undefined && { name }),
       ...(email !== undefined && { email }),
+      ...(phone !== undefined && { phone }),
       ...(avatar !== undefined && { avatar }),
     };
 
@@ -95,6 +107,7 @@ export async function PATCH(request: NextRequest) {
         id: true,
         name: true,
         email: true,
+        phone: true,
         avatar: true,
       },
     });

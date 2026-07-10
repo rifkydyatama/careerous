@@ -105,6 +105,7 @@ model User {
   email           String?           @unique
   passwordHash    String?
   avatar          String?           @db.Text
+  phone           String?           // Nomor telepon/WA pengguna
   role            UserRole          @default(STUDENT)
   plan            PlanTier          @default(FREE)
   institutionId   String?           @db.Uuid
@@ -113,6 +114,11 @@ model User {
   assessments     Assessment[]
   journalProgress JournalProgress[]
   notifications   Notification[]
+
+  // Self-relation: Plotting Konselor untuk Siswa
+  counselorId     String?           @db.Uuid
+  counselor       User?             @relation("StudentCounselor", fields: [counselorId], references: [id])
+  students        User[]            @relation("StudentCounselor")
 
   // Relations for Counselors
   schedulesCreated CounselingSchedule[] @relation("CounselorSchedules")

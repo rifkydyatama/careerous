@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { autoAssignCounselor } from "../../../../lib/counselor-assignment";
 import {
   getDashboardPath,
   normalizeEmail,
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest) {
           passwordHash,
           ...(institutionId ? { institutionId } : {}),
         },
-        select: { id: true, name: true, email: true, role: true },
+        select: { id: true, name: true, email: true, role: true, institutionId: true },
       });
     } else {
       user = await prisma.user.create({
@@ -175,12 +176,15 @@ export async function POST(request: NextRequest) {
           passwordHash,
           ...(institutionId ? { institutionId } : {}),
         },
-        select: { id: true, name: true, email: true, role: true },
+        select: { id: true, name: true, email: true, role: true, institutionId: true },
       });
     }
 
     if (user.role === "STUDENT") {
       await ensureJournalWeeks(user.id);
+      if (user.institutionId) {
+        await autoAssignCounselor(user.id, user.institutionId);
+      }
     }
 
     const response = NextResponse.json(

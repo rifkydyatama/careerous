@@ -59,12 +59,29 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  
+  // Ambil data konselor terpilih / institusi siswa untuk membatasi kuota slot pengerjaan
+  const student = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { institutionId: true, counselorId: true }
+  });
+
+  const counselorFilter = student?.counselorId
+    ? { counselorId: student.counselorId }
+    : student?.institutionId
+      ? { counselor: { institutionId: student.institutionId } }
+      : {};
+
   const schedules = await prisma.counselingSchedule.findMany({
     where: {
       OR: [
-        { startTime: { gte: now }, status: { not: "CANCELLED" } },
-        { bookings: { some: { studentId: session.userId } } }
+        {
+          ...counselorFilter,
+          startTime: { gte: now },
+          status: { not: "CANCELLED" }
+        },
+        {
+          bookings: { some: { studentId: session.userId } }
+        }
       ]
     },
     orderBy: { startTime: "asc" },

@@ -6,16 +6,19 @@ import { Camera, Loader2 } from "lucide-react";
 export function AccountSettingsForm({
   initialName,
   initialEmail,
+  initialPhone,
   initialAvatar,
   onSuccess,
 }: {
   initialName: string;
   initialEmail: string;
+  initialPhone?: string | null;
   initialAvatar: string | null;
   onSuccess: () => void;
 }) {
   const [name, setName] = useState(initialName || "");
   const [email, setEmail] = useState(initialEmail || "");
+  const [phone, setPhone] = useState(initialPhone || "");
   const [avatarBase64, setAvatarBase64] = useState<string | null>(initialAvatar);
   
   const [password, setPassword] = useState("");
@@ -107,7 +110,7 @@ export function AccountSettingsForm({
     }
 
     try {
-      const payload: any = { name, email, avatar: avatarBase64 };
+      const payload: any = { name, email, phone, avatar: avatarBase64 };
       if (password) {
         payload.password = password;
       }
@@ -213,6 +216,17 @@ export function AccountSettingsForm({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Nomor Telepon / WhatsApp (Opsional)</label>
+            <input
+              type="tel"
+              placeholder="Contoh: 081234567890"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
             />
           </div>

@@ -44,6 +44,7 @@ export type StudentProfile = {
   id: string;
   name: string | null;
   email: string | null;
+  phone?: string | null;
   avatar?: string | null;
 };
 
@@ -60,6 +61,13 @@ export type StudentDashboardResponse = {
   freeModuleLimit: number;
   hasReport: boolean;
   student: StudentProfile | null;
+  counselor?: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+    avatar: string | null;
+  } | null;
   journals: JournalItem[];
 };
 

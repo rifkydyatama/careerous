@@ -127,6 +127,7 @@ export default function SettingsPage() {
               <AccountSettingsForm
                 initialName={currentUser?.name || ""}
                 initialEmail={currentUser?.email || ""}
+                initialPhone={currentUser?.phone || ""}
                 initialAvatar={currentUser?.avatar || null}
                 onSuccess={() => void loadOverview()}
               />

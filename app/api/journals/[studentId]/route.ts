@@ -76,12 +76,23 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         id: true,
         name: true,
         email: true,
+        phone: true,
         avatar: true,
         role: true,
         plan: true,
         institutionId: true,
         institution: {
           select: { name: true, subscriptionActive: true, subscriptionExpiresAt: true },
+        },
+        counselorId: true,
+        counselor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            avatar: true,
+          },
         },
       },
     });
@@ -158,8 +169,16 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         id: student.id,
         name: student.name,
         email: student.email,
+        phone: student.phone,
         avatar: (student as any).avatar ?? null,
       },
+      counselor: student.counselor ? {
+        id: student.counselor.id,
+        name: student.counselor.name,
+        email: student.counselor.email,
+        phone: student.counselor.phone,
+        avatar: student.counselor.avatar,
+      } : null,
       journals: journalsWithGate,
     });
   } catch (error) {

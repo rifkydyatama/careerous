@@ -72,6 +72,7 @@ export default function SettingsPage() {
             <AccountSettingsForm
               initialName={data.student?.name || ""}
               initialEmail={data.student?.email || ""}
+              initialPhone={data.student?.phone || ""}
               initialAvatar={data.student?.avatar || null}
               onSuccess={() => void load()}
             />
