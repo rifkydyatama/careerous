@@ -18,6 +18,16 @@ export async function getAppSetting() {
       });
     }
 
+    if (setting.maintenanceMode && setting.maintenanceEndsAt && new Date(setting.maintenanceEndsAt).getTime() <= Date.now()) {
+      setting = await prisma.appSetting.update({
+        where: { id: "singleton" },
+        data: {
+          maintenanceMode: false,
+          maintenanceEndsAt: null,
+        },
+      });
+    }
+
     return setting;
   } catch (error) {
     return {
