@@ -258,42 +258,21 @@ async function generateReportWithAI(
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "career_report",
-            strict: true,
-            schema: {
-              type: "object",
-              properties: {
-                summary: {
-                  type: "string",
-                  description:
-                    "Ringkasan naratif 4–6 kalimat perjalanan eksplorasi karier siswa, menghubungkan jurnal + RIASEC + gaya belajar. Bahasa Indonesia, hangat, reflektif, dan suportif.",
-                },
-                dominantThemes: {
-                  type: "array",
-                  items: { type: "string" },
-                  description:
-                    "2–4 tema karier yang BENAR-BENAR muncul dari jawaban siswa (bukan generik). Contoh: 'Teknologi & Komputer', 'Sosial & Membantu Orang'.",
-                },
-                sentimentLabel: {
-                  type: "string",
-                  enum: ["POSITIF", "NETRAL", "CAMPURAN"],
-                },
-                sentimentScore: {
-                  type: "integer",
-                  description: "Skor sentimen positif 0–100, didasarkan pada nada emosional jawaban jurnal.",
-                },
-              },
-              required: ["summary", "dominantThemes", "sentimentLabel", "sentimentScore"],
-              additionalProperties: false,
-            },
-          },
-        },
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
+          {
+            role: "user",
+            content:
+              userPrompt +
+              `\n\nBALAS HANYA dengan JSON valid berikut ini (tanpa markdown, tanpa teks lain):\n` +
+              `{\n` +
+              `  "summary": "<ringkasan naratif 4-6 kalimat dalam Bahasa Indonesia>",\n` +
+              `  "dominantThemes": ["<tema1>", "<tema2>"],\n` +
+              `  "sentimentLabel": "<POSITIF | NETRAL | CAMPURAN>",\n` +
+              `  "sentimentScore": <angka 0-100>\n` +
+              `}`,
+          },
         ],
         temperature: 0.5,
       }),

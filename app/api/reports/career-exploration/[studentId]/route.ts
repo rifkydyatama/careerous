@@ -63,6 +63,12 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     });
 
     const hasApiKey = Boolean(process.env.OPENAI_API_KEY?.trim());
+    // Log ke Vercel Function Logs untuk debugging
+    console.log(
+      `[career-report] studentId=${studentId} hasApiKey=${hasApiKey} ` +
+      `keyPrefix=${process.env.OPENAI_API_KEY?.slice(0, 7) ?? "unset"} ` +
+      `existingReport=${report ? `id=${report.id} isAI=${report.isAiGenerated}` : "null"}`
+    );
 
     // Regenerate if: no report exists, or existing report is rule-based while AI key is now active
     if (!report || (!report.isAiGenerated && hasApiKey)) {
