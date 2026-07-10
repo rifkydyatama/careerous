@@ -23,7 +23,14 @@ export default function AccessibilityWidget() {
   const [state, setState] = useState<Record<string, boolean>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
-  
+  // Dragging state and position
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const posStart = useRef({ x: 0, y: 0 });
+  const clickPrevent = useRef(false);
+
+  // Load preferences from localStorage
   useEffect(() => {
     const next: Record<string, boolean> = {};
     for (const opt of OPTIONS) {
@@ -34,7 +41,7 @@ export default function AccessibilityWidget() {
     setState(next);
   }, []);
 
-  
+  // Close accessibility panel when clicking outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -45,6 +52,89 @@ export default function AccessibilityWidget() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Handle drag move window events
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const dx = e.clientX - dragStart.current.x;
+      const dy = e.clientY - dragStart.current.y;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        clickPrevent.current = true;
+      }
+      
+      const newX = posStart.current.x + dx;
+      const newY = posStart.current.y + dy;
+
+      const maxLeft = -(window.innerWidth - 70);
+      const maxRight = 10;
+      const maxUp = -(window.innerHeight - 70);
+      const maxDown = 10;
+
+      setPosition({
+        x: Math.max(maxLeft, Math.min(maxRight, newX)),
+        y: Math.max(maxUp, Math.min(maxDown, newY))
+      });
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - dragStart.current.x;
+      const dy = touch.clientY - dragStart.current.y;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        clickPrevent.current = true;
+      }
+
+      const newX = posStart.current.x + dx;
+      const newY = posStart.current.y + dy;
+
+      const maxLeft = -(window.innerWidth - 70);
+      const maxRight = 10;
+      const maxUp = -(window.innerHeight - 70);
+      const maxDown = 10;
+
+      setPosition({
+        x: Math.max(maxLeft, Math.min(maxRight, newX)),
+        y: Math.max(maxUp, Math.min(maxDown, newY))
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [isDragging]);
+
+  // Constrain position on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setPosition((prev) => {
+        const maxLeft = -(window.innerWidth - 70);
+        const maxRight = 10;
+        const maxUp = -(window.innerHeight - 70);
+        const maxDown = 10;
+        return {
+          x: Math.max(maxLeft, Math.min(maxRight, prev.x)),
+          y: Math.max(maxUp, Math.min(maxDown, prev.y))
+        };
+      });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const toggle = (opt: (typeof OPTIONS)[number]) => {
     const on = !state[opt.key];
     setState((prev) => ({ ...prev, [opt.key]: on }));
@@ -52,10 +142,34 @@ export default function AccessibilityWidget() {
     window.localStorage.setItem(opt.storageKey, on ? "1" : "0");
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Only left click drag
+    dragStart.current = { x: e.clientX, y: e.clientY };
+    posStart.current = { x: position.x, y: position.y };
+    setIsDragging(true);
+    clickPrevent.current = false;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 0) return;
+    const touch = e.touches[0];
+    dragStart.current = { x: touch.clientX, y: touch.clientY };
+    posStart.current = { x: position.x, y: position.y };
+    setIsDragging(true);
+    clickPrevent.current = false;
+  };
+
   const darkOn = state["theme-dark"];
 
   return (
-    <div ref={containerRef} className="fixed bottom-5 right-5 z-[100]" data-noinvert>
+    <div
+      ref={containerRef}
+      className="fixed bottom-5 right-5 z-[100] flex flex-col items-end"
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+      }}
+      data-noinvert
+    >
       {open && (
         <div className="mb-3 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
           <div className="flex items-center justify-between border-b border-slate-100 bg-[#2563eb] px-4 py-3">
@@ -119,9 +233,20 @@ export default function AccessibilityWidget() {
 
       <button
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onClick={() => {
+          if (!clickPrevent.current) {
+            setOpen((prev) => !prev);
+          }
+        }}
         aria-label="Pengaturan aksesibilitas"
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-xl ring-2 ring-white transition hover:scale-105"
+        className={`flex h-12 w-12 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-xl ring-2 ring-white transition hover:scale-105 active:scale-95 ${
+          isDragging ? "cursor-grabbing select-none" : "cursor-grab"
+        }`}
+        style={{
+          touchAction: "none"
+        }}
       >
         {darkOn ? <Moon size={20} /> : <Accessibility size={20} />}
       </button>
