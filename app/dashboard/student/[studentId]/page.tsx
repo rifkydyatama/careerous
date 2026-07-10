@@ -166,7 +166,12 @@ export default function StudentDashboardPage() {
             <PhaseProgressCard phases={phaseProgress} />
           </div>
 
-          {}
+          {/* Counselor Card on Mobile */}
+          {data.counselor && (
+            <div className="mb-6 lg:hidden">
+              <CounselorCard counselor={data.counselor} />
+            </div>
+          )}
           <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -248,74 +253,21 @@ export default function StudentDashboardPage() {
             </div>
 
             <div className="flex flex-col gap-4">
-              {/* Counselor Contact Card */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <User size={16} className="text-[#2563eb]" />
-                  <h3 className="text-[14px] font-extrabold text-slate-900">Konselor Bimbingan Konseling (BK)</h3>
-                </div>
-
+              {/* Counselor Contact Card - Desktop Only */}
+              <div className="hidden lg:block">
                 {data.counselor ? (
-                  <div className="flex flex-col items-center text-center">
-                    <div className="relative h-16 w-16 overflow-hidden rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center text-lg font-extrabold shadow-inner mb-3">
-                      {data.counselor.avatar ? (
-                        <img src={data.counselor.avatar} alt={data.counselor.name || ""} className="h-full w-full object-cover" />
-                      ) : (
-                        (data.counselor.name?.[0] || "K").toUpperCase()
-                      )}
-                    </div>
-                    <h4 className="text-[13.5px] font-bold text-slate-900">{data.counselor.name || "Konselor Sekolah"}</h4>
-                    <p className="text-[11.5px] text-slate-400">Guru Pembimbing Anda</p>
-
-                    <div className="mt-4 w-full space-y-2.5 text-[12px] text-slate-600 text-left bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                      <div className="flex items-center gap-2.5 truncate">
-                        <span className="text-slate-400 shrink-0">📧</span>
-                        <span className="truncate" title={data.counselor.email || ""}>
-                          {data.counselor.email || "Tidak ada email"}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-slate-400 shrink-0">📞</span>
-                        <span>
-                          {data.counselor.phone || "Belum mendaftarkan nomor telepon"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-2 w-full">
-                      {data.counselor.email ? (
-                        <a
-                          href={`mailto:${data.counselor.email}`}
-                          className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white py-2 text-[11.5px] font-bold text-slate-700 hover:bg-slate-50 transition"
-                        >
-                          Kirim Email
-                        </a>
-                      ) : (
-                        <button disabled className="rounded-lg border border-slate-200 bg-slate-50 py-2 text-[11.5px] font-bold text-slate-400 cursor-not-allowed">
-                          Email
-                        </button>
-                      )}
-                      {data.counselor.phone ? (
-                        <a
-                          href={`https://wa.me/${data.counselor.phone.replace(/[^0-9]/g, "").replace(/^0/, "62")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 py-2 text-[11.5px] font-bold text-white hover:bg-emerald-700 transition"
-                        >
-                          WhatsApp
-                        </a>
-                      ) : (
-                        <button disabled className="rounded-lg bg-slate-100 py-2 text-[11.5px] font-bold text-slate-400 cursor-not-allowed">
-                          WhatsApp
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <CounselorCard counselor={data.counselor} />
                 ) : (
-                  <div className="text-center py-4">
-                    <p className="text-[12px] text-slate-500 leading-relaxed">
-                      Konselor sekolah belum dialokasikan untuk Anda. Hubungi pihak sekolah untuk plotting.
-                    </p>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
+                      <User size={16} className="text-[#2563eb]" />
+                      <h3 className="text-[14px] font-extrabold text-slate-900">Konselor Bimbingan Konseling (BK)</h3>
+                    </div>
+                    <div className="text-center py-4">
+                      <p className="text-[12px] text-slate-500 leading-relaxed">
+                        Konselor sekolah belum dialokasikan untuk Anda. Hubungi pihak sekolah untuk plotting.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -530,5 +482,73 @@ function QuickCard({
     >
       {inner}
     </Link>
+  );
+}
+
+function CounselorCard({ counselor }: { counselor: any }) {
+  if (!counselor) return null;
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
+        <User size={16} className="text-[#2563eb]" />
+        <h3 className="text-[14px] font-extrabold text-slate-900">Konselor Bimbingan Konseling (BK)</h3>
+      </div>
+
+      <div className="flex flex-col md:flex-row lg:flex-col xl:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col items-center md:flex-row lg:flex-col xl:flex-row gap-3 text-center md:text-left lg:text-center xl:text-left">
+          <div className="relative h-14 w-14 overflow-hidden rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center text-lg font-extrabold shadow-inner shrink-0">
+            {counselor.avatar ? (
+              <img src={counselor.avatar} alt={counselor.name || ""} className="h-full w-full object-cover" />
+            ) : (
+              (counselor.name?.[0] || "K").toUpperCase()
+            )}
+          </div>
+          <div>
+            <h4 className="text-[13.5px] font-bold text-slate-900">{counselor.name || "Konselor Sekolah"}</h4>
+            <p className="text-[11.5px] text-slate-400 font-medium">Guru Pembimbing Anda</p>
+            
+            <div className="mt-2 space-y-1 text-[11px] text-slate-500">
+              <div className="flex items-center gap-1.5 justify-center md:justify-start lg:justify-center xl:justify-start truncate max-w-[200px] md:max-w-none">
+                <span>📧</span>
+                <span className="truncate" title={counselor.email || ""}>{counselor.email || "-"}</span>
+              </div>
+              <div className="flex items-center gap-1.5 justify-center md:justify-start lg:justify-center xl:justify-start">
+                <span>📞</span>
+                <span>{counselor.phone || "-"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-2 w-full md:w-auto lg:w-full xl:w-auto shrink-0">
+          {counselor.email ? (
+            <a
+              href={`mailto:${counselor.email}`}
+              className="flex flex-1 md:flex-initial lg:flex-1 xl:flex-initial items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white py-2 px-3 text-[11.5px] font-bold text-slate-700 hover:bg-slate-50 transition"
+            >
+              Email
+            </a>
+          ) : (
+            <button disabled className="flex-1 md:flex-initial lg:flex-1 xl:flex-initial rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-[11.5px] font-bold text-slate-400 cursor-not-allowed">
+              Email
+            </button>
+          )}
+          {counselor.phone ? (
+            <a
+              href={`https://wa.me/${counselor.phone.replace(/[^0-9]/g, "").replace(/^0/, "62")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-1 md:flex-initial lg:flex-1 xl:flex-initial items-center justify-center gap-1.5 rounded-lg bg-emerald-600 py-2 px-3 text-[11.5px] font-bold text-white hover:bg-emerald-700 transition"
+            >
+              WhatsApp
+            </a>
+          ) : (
+            <button disabled className="flex-1 md:flex-initial lg:flex-1 xl:flex-initial rounded-lg bg-slate-100 py-2 px-3 text-[11.5px] font-bold text-slate-400 cursor-not-allowed">
+              WhatsApp
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
