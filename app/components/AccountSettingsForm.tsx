@@ -18,6 +18,9 @@ export function AccountSettingsForm({
   const [email, setEmail] = useState(initialEmail || "");
   const [avatarBase64, setAvatarBase64] = useState<string | null>(initialAvatar);
   
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -57,7 +60,6 @@ export function AccountSettingsForm({
           
           ctx.drawImage(img, 0, 0, width, height);
           
-          
           const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
           resolve(dataUrl);
         };
@@ -91,11 +93,29 @@ export function AccountSettingsForm({
     setError(null);
     setSuccessMsg(null);
 
+    if (password) {
+      if (password.length < 8) {
+        setError("Kata sandi baru minimal 8 karakter.");
+        setIsSaving(false);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Konfirmasi kata sandi tidak cocok.");
+        setIsSaving(false);
+        return;
+      }
+    }
+
     try {
+      const payload: any = { name, email, avatar: avatarBase64 };
+      if (password) {
+        payload.password = password;
+      }
+
       const res = await fetch("/api/auth/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, avatar: avatarBase64 }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -103,7 +123,9 @@ export function AccountSettingsForm({
         throw new Error(data?.error || "Gagal menyimpan perubahan.");
       }
 
-      setSuccessMsg("Profil berhasil diperbarui!");
+      setSuccessMsg(password ? "Profil dan kata sandi berhasil diperbarui!" : "Profil berhasil diperbarui!");
+      setPassword("");
+      setConfirmPassword("");
       onSuccess();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal menyimpan perubahan.");
@@ -120,7 +142,6 @@ export function AccountSettingsForm({
       </div>
 
       <form onSubmit={handleSave} className="p-6">
-        {}
         <div className="mb-6 flex flex-col items-center sm:flex-row sm:items-start gap-6">
           <div className="relative group">
             <div 
@@ -173,7 +194,6 @@ export function AccountSettingsForm({
           </div>
         </div>
 
-        {}
         <div className="grid gap-5">
           <div>
             <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Nama Lengkap</label>
@@ -195,6 +215,33 @@ export function AccountSettingsForm({
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
             />
+          </div>
+        </div>
+
+        <div className="mt-6 border-t border-slate-100 pt-5">
+          <h4 className="text-[13px] font-bold text-slate-900 mb-3">Ganti Kata Sandi (Opsional)</h4>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Kata Sandi Baru</label>
+              <input
+                type="password"
+                placeholder="Minimal 8 karakter"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-[12px] font-bold text-slate-700 mb-1.5">Konfirmasi Kata Sandi Baru</label>
+              <input
+                type="password"
+                placeholder="Ulangi kata sandi baru"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[13px] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+              />
+            </div>
           </div>
         </div>
 

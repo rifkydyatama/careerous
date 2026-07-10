@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
-import { getSessionCookieName, parseSessionToken } from "../../../../lib/portal-session";
+import { getSessionCookieName, parseSessionToken, hashPassword } from "../../../../lib/portal-session";
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get(getSessionCookieName())?.value;
@@ -71,15 +71,26 @@ export async function PATCH(request: NextRequest) {
   const name = typeof body?.name === "string" ? body.name.trim() : undefined;
   const email = typeof body?.email === "string" ? body.email.trim() : undefined;
   const avatar = typeof body?.avatar === "string" ? body.avatar : undefined;
+  const password = typeof body?.password === "string" ? body.password : undefined;
+
+  if (password !== undefined && password.length < 8) {
+    return NextResponse.json({ error: "Kata sandi baru minimal 8 karakter" }, { status: 400 });
+  }
 
   try {
+    const updateData: any = {
+      ...(name !== undefined && { name }),
+      ...(email !== undefined && { email }),
+      ...(avatar !== undefined && { avatar }),
+    };
+
+    if (password !== undefined) {
+      updateData.passwordHash = await hashPassword(password);
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: session.userId },
-      data: {
-        ...(name !== undefined && { name }),
-        ...(email !== undefined && { email }),
-        ...(avatar !== undefined && { avatar }),
-      },
+      data: updateData,
       select: {
         id: true,
         name: true,
